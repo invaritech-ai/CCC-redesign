@@ -9,24 +9,24 @@ All colors MUST be HSL.
 @layer base {
   :root {
     --background: 40 20% 97%;
-    --foreground: 180 50% 15%;
+    --foreground: 181 55% 17%;
 
     --card: 0 0% 100%;
-    --card-foreground: 180 50% 15%;
+    --card-foreground: 181 55% 17%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 180 50% 15%;
+    --popover-foreground: 181 55% 17%;
 
-    --primary: 180 65% 25%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 181 55% 17%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 40 40% 94%;
-    --secondary-foreground: 180 65% 25%;
+    --secondary-foreground: 181 55% 17%;
 
     --muted: 40 30% 92%;
-    --muted-foreground: 180 20% 45%;
+    --muted-foreground: 181 20% 45%;
 
-    --accent: 142 71% 45%;
+    --accent: 121 42% 53%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
@@ -34,15 +34,15 @@ All colors MUST be HSL.
 
     --border: 40 20% 88%;
     --input: 40 20% 90%;
-    --ring: 180 65% 25%;
+    --ring: 181 55% 17%;
 
     --radius: 0.75rem;
     
-    --success: 142 71% 45%;
+    --success: 121 42% 53%;
     --success-foreground: 0 0% 100%;
     
-    --badge: 180 30% 92%;
-    --badge-foreground: 180 65% 25%;
+    --badge: 181 15% 92%;
+    --badge-foreground: 181 55% 17%;
 
     --sidebar-background: 0 0% 98%;
 
@@ -62,39 +62,39 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 180 50% 8%;
+    --background: 181 50% 8%;
     --foreground: 40 20% 95%;
 
-    --card: 180 45% 12%;
+    --card: 181 45% 12%;
     --card-foreground: 40 20% 95%;
 
-    --popover: 180 45% 12%;
+    --popover: 181 45% 12%;
     --popover-foreground: 40 20% 95%;
 
-    --primary: 180 50% 70%;
-    --primary-foreground: 180 65% 15%;
+    --primary: 181 50% 70%;
+    --primary-foreground: 181 55% 15%;
 
-    --secondary: 180 30% 18%;
+    --secondary: 181 30% 18%;
     --secondary-foreground: 40 20% 95%;
 
-    --muted: 180 30% 18%;
-    --muted-foreground: 180 20% 65%;
+    --muted: 181 30% 18%;
+    --muted-foreground: 181 20% 65%;
 
-    --accent: 142 71% 50%;
+    --accent: 121 42% 55%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 180 30% 20%;
-    --input: 180 30% 20%;
-    --ring: 180 50% 70%;
+    --border: 181 30% 20%;
+    --input: 181 30% 20%;
+    --ring: 181 50% 70%;
     
-    --success: 142 71% 50%;
+    --success: 121 42% 55%;
     --success-foreground: 0 0% 100%;
     
-    --badge: 180 40% 18%;
-    --badge-foreground: 180 50% 70%;
+    --badge: 181 40% 18%;
+    --badge-foreground: 181 50% 70%;
     
     --sidebar-background: 180 45% 10%;
     --sidebar-foreground: 40 20% 90%;
