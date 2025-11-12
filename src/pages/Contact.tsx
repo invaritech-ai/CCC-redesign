@@ -156,7 +156,7 @@ const Contact = () => {
               <p className="text-lg text-muted-foreground mb-6">
                 For urgent matters requiring immediate attention, please contact our emergency hotline:
               </p>
-              <a href="tel:+85298765432" className="text-3xl font-bold text-primary hover:text-primary/80 transition-colors">
+              <a href="tel:+85298765432" className="text-3xl font-bold text-foreground hover:text-primary transition-colors">
                 +852 9876 5432
               </a>
               <p className="text-sm text-muted-foreground mt-4">

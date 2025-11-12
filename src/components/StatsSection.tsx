@@ -32,7 +32,7 @@ export const StatsSection = () => {
                 </div>
               </div>
               {stat.number && (
-                <div className="text-4xl font-bold text-primary mb-2">{stat.number}</div>
+                <div className="text-4xl font-bold text-foreground mb-2">{stat.number}</div>
               )}
               <div className="text-sm font-medium text-foreground">{stat.label}</div>
               {stat.subtitle && (

@@ -16,7 +16,7 @@ export const HeroSection = () => {
             </Badge>
 
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl text-primary leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight">
                 A Caring Home for Hong Kong's English-Speaking Elderly
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
@@ -61,7 +61,7 @@ export const HeroSection = () => {
             </div>
             <div className="absolute -bottom-6 -left-6 bg-card p-4 rounded-xl shadow-lg border hidden md:block">
               <p className="text-sm text-muted-foreground mb-1">Creating a compassionate community since</p>
-              <p className="text-3xl font-bold text-primary">1978</p>
+              <p className="text-3xl font-bold text-foreground">1978</p>
             </div>
           </div>
         </div>

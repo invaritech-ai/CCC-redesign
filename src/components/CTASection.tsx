@@ -6,7 +6,7 @@ export const CTASection = () => {
     <section className="py-20 bg-gradient-to-br from-primary/10 via-secondary/30 to-success/10">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center space-y-8">
-          <h2 className="text-3xl md:text-4xl text-primary">
+          <h2 className="text-3xl md:text-4xl text-foreground">
             Ready to Make a Difference?
           </h2>
           <p className="text-lg text-foreground leading-relaxed">

@@ -19,7 +19,7 @@ export const TestimonialsSection = () => {
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl text-primary mb-4">
+          <h2 className="text-3xl md:text-4xl text-foreground mb-4">
             A Special Place Residents Call Home
           </h2>
         </div>
@@ -32,7 +32,7 @@ export const TestimonialsSection = () => {
                 "{testimonial.quote}"
               </p>
               <div className="border-t pt-4">
-                <p className="font-semibold text-primary">{testimonial.role}</p>
+                <p className="font-semibold text-foreground">{testimonial.role}</p>
                 <p className="text-sm text-muted-foreground">{testimonial.detail}</p>
               </div>
             </Card>

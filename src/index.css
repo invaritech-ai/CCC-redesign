@@ -7,118 +7,148 @@ All colors MUST be HSL.
 */
 
 @layer base {
-  :root {
-    --background: 40 20% 97%;
-    --foreground: 181 55% 17%;
+    :root {
+        /* Background & Foreground - Using lavender and black text */
+        --background: 242 30% 98%;
+        --foreground: 0 0% 0%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 181 55% 17%;
+        /* Card - Clean white with black text */
+        --card: 0 0% 100%;
+        --card-foreground: 0 0% 0%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 181 55% 17%;
+        /* Popover - Clean white with black text */
+        --popover: 0 0% 100%;
+        --popover-foreground: 0 0% 0%;
 
-    --primary: 181 55% 17%;
-    --primary-foreground: 0 0% 100%;
+        /* Primary - Dark pastel green */
+        --primary: 122 48% 47%;
+        --primary-foreground: 0 0% 100%;
 
-    --secondary: 40 40% 94%;
-    --secondary-foreground: 181 55% 17%;
+        /* Secondary - Light lavender */
+        --secondary: 242 43% 87%;
+        --secondary-foreground: 0 0% 0%;
 
-    --muted: 40 30% 92%;
-    --muted-foreground: 181 20% 45%;
+        /* Muted - Very light lavender */
+        --muted: 242 43% 92%;
+        --muted-foreground: 147 30% 35%;
 
-    --accent: 121 42% 53%;
-    --accent-foreground: 0 0% 100%;
+        /* Accent - Fawn (warm orange) */
+        --accent: 28 95% 74%;
+        --accent-foreground: 0 0% 0%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+        /* Destructive - Burgundy */
+        --destructive: 355 67% 26%;
+        --destructive-foreground: 0 0% 98%;
 
-    --border: 40 20% 88%;
-    --input: 40 20% 90%;
-    --ring: 181 55% 17%;
+        /* Border & Input - Light lavender */
+        --border: 242 30% 85%;
+        --input: 242 30% 90%;
+        --ring: 122 48% 47%;
 
-    --radius: 0.75rem;
-    
-    --success: 121 42% 53%;
-    --success-foreground: 0 0% 100%;
-    
-    --badge: 181 15% 92%;
-    --badge-foreground: 181 55% 17%;
+        --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+        /* Success - Dark pastel green */
+        --success: 122 48% 47%;
+        --success-foreground: 0 0% 100%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+        /* Badge - Very light lavender */
+        --badge: 242 43% 94%;
+        --badge-foreground: 0 0% 0%;
 
-    --sidebar-primary: 240 5.9% 10%;
+        /* Sidebar - Light lavender background */
+        --sidebar-background: 242 43% 96%;
 
-    --sidebar-primary-foreground: 0 0% 98%;
+        --sidebar-foreground: 0 0% 0%;
 
-    --sidebar-accent: 240 4.8% 95.9%;
+        --sidebar-primary: 122 48% 47%;
 
-    --sidebar-accent-foreground: 240 5.9% 10%;
+        --sidebar-primary-foreground: 0 0% 100%;
 
-    --sidebar-border: 220 13% 91%;
+        --sidebar-accent: 242 43% 90%;
 
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+        --sidebar-accent-foreground: 0 0% 0%;
 
-  .dark {
-    --background: 181 50% 8%;
-    --foreground: 40 20% 95%;
+        --sidebar-border: 242 30% 85%;
 
-    --card: 181 45% 12%;
-    --card-foreground: 40 20% 95%;
+        --sidebar-ring: 122 48% 47%;
+    }
 
-    --popover: 181 45% 12%;
-    --popover-foreground: 40 20% 95%;
+    .dark {
+        /* Dark mode - Using dark green as base with white text */
+        --background: 147 94% 4%;
+        --foreground: 0 0% 100%;
 
-    --primary: 181 50% 70%;
-    --primary-foreground: 181 55% 15%;
+        /* Card - Slightly lighter than background */
+        --card: 147 94% 6%;
+        --card-foreground: 0 0% 100%;
 
-    --secondary: 181 30% 18%;
-    --secondary-foreground: 40 20% 95%;
+        /* Popover - Matching card */
+        --popover: 147 94% 6%;
+        --popover-foreground: 0 0% 100%;
 
-    --muted: 181 30% 18%;
-    --muted-foreground: 181 20% 65%;
+        /* Primary - Lighter green for dark mode */
+        --primary: 122 48% 60%;
+        --primary-foreground: 147 94% 4%;
 
-    --accent: 121 42% 55%;
-    --accent-foreground: 0 0% 100%;
+        /* Secondary - Dark lavender */
+        --secondary: 242 30% 20%;
+        --secondary-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 50%;
-    --destructive-foreground: 0 0% 98%;
+        /* Muted - Darker lavender */
+        --muted: 242 30% 15%;
+        --muted-foreground: 242 30% 70%;
 
-    --border: 181 30% 20%;
-    --input: 181 30% 20%;
-    --ring: 181 50% 70%;
-    
-    --success: 121 42% 55%;
-    --success-foreground: 0 0% 100%;
-    
-    --badge: 181 40% 18%;
-    --badge-foreground: 181 50% 70%;
-    
-    --sidebar-background: 180 45% 10%;
-    --sidebar-foreground: 40 20% 90%;
-    --sidebar-primary: 180 50% 70%;
-    --sidebar-primary-foreground: 180 65% 15%;
-    --sidebar-accent: 180 30% 18%;
-    --sidebar-accent-foreground: 40 20% 90%;
-    --sidebar-border: 180 30% 20%;
-    --sidebar-ring: 180 50% 70%;
-  }
+        /* Accent - Lighter fawn for dark mode */
+        --accent: 28 85% 80%;
+        --accent-foreground: 0 0% 100%;
+
+        /* Destructive - Lighter burgundy for dark mode */
+        --destructive: 355 67% 55%;
+        --destructive-foreground: 0 0% 98%;
+
+        /* Border & Input - Dark lavender */
+        --border: 242 30% 18%;
+        --input: 242 30% 18%;
+        --ring: 122 48% 60%;
+
+        /* Success - Lighter green for dark mode */
+        --success: 122 48% 60%;
+        --success-foreground: 147 94% 4%;
+
+        /* Badge - Dark lavender */
+        --badge: 242 30% 18%;
+        --badge-foreground: 122 48% 60%;
+
+        /* Sidebar - Dark green background */
+        --sidebar-background: 147 94% 5%;
+        --sidebar-foreground: 0 0% 100%;
+        --sidebar-primary: 122 48% 60%;
+        --sidebar-primary-foreground: 147 94% 4%;
+        --sidebar-accent: 242 30% 15%;
+        --sidebar-accent-foreground: 0 0% 100%;
+        --sidebar-border: 242 30% 18%;
+        --sidebar-ring: 122 48% 60%;
+    }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+    * {
+        @apply border-border;
+    }
 
-  body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-weight: 700;
-  }
+    body {
+        @apply bg-background text-foreground;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+            system-ui, sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: "Playfair Display", Georgia, serif;
+        font-weight: 700;
+    }
 }

@@ -9,7 +9,7 @@ export const Footer = () => {
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
               <Heart className="h-4 w-4 text-primary-foreground fill-primary-foreground" />
             </div>
-            <span className="text-sm font-semibold text-primary">China Coast Community</span>
+            <span className="text-sm font-semibold text-foreground">China Coast Community</span>
           </div>
           
           <p className="text-sm text-muted-foreground text-center">

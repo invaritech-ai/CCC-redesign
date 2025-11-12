@@ -37,7 +37,7 @@ export const NoticeboardSection = () => {
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl text-primary mb-4">Noticeboard</h2>
+          <h2 className="text-3xl md:text-4xl text-foreground mb-4">Noticeboard</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Stay updated on our redevelopment progress, community events, and ways you can help
           </p>
@@ -60,7 +60,7 @@ export const NoticeboardSection = () => {
                     <span className="text-sm text-muted-foreground">{notice.date}</span>
                     <Badge variant="neutral" className="text-xs">{notice.type}</Badge>
                   </div>
-                  <h3 className="text-xl font-semibold text-primary mb-2">{notice.title}</h3>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">{notice.title}</h3>
                   <p className="text-muted-foreground mb-4">{notice.description}</p>
                   <Button variant="link" className="p-0 h-auto">
                     Read more <ArrowRight className="ml-1 h-4 w-4" />
@@ -74,7 +74,7 @@ export const NoticeboardSection = () => {
         {/* Subscribe Section */}
         <Card className="p-8 bg-secondary/50 border-primary/20">
           <div className="max-w-xl mx-auto text-center">
-            <h3 className="text-2xl font-semibold text-primary mb-2">Stay Updated</h3>
+            <h3 className="text-2xl font-semibold text-foreground mb-2">Stay Updated</h3>
             <p className="text-muted-foreground mb-6">
               Subscribe to receive the latest news and updates about our redevelopment progress
             </p>
