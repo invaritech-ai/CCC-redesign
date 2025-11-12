@@ -30,13 +30,13 @@ export const Navigation = () => {
                 <div className="rounded-md border bg-popover p-2 shadow-lg">
                   <Link
                     to="/about"
-                    className="block rounded-md p-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="block rounded-md p-3 text-sm font-medium hover:bg-[hsl(var(--muted-foreground))] hover:text-white transition-colors"
                   >
                     About
                   </Link>
                   <Link
                     to="/future"
-                    className="block rounded-md p-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="block rounded-md p-3 text-sm font-medium hover:bg-[hsl(var(--muted-foreground))] hover:text-white transition-colors"
                   >
                     Future Plans
                   </Link>
@@ -54,19 +54,19 @@ export const Navigation = () => {
                 <div className="rounded-md border bg-popover p-2 shadow-lg">
                   <Link
                     to="/community"
-                    className="block rounded-md p-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="block rounded-md p-3 text-sm font-medium hover:bg-[hsl(var(--muted-foreground))] hover:text-white transition-colors"
                   >
                     Community
                   </Link>
                   <Link
                     to="/waitlist"
-                    className="block rounded-md p-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="block rounded-md p-3 text-sm font-medium hover:bg-[hsl(var(--muted-foreground))] hover:text-white transition-colors"
                   >
                     Join Waitlist
                   </Link>
                   <Link
                     to="/volunteer"
-                    className="block rounded-md p-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="block rounded-md p-3 text-sm font-medium hover:bg-[hsl(var(--muted-foreground))] hover:text-white transition-colors"
                   >
                     Volunteer
                   </Link>
@@ -84,13 +84,13 @@ export const Navigation = () => {
                 <div className="rounded-md border bg-popover p-2 shadow-lg">
                   <Link
                     to="/support/donate"
-                    className="block rounded-md p-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="block rounded-md p-3 text-sm font-medium hover:bg-[hsl(var(--muted-foreground))] hover:text-white transition-colors"
                   >
                     Donate
                   </Link>
                   <Link
                     to="/reports"
-                    className="block rounded-md p-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="block rounded-md p-3 text-sm font-medium hover:bg-[hsl(var(--muted-foreground))] hover:text-white transition-colors"
                   >
                     Annual Reports
                   </Link>
@@ -108,13 +108,13 @@ export const Navigation = () => {
                 <div className="rounded-md border bg-popover p-2 shadow-lg">
                   <Link
                     to="/updates"
-                    className="block rounded-md p-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="block rounded-md p-3 text-sm font-medium hover:bg-[hsl(var(--muted-foreground))] hover:text-white transition-colors"
                   >
                     Updates
                   </Link>
                   <Link
                     to="/events"
-                    className="block rounded-md p-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="block rounded-md p-3 text-sm font-medium hover:bg-[hsl(var(--muted-foreground))] hover:text-white transition-colors"
                   >
                     Events
                   </Link>

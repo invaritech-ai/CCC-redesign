@@ -57,6 +57,9 @@ export const HeroSection = () => {
                 src={heroImage}
                 alt="Caring elderly community - two people walking together in a peaceful garden"
                 className="w-full h-full object-cover"
+                fetchPriority="high"
+                width="800"
+                height="600"
               />
             </div>
             <div className="absolute -bottom-6 -left-6 bg-card p-4 rounded-xl shadow-lg border hidden md:block">
