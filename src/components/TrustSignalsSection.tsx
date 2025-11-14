@@ -10,12 +10,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { getAllPartners } from "@/lib/sanity.queries";
+import { getImageUrl } from "@/lib/sanityImage";
+import type { SanityPartner } from "@/lib/sanity.types";
 
-interface Partner {
-    _id: string;
-    name: string;
-    description?: string;
-    logoUrl?: string;
+interface Partner extends SanityPartner {
     website?: string;
     partnershipType?: string;
     contactInfo?: {
@@ -120,9 +118,15 @@ export const TrustSignalsSection = () => {
                                     }
                                     className="flex items-center justify-center h-20 w-full opacity-60 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
                                 >
-                                    {partner.logoUrl ? (
+                                    {partner.logo ? (
                                         <img
-                                            src={partner.logoUrl}
+                                            src={
+                                                getImageUrl(partner.logo, {
+                                                    width: 64,
+                                                    height: 64,
+                                                    format: "webp",
+                                                }) || ""
+                                            }
                                             alt={partner.name}
                                             className="max-h-16 max-w-full object-contain"
                                             width="64"
