@@ -70,8 +70,9 @@ All colors MUST be HSL.
         --popover-foreground: 0 0% 0%;
 
         /* Primary - Dark pastel green */
-        --primary: 122 48% 47%;
+        --primary: 147 30% 25%;
         --primary-foreground: 0 0% 100%;
+        --logo-text: 122 48% 47%;
 
         /* Secondary - Light lavender */
         --secondary: 242 43% 87%;
@@ -136,8 +137,9 @@ All colors MUST be HSL.
         --popover-foreground: 0 0% 100%;
 
         /* Primary - Lighter green for dark mode */
-        --primary: 122 48% 60%;
+        --primary: 147 30% 35%;
         --primary-foreground: 147 94% 4%;
+        --logo-text: 122 48% 47%;
 
         /* Secondary - Dark lavender */
         --secondary: 242 30% 20%;

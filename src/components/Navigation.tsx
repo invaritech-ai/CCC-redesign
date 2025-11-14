@@ -14,7 +14,7 @@ export const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+    <header className="sticky top-0 z-50 w-full border-b bg-card">
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center justify-between">
           <Logo size="md" showText={true} asLink={true} />

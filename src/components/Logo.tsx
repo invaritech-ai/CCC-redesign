@@ -59,10 +59,10 @@ export const Logo = ({ className, size = "md", showText = true, asLink = true }:
       </svg>
       {showText && (
         <div className="flex flex-col">
-          <span className="text-lg font-bold text-primary leading-none">
+          <span className="text-lg font-bold text-logo-text leading-none">
             China Coast
           </span>
-          <span className="text-lg font-bold text-primary leading-none">
+          <span className="text-lg font-bold text-logo-text leading-none">
             Community
           </span>
         </div>
