@@ -2,8 +2,22 @@ import { Award, Shield, FileText, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { getAllPartners } from "@/lib/sanity.queries";
 
 export const TrustSignalsSection = () => {
+  const [partners, setPartners] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPartners = async () => {
+      const data = await getAllPartners();
+      setPartners(data);
+      setLoading(false);
+    };
+    fetchPartners();
+  }, []);
+
   const accreditations = [
     {
       icon: Award,
@@ -20,14 +34,6 @@ export const TrustSignalsSection = () => {
       label: "Financial Transparency",
       description: "Annual reports and financial statements publicly available",
     },
-  ];
-
-  // Placeholder for partner logos - will be replaced with CMS images
-  const partners = [
-    { name: "Partner 1", logo: "/placeholder.svg" },
-    { name: "Partner 2", logo: "/placeholder.svg" },
-    { name: "Partner 3", logo: "/placeholder.svg" },
-    { name: "Partner 4", logo: "/placeholder.svg" },
   ];
 
   return (
@@ -63,25 +69,34 @@ export const TrustSignalsSection = () => {
         </div>
 
         {/* Partner Logos */}
-        <div className="mb-12">
-          <h3 className="text-xl font-semibold text-foreground text-center mb-8">
-            Our Partners & Supporters
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
-            {partners.map((partner, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-center h-20 w-full opacity-60 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
-              >
-                <img
-                  src={partner.logo}
-                  alt={partner.name}
-                  className="max-h-16 max-w-full object-contain"
-                />
-              </div>
-            ))}
+        {!loading && partners.length > 0 && (
+          <div className="mb-12">
+            <h3 className="text-xl font-semibold text-foreground text-center mb-8">
+              Our Partners & Supporters
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
+              {partners.map((partner) => (
+                <a
+                  key={partner._id}
+                  href={partner.website || '#'}
+                  target={partner.website ? "_blank" : undefined}
+                  rel={partner.website ? "noopener noreferrer" : undefined}
+                  className="flex items-center justify-center h-20 w-full opacity-60 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
+                >
+                  {partner.logoUrl ? (
+                    <img
+                      src={partner.logoUrl}
+                      alt={partner.name}
+                      className="max-h-16 max-w-full object-contain"
+                    />
+                  ) : (
+                    <span className="text-muted-foreground">{partner.name}</span>
+                  )}
+                </a>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Transparency Note */}
         <div className="max-w-3xl mx-auto">

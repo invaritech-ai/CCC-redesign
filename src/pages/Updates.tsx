@@ -1,7 +1,26 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { useEffect, useState } from "react";
+import { getLatestUpdates } from "@/lib/sanity.queries";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
+import { Calendar, ArrowRight } from "lucide-react";
+import { format } from "date-fns";
 
 const Updates = () => {
+  const [updates, setUpdates] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUpdates = async () => {
+      const data = await getLatestUpdates(10);
+      setUpdates(data);
+      setLoading(false);
+    };
+    fetchUpdates();
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
@@ -18,11 +37,52 @@ const Updates = () => {
 
         <section className="py-16">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <p className="text-lg text-muted-foreground">
-                Updates blog feed coming soon. This will display blog posts from Sanity CMS.
-              </p>
-            </div>
+            {loading ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Loading updates...</p>
+              </div>
+            ) : updates.length > 0 ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+                {updates.map((update) => (
+                  <Card key={update._id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    {update.imageUrl && (
+                      <img
+                        src={update.imageUrl}
+                        alt={update.title}
+                        className="w-full h-48 object-cover"
+                      />
+                    )}
+                    <div className="p-6">
+                      {update.featured && (
+                        <Badge variant="default" className="mb-3">Featured</Badge>
+                      )}
+                      <h2 className="text-xl font-semibold mb-2">{update.title}</h2>
+                      <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+                        <Calendar className="h-4 w-4" />
+                        <span>{format(new Date(update.publishedAt), "PPP")}</span>
+                      </div>
+                      {update.excerpt && (
+                        <p className="text-muted-foreground mb-4 line-clamp-3">
+                          {update.excerpt}
+                        </p>
+                      )}
+                      <Link
+                        to={`/updates/${update.slug?.current}`}
+                        className="inline-flex items-center text-primary hover:underline"
+                      >
+                        Read more <ArrowRight className="ml-1 h-4 w-4" />
+                      </Link>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="max-w-4xl mx-auto text-center py-12">
+                <p className="text-lg text-muted-foreground">
+                  No updates available at this time. Check back soon!
+                </p>
+              </div>
+            )}
           </div>
         </section>
       </main>
