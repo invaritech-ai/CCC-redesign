@@ -1,73 +1,138 @@
-# Welcome to your Lovable project
+# China Coast Community Website Redesign
 
-## Project info
+A modern, responsive website redesign for the China Coast Community (CCC), built with React, TypeScript, and Sanity CMS.
 
-**URL**: https://lovable.dev/projects/05d8bf22-1fb1-48e1-b754-1b57fb630080
+## Overview
 
-## How can I edit this code?
+This project is a complete redesign of the China Coast Community website, featuring a modern UI, improved user experience, and a content management system powered by Sanity. The website showcases community services, events, updates, testimonials, and provides ways for community members to get involved through volunteering and donations.
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+- **Modern, Responsive Design**: Built with Tailwind CSS and shadcn/ui components
+- **Content Management**: Sanity CMS integration for easy content updates
+- **Performance Optimized**: Code splitting, lazy loading, and optimized asset delivery
+- **Accessible**: Built with accessibility best practices
+- **SEO Friendly**: Optimized for search engines
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/05d8bf22-1fb1-48e1-b754-1b57fb630080) and start prompting.
+## Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Frontend Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui (Radix UI primitives)
+- **Routing**: React Router v6
+- **CMS**: Sanity
+- **State Management**: TanStack Query (React Query)
+- **Form Handling**: React Hook Form with Zod validation
 
-**Use your preferred IDE**
+## Project Structure
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```
+src/
+├── components/          # Reusable React components
+│   ├── ui/             # shadcn/ui components
+│   └── ...             # Feature-specific components
+├── pages/              # Page components
+├── lib/                # Utilities and configurations
+│   ├── sanity.ts       # Sanity client setup
+│   └── utils.ts        # Helper functions
+└── hooks/              # Custom React hooks
+```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Getting Started
 
-Follow these steps:
+### Prerequisites
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- Node.js 18+ and npm (or use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Installation
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd CCC-redesign
+```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Set up environment variables:
+Create a `.env` file in the root directory with your Sanity configuration:
+```
+VITE_SANITY_PROJECT_ID=your-project-id
+VITE_SANITY_DATASET=production
+VITE_SANITY_API_VERSION=2024-01-01
+```
+
+4. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The application will be available at `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Available Scripts
 
-**Use GitHub Codespaces**
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run build:dev` - Build in development mode
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Sanity CMS
 
-## What technologies are used for this project?
+The project uses Sanity as a headless CMS for managing content. Content types include:
 
-This project is built with:
+- **Events**: Community events and activities
+- **Updates**: News, announcements, and stories
+- **Reports**: Annual reports and impact studies
+- **Testimonials**: Community member testimonials
+- **Team Members**: Staff and board member profiles
+- **Partners**: Partner organizations
+- **Case Studies**: Success stories and program outcomes
+- **Resources**: Downloadable documents and forms
+- **FAQs**: Frequently asked questions
+- **Galleries**: Photo galleries
+- **Press Releases**: Media releases
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Pages
 
-## How can I deploy this project?
+- `/` - Homepage
+- `/about` - About the organization
+- `/community` - Community information
+- `/events` - Events listing and details
+- `/updates` - News and updates
+- `/reports` - Annual reports and publications
+- `/volunteer` - Volunteer information and signup
+- `/support/donate` - Donation page
+- `/contact` - Contact information
+- `/future` - Future plans and vision
+- `/waitlist` - Waitlist signup
+- `/privacy` - Privacy policy
 
-Simply open [Lovable](https://lovable.dev/projects/05d8bf22-1fb1-48e1-b754-1b57fb630080) and click on Share -> Publish.
+## Development
 
-## Can I connect a custom domain to my Lovable project?
+The project uses:
+- **TypeScript** for type safety
+- **ESLint** for code quality
+- **Tailwind CSS** for styling
+- **React Router** for client-side routing
+- **React Query** for data fetching and caching
 
-Yes, you can!
+## Building for Production
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```bash
+npm run build
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+The production build will be output to the `dist/` directory.
+
+## License
+
+[Add your license information here]
+
+## Contact
+
+For questions or support, please contact [your contact information]

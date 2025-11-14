@@ -7,8 +7,8 @@ import { DonateNowButton } from "./DonateNowButton";
 
 export const HeroSection = () => {
     return (
-        <section className="relative py-16 md:py-24 bg-secondary/30">
-            <div className="container mx-auto px-4">
+        <section className="relative py-16 md:min-h-screen md:flex md:items-center bg-secondary/30">
+            <div className="container mx-auto px-4 w-full">
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
                     {/* Left Content */}
                     <div className="space-y-8">

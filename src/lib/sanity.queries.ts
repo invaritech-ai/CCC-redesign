@@ -89,6 +89,34 @@ export const getFeaturedUpdate = async () => {
 };
 
 /**
+ * Fetch multiple featured updates/stories
+ */
+export const getFeaturedUpdates = async (limit: number = 10) => {
+  if (!isSanityConfigured()) return [];
+  
+  const query = `*[_type == "update" && featured == true] | order(publishedAt desc) [0...$limit] {
+    _id,
+    title,
+    slug,
+    type,
+    publishedAt,
+    author,
+    excerpt,
+    tags,
+    categories,
+    "imageUrl": image.asset->url,
+    featured
+  }`;
+  
+  try {
+    return await sanityClient.fetch(query, { limit });
+  } catch (error) {
+    console.error('Error fetching featured updates:', error);
+    return [];
+  }
+};
+
+/**
  * Fetch latest updates with limit
  */
 export const getLatestUpdates = async (limit: number = 10) => {

@@ -201,3 +201,17 @@ All colors MUST be HSL.
         font-weight: 700;
     }
 }
+
+@keyframes infinite-scroll-smooth {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.animate-infinite-scroll-smooth {
+    animation: infinite-scroll-smooth linear infinite;
+    will-change: transform;
+}

@@ -6,10 +6,20 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getFeaturedEvents, getRecentUpdate } from "@/lib/sanity.queries";
 import { format } from "date-fns";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 export const NoticeboardSection = () => {
   const [notices, setNotices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
 
   useEffect(() => {
     const fetchNotices = async () => {
@@ -55,11 +65,42 @@ export const NoticeboardSection = () => {
         return dateB.getTime() - dateA.getTime();
       });
       
-      setNotices(noticesList.slice(0, 4)); // Limit to 4
+      setNotices(noticesList.slice(0, 10)); // Increase limit for carousel
       setLoading(false);
     };
     fetchNotices();
   }, []);
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    setCurrent(api.selectedScrollSnap());
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
+
+  // Auto-scroll functionality with pause on hover
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (!api || notices.length <= 1 || isPaused) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      if (api.canScrollNext()) {
+        api.scrollNext();
+      } else {
+        api.scrollTo(0); // Loop back to start
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [api, notices.length, isPaused]);
 
   if (loading) {
     return (
@@ -88,36 +129,77 @@ export const NoticeboardSection = () => {
         </div>
 
         {notices.length > 0 ? (
-          <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-            {notices.map((notice) => (
-              <Card key={notice._id} className={`p-6 hover:shadow-lg transition-shadow ${notice.featured ? 'md:col-span-2 bg-primary/5' : ''}`}>
-                {notice.featured && (
-                  <Badge variant="default" className="mb-4">Featured</Badge>
-                )}
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0">
-                    <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Calendar className="h-6 w-6 text-primary" />
-                    </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm text-muted-foreground">{notice.date}</span>
-                      <Badge variant="neutral" className="text-xs">{notice.type}</Badge>
-                    </div>
-                    <h3 className="text-xl font-semibold text-foreground mb-2">{notice.title}</h3>
-                    <p className="text-muted-foreground mb-4">{notice.description}</p>
-                    {notice.link && (
-                      <Button variant="link" className="p-0 h-auto" asChild>
-                        <Link to={notice.link}>
-                          Read more <ArrowRight className="ml-1 h-4 w-4" />
-                        </Link>
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            ))}
+          <div 
+            className="max-w-3xl mx-auto relative px-12 md:px-16"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            <Carousel
+              setApi={setApi}
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full"
+            >
+              <CarouselContent>
+                {notices.map((notice) => (
+                  <CarouselItem key={notice._id}>
+                    <Card className={`p-6 md:p-8 hover:shadow-lg transition-shadow ${notice.featured ? 'bg-primary/5' : ''}`}>
+                      {notice.featured && (
+                        <Badge variant="default" className="mb-4">Featured</Badge>
+                      )}
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0">
+                          <div className="h-12 w-12 md:h-16 md:w-16 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary" />
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-2 flex-wrap">
+                            <span className="text-sm md:text-base text-muted-foreground">{notice.date}</span>
+                            <Badge variant="neutral" className="text-xs md:text-sm">{notice.type}</Badge>
+                          </div>
+                          <h3 className="text-xl md:text-2xl font-semibold text-foreground mb-2 md:mb-4">{notice.title}</h3>
+                          <p className="text-muted-foreground mb-4 md:mb-6 text-base md:text-lg">{notice.description}</p>
+                          {notice.link && (
+                            <Button variant="link" className="p-0 h-auto text-base md:text-lg" asChild>
+                              <Link to={notice.link}>
+                                Read more <ArrowRight className="ml-1 h-4 w-4 md:h-5 md:w-5" />
+                              </Link>
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              {notices.length > 1 && (
+                <>
+                  <CarouselPrevious className="h-10 w-10 md:h-12 md:w-12" />
+                  <CarouselNext className="h-10 w-10 md:h-12 md:w-12" />
+                </>
+              )}
+            </Carousel>
+            
+            {/* Dots indicator */}
+            {notices.length > 1 && (
+              <div className="flex justify-center gap-2 mt-6">
+                {notices.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => api?.scrollTo(index)}
+                    className={`h-2 md:h-3 rounded-full transition-all ${
+                      index === current
+                        ? "w-8 md:w-10 bg-primary"
+                        : "w-2 md:w-3 bg-primary/30"
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div className="text-center py-12 text-muted-foreground">

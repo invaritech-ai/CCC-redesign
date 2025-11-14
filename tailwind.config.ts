@@ -150,10 +150,19 @@ export default {
             height: "0",
           },
         },
+        "infinite-scroll": {
+          from: {
+            transform: "translateX(0)",
+          },
+          to: {
+            transform: "translateX(calc(-50% - var(--gap) / 2))",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "infinite-scroll": "infinite-scroll linear infinite",
       },
     },
   },
