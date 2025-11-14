@@ -1,12 +1,13 @@
 import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DonateNowButton } from "./DonateNowButton";
+import { Link } from "react-router-dom";
 
 export const CTASection = () => {
   return (
-    <section className="py-20 bg-gradient-to-br from-primary/10 via-secondary/30 to-success/10">
+    <section className="py-12 md:py-20 bg-gradient-to-br from-primary/10 via-secondary/30 to-success/10">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center space-y-8">
+        <div className="max-w-3xl mx-auto text-center space-y-6 md:space-y-8">
           <h2 className="text-3xl md:text-4xl text-foreground">
             Ready to Make a Difference?
           </h2>
@@ -15,9 +16,11 @@ export const CTASection = () => {
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <DonateNowButton size="lg" />
-            <Button variant="outline" size="lg" className="gap-2">
-              <Mail className="h-5 w-5" />
-              Get Involved
+            <Button variant="outline" size="lg" className="gap-2" asChild>
+              <Link to="/community">
+                <Mail className="h-5 w-5" />
+                Get Involved
+              </Link>
             </Button>
           </div>
         </div>

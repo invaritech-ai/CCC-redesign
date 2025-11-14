@@ -20,7 +20,7 @@ export const TestimonialsSection = () => {
     return (
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-3xl md:text-4xl text-foreground mb-4">
               A Special Place Residents Call Home
             </h2>
@@ -35,7 +35,7 @@ export const TestimonialsSection = () => {
     return (
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-3xl md:text-4xl text-foreground mb-4">
               A Special Place Residents Call Home
             </h2>
@@ -51,7 +51,7 @@ export const TestimonialsSection = () => {
   }
 
   return (
-    <section className="py-20 bg-background">
+    <section className="py-12 md:py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl text-foreground mb-4">
@@ -59,9 +59,9 @@ export const TestimonialsSection = () => {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-4 md:gap-8 max-w-5xl mx-auto">
           {testimonials.map((testimonial) => (
-            <Card key={testimonial._id} className="p-8 relative hover:shadow-lg transition-shadow">
+            <Card key={testimonial._id} className="p-6 md:p-8 relative hover:shadow-lg transition-shadow">
               <Quote className="h-10 w-10 text-primary/20 mb-4" />
               <p className="text-lg text-foreground mb-6 leading-relaxed italic">
                 "{testimonial.quote}"

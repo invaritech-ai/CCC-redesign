@@ -22,12 +22,12 @@ export const FeaturedStorySection = () => {
     return (
       <section className="py-20 bg-secondary/20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-3xl md:text-4xl text-foreground mb-4">
-              A Special Place Residents Call Home
+              Featured Story
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Hear from our community members about their experiences
+              Latest news and updates from our community
             </p>
           </div>
           <div className="max-w-4xl mx-auto">
@@ -44,12 +44,12 @@ export const FeaturedStorySection = () => {
     return (
       <section className="py-20 bg-secondary/20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-3xl md:text-4xl text-foreground mb-4">
-              A Special Place Residents Call Home
+              Featured Story
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Hear from our community members about their experiences
+              Latest news and updates from our community
             </p>
           </div>
           <div className="max-w-4xl mx-auto">
@@ -65,9 +65,9 @@ export const FeaturedStorySection = () => {
   }
 
   return (
-    <section className="py-20 bg-secondary/20">
+    <section className="py-12 md:py-20 bg-secondary/20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 md:mb-12">
           <h2 className="text-3xl md:text-4xl text-foreground mb-4">
             A Special Place Residents Call Home
           </h2>

@@ -1,4 +1,4 @@
-import { Award, Shield, FileText, ExternalLink } from "lucide-react";
+import { Award, Shield, FileText, ExternalLink, CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -34,12 +34,17 @@ export const TrustSignalsSection = () => {
       label: "Financial Transparency",
       description: "Annual reports and financial statements publicly available",
     },
+    {
+      icon: CheckCircle,
+      label: "Licensed Care & Attention Home",
+      description: "Licensed Care & Attention Home by Social Welfare Department",
+    },
   ];
 
   return (
-    <section className="py-20 bg-background">
+    <section className="py-12 md:py-20 bg-background">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 md:mb-12">
           <h2 className="text-3xl md:text-4xl text-foreground mb-4">
             Trusted & Accredited
           </h2>
@@ -49,7 +54,7 @@ export const TrustSignalsSection = () => {
         </div>
 
         {/* Accreditations */}
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12 md:mb-16">
           {accreditations.map((accreditation, index) => (
             <div
               key={index}
@@ -74,7 +79,7 @@ export const TrustSignalsSection = () => {
             <h3 className="text-xl font-semibold text-foreground text-center mb-8">
               Our Partners & Supporters
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 items-center justify-items-center">
               {partners.map((partner) => (
                 <a
                   key={partner._id}

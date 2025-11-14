@@ -2,7 +2,6 @@ import { Calendar, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getFeaturedEvents, getRecentUpdate } from "@/lib/sanity.queries";
@@ -66,7 +65,7 @@ export const NoticeboardSection = () => {
     return (
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-3xl md:text-4xl text-foreground mb-4">Noticeboard</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Stay updated on our redevelopment progress, community events, and ways you can help
@@ -79,7 +78,7 @@ export const NoticeboardSection = () => {
   }
 
   return (
-    <section className="py-20 bg-background">
+    <section className="py-12 md:py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl text-foreground mb-4">Noticeboard</h2>
@@ -89,7 +88,7 @@ export const NoticeboardSection = () => {
         </div>
 
         {notices.length > 0 ? (
-          <div className="grid md:grid-cols-2 gap-6 mb-12">
+          <div className="grid md:grid-cols-2 gap-4 md:gap-6">
             {notices.map((notice) => (
               <Card key={notice._id} className={`p-6 hover:shadow-lg transition-shadow ${notice.featured ? 'md:col-span-2 bg-primary/5' : ''}`}>
                 {notice.featured && (
@@ -121,28 +120,10 @@ export const NoticeboardSection = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 text-muted-foreground mb-12">
+          <div className="text-center py-12 text-muted-foreground">
             <p>No notices available at this time. Check back soon!</p>
           </div>
         )}
-
-        {/* Subscribe Section */}
-        <Card className="p-8 bg-secondary/50 border-primary/20">
-          <div className="max-w-xl mx-auto text-center">
-            <h3 className="text-2xl font-semibold text-foreground mb-2">Stay Updated</h3>
-            <p className="text-muted-foreground mb-6">
-              Subscribe to receive the latest news and updates about our redevelopment progress
-            </p>
-            <div className="flex gap-2">
-              <Input 
-                type="email" 
-                placeholder="Enter your email" 
-                className="flex-1"
-              />
-              <Button variant="success">Subscribe</Button>
-            </div>
-          </div>
-        </Card>
       </div>
     </section>
   );

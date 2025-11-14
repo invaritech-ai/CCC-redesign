@@ -27,16 +27,16 @@ export const ServicesSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-secondary/20">
+    <section className="py-12 md:py-20 bg-secondary/20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 md:mb-12">
           <h2 className="text-3xl md:text-4xl text-foreground mb-4">What We Do</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Comprehensive care and community programs for Hong Kong's English-speaking elderly
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-4 md:gap-6">
           {services.map((service, index) => (
             <HighlightCard
               key={index}
