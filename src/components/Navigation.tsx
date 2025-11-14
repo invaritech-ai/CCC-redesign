@@ -1,4 +1,4 @@
-import { Heart, Menu, ChevronDown } from "lucide-react";
+import { Menu, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sheet";
 import { useState } from "react";
 import { Logo } from "./Logo";
+import { DonateNowButton } from "./DonateNowButton";
 
 export const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -236,22 +237,12 @@ export const Navigation = () => {
               </SheetContent>
             </Sheet>
 
-            <Button variant="success" size="sm" className="gap-1" asChild>
-              <Link to="/support/donate">
-                <Heart className="h-4 w-4" />
-                <span className="hidden sm:inline">Donate Now</span>
-              </Link>
-            </Button>
+            <DonateNowButton size="sm" />
           </div>
 
           {/* Desktop CTA Button */}
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="success" size="sm" className="gap-1" asChild>
-              <Link to="/support/donate">
-                <Heart className="h-4 w-4" />
-                Donate Now
-              </Link>
-            </Button>
+            <DonateNowButton size="sm" />
           </div>
         </nav>
       </div>

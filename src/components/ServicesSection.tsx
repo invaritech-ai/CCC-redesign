@@ -1,6 +1,5 @@
-import { Heart, Users, Calendar, ArrowRight } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Heart, Users, Calendar } from "lucide-react";
+import { HighlightCard } from "./HighlightCard";
 
 export const ServicesSection = () => {
   const services = [
@@ -8,16 +7,22 @@ export const ServicesSection = () => {
       icon: Heart,
       title: "Care & Attention Home",
       description: "24-hour professional nursing care in a warm, home-like environment. Our licensed facility ensures residents receive dignified care as their needs change.",
+      link: "/waitlist",
+      category: "Care Services",
     },
     {
       icon: Users,
       title: "Community Members Program",
       description: "Over 80 members enjoy regular outings, activities, and social connections while living independently. A vibrant community to ease loneliness.",
+      link: "/community",
+      category: "Community",
     },
     {
       icon: Calendar,
       title: "Activities & Outings",
       description: "Regular social events, cultural outings, and activities that bring both residents and community members together to make new friends.",
+      link: "/events",
+      category: "Events",
     },
   ];
 
@@ -31,18 +36,16 @@ export const ServicesSection = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-6">
           {services.map((service, index) => (
-            <Card key={index} className="p-8 hover:shadow-xl transition-all hover:-translate-y-1">
-              <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
-                <service.icon className="h-7 w-7 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">{service.title}</h3>
-              <p className="text-muted-foreground mb-6 leading-relaxed">{service.description}</p>
-              <Button variant="link" className="p-0 h-auto text-foreground">
-                Learn more <ArrowRight className="ml-1 h-4 w-4" />
-              </Button>
-            </Card>
+            <HighlightCard
+              key={index}
+              title={service.title}
+              description={service.description}
+              icon={service.icon}
+              link={service.link}
+              category={service.category}
+            />
           ))}
         </div>
       </div>

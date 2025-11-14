@@ -1,5 +1,6 @@
-import { Heart, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DonateNowButton } from "./DonateNowButton";
 
 export const CTASection = () => {
   return (
@@ -13,10 +14,7 @@ export const CTASection = () => {
             Your support today helps us build tomorrow's caring community. Join us in creating a modern, welcoming home for Hong Kong's elderly.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <Button variant="success" size="lg" className="gap-2">
-              <Heart className="h-5 w-5" />
-              Donate Now
-            </Button>
+            <DonateNowButton size="lg" />
             <Button variant="outline" size="lg" className="gap-2">
               <Mail className="h-5 w-5" />
               Get Involved
