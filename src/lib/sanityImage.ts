@@ -2,23 +2,19 @@ import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { sanityClient } from "./sanity";
 
-// Create a builder instance configured to use API endpoint (not CDN)
-// Since sanityClient has useCdn: false, images will be served from api.sanity.io
-// This prevents third-party cookies from cdn.sanity.io
+// Create a builder instance for Sanity image URLs
+// Images are served from Sanity's CDN (cdn.sanity.io) which uses necessary cookies
+// for performance and caching. These cookies do not store personal information.
 const builder = imageUrlBuilder(sanityClient);
 
 /**
  * Build a Sanity image URL using the official image URL builder
- * This uses the API endpoint instead of CDN to avoid third-party cookies
  *
  * @param source - Image reference from Sanity (can be asset object or reference)
  * @returns Image URL builder instance for chaining transformations
  */
 export const urlFor = (source: SanityImageSource | null | undefined) => {
     if (!source) return null;
-
-    // Build URL using API endpoint
-    // The builder respects the useCdn: false setting in sanityClient
     return builder.image(source);
 };
 
@@ -92,8 +88,5 @@ export const getImageUrlFromString = (
     url: string | undefined | null
 ): string | null => {
     if (!url) return null;
-
-    // Replace CDN domain with API domain to avoid cookies
-    // This handles legacy queries that return imageUrl strings
-    return url.replace(/cdn\.sanity\.io/g, "api.sanity.io");
+    return url;
 };
