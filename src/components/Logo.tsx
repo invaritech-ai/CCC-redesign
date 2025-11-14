@@ -72,7 +72,7 @@ export const Logo = ({ className, size = "md", showText = true, asLink = true }:
 
   if (asLink) {
     return (
-      <Link to="/" className="flex items-center">
+      <Link to="/" className="flex items-center min-h-[44px]">
         {logoContent}
       </Link>
     );

@@ -18,7 +18,7 @@ export const CTASection = () => {
             <DonateNowButton size="lg" />
             <Button variant="outline" size="lg" className="gap-2" asChild>
               <Link to="/community">
-                <Mail className="h-5 w-5" />
+                <Mail className="h-5 w-5" aria-hidden="true" />
                 Get Involved
               </Link>
             </Button>

@@ -190,13 +190,17 @@ export const NoticeboardSection = () => {
                   <button
                     key={index}
                     onClick={() => api?.scrollTo(index)}
-                    className={`h-2 md:h-3 rounded-full transition-all ${
+                    className={`h-6 w-6 rounded-full transition-all p-2 min-h-[44px] min-w-[44px] flex items-center justify-center ${
                       index === current
-                        ? "w-8 md:w-10 bg-primary"
-                        : "w-2 md:w-3 bg-primary/30"
+                        ? "bg-primary"
+                        : "bg-primary/30"
                     }`}
                     aria-label={`Go to slide ${index + 1}`}
-                  />
+                  >
+                    <span className={`h-2 w-2 rounded-full ${
+                      index === current ? "bg-white" : "bg-primary"
+                    }`} aria-hidden="true" />
+                  </button>
                 ))}
               </div>
             )}

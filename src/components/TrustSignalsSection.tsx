@@ -125,6 +125,8 @@ export const TrustSignalsSection = () => {
                                             src={partner.logoUrl}
                                             alt={partner.name}
                                             className="max-h-16 max-w-full object-contain"
+                                            width="64"
+                                            height="64"
                                         />
                                     ) : (
                                         <span className="text-muted-foreground">

@@ -19,11 +19,11 @@ export const DonateNowButton = ({
     <Button 
       variant="success" 
       size={size} 
-      className={cn(gap, className)} 
+      className={cn(gap, "min-h-[44px]", className)} 
       asChild
     >
       <Link to="/support/donate">
-        <Heart className={iconSize} />
+        <Heart className={iconSize} aria-hidden="true" />
         Donate Now
       </Link>
     </Button>

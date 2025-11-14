@@ -30,7 +30,7 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
     >
       {/* Icon */}
       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-        <Icon className="h-6 w-6" />
+        <Icon className="h-6 w-6" aria-hidden="true" />
       </div>
 
       {/* Category */}
@@ -54,8 +54,8 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({
 
       {/* Link indicator */}
       <div className="flex items-center gap-2 text-sm font-medium text-primary opacity-100 md:opacity-0 transition-opacity md:group-hover:opacity-100">
-        Learn more
-        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+        <span aria-label={`Learn more about ${title}`}>Learn more</span>
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
       </div>
     </Link>
   );

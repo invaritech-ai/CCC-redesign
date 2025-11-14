@@ -44,7 +44,7 @@ const ContentCard: React.FC<CaseStudyCardProps> = ({
                 )}
             </div>
             {logo && ( // Check if image exists
-                <img src={logo} alt={title} className="z-10 h-9 rounded-lg" />
+                <img src={logo} alt={title} className="z-10 h-9 rounded-lg" width="36" height="36" />
             )}
         </div>
     );

@@ -35,19 +35,19 @@ export const HeroSection = () => {
 
                         <div className="flex flex-wrap gap-4 text-sm">
                             <div className="flex items-center gap-2">
-                                <CheckCircle2 className="h-5 w-5 text-success" />
+                                <CheckCircle2 className="h-5 w-5 text-success" aria-hidden="true" />
                                 <span className="text-foreground font-medium">
                                     Section 88 Charity
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Award className="h-5 w-5 text-success" />
+                                <Award className="h-5 w-5 text-success" aria-hidden="true" />
                                 <span className="text-foreground font-medium">
                                     45+ Years Serving HK
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Users className="h-5 w-5 text-success" />
+                                <Users className="h-5 w-5 text-success" aria-hidden="true" />
                                 <span className="text-foreground font-medium">
                                     80+ Community Members
                                 </span>
@@ -64,7 +64,7 @@ export const HeroSection = () => {
                             >
                                 <Link to="/future">
                                     Learn more about Redevelopment
-                                    <ArrowRight className="h-4 w-4" />
+                                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
                                 </Link>
                             </Button>
                         </div>
@@ -77,7 +77,7 @@ export const HeroSection = () => {
                                 src={heroImage}
                                 alt="Caring elderly community - two people walking together in a peaceful garden"
                                 className="w-full h-full object-cover"
-                                fetchPriority="high"
+                                fetchpriority="high"
                                 width="800"
                                 height="600"
                             />

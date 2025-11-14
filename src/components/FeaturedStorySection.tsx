@@ -141,7 +141,7 @@ export const FeaturedStorySection = () => {
                     <div className="relative z-10">
                       {/* Quote icon */}
                       <div className="mb-6">
-                        <Quote className="h-12 w-12 text-primary/20" />
+                        <Quote className="h-12 w-12 text-primary/20" aria-hidden="true" />
                       </div>
 
                       {/* Featured story title */}
@@ -164,6 +164,8 @@ export const FeaturedStorySection = () => {
                               src={story.imageUrl}
                               alt={story.title}
                               className="h-full w-full rounded-full object-cover"
+                              width="64"
+                              height="64"
                             />
                           ) : (
                             <User className="h-8 w-8 text-primary" />
@@ -209,13 +211,17 @@ export const FeaturedStorySection = () => {
                 <button
                   key={index}
                   onClick={() => api?.scrollTo(index)}
-                  className={`h-2 md:h-3 rounded-full transition-all ${
+                  className={`h-6 w-6 rounded-full transition-all p-2 min-h-[44px] min-w-[44px] flex items-center justify-center ${
                     index === current
-                      ? "w-8 md:w-10 bg-primary"
-                      : "w-2 md:w-3 bg-primary/30"
+                      ? "bg-primary"
+                      : "bg-primary/30"
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
-                />
+                >
+                  <span className={`h-2 w-2 rounded-full ${
+                    index === current ? "bg-white" : "bg-primary"
+                  }`} aria-hidden="true" />
+                </button>
               ))}
             </div>
           )}
