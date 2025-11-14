@@ -46,7 +46,7 @@ const About = () => {
                 <CardContent className="pt-6">
                   <div className="flex flex-col items-center text-center">
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                      <Heart className="h-8 w-8 text-primary" />
+                      <Heart className="h-8 w-8 text-primary" aria-hidden="true" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2">Compassion</h3>
                     <p className="text-muted-foreground">
@@ -60,7 +60,7 @@ const About = () => {
                 <CardContent className="pt-6">
                   <div className="flex flex-col items-center text-center">
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                      <Users className="h-8 w-8 text-primary" />
+                      <Users className="h-8 w-8 text-primary" aria-hidden="true" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2">Community</h3>
                     <p className="text-muted-foreground">
@@ -74,7 +74,7 @@ const About = () => {
                 <CardContent className="pt-6">
                   <div className="flex flex-col items-center text-center">
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                      <Award className="h-8 w-8 text-primary" />
+                      <Award className="h-8 w-8 text-primary" aria-hidden="true" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2">Excellence</h3>
                     <p className="text-muted-foreground">
@@ -88,7 +88,7 @@ const About = () => {
                 <CardContent className="pt-6">
                   <div className="flex flex-col items-center text-center">
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                      <Calendar className="h-8 w-8 text-primary" />
+                      <Calendar className="h-8 w-8 text-primary" aria-hidden="true" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2">Engagement</h3>
                     <p className="text-muted-foreground">

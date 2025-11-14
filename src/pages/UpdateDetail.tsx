@@ -130,12 +130,12 @@ const UpdateDetail = () => {
             <h1 className="text-4xl md:text-5xl font-bold mb-6">{update.title}</h1>
             <div className="flex flex-wrap gap-4 text-lg opacity-90">
               <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
+                <Calendar className="h-5 w-5" aria-hidden="true" />
                 <span>{format(new Date(update.publishedAt), "PPP")}</span>
               </div>
               {update.author && (
                 <div className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
+                  <User className="h-5 w-5" aria-hidden="true" />
                   <span>{update.author}</span>
                 </div>
               )}

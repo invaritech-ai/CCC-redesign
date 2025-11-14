@@ -69,7 +69,7 @@ const Reports = () => {
                             to={`/reports/${report.slug.current}`}
                             className="inline-flex items-center text-primary hover:underline text-sm"
                           >
-                            View details <ArrowRight className="ml-1 h-4 w-4" />
+                            View details <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
                           </Link>
                         )}
                         {report.pdfUrl && (

@@ -11,7 +11,7 @@ const SupportConfirmation = () => {
         <section className="bg-primary text-primary-foreground py-20">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
-              <CheckCircle2 className="h-16 w-16 mx-auto mb-6 text-success" />
+              <CheckCircle2 className="h-16 w-16 mx-auto mb-6 text-success" aria-hidden="true" />
               <h1 className="text-4xl md:text-5xl font-bold mb-6">Payment Confirmed</h1>
               <p className="text-xl opacity-90">
                 Thank you for your generous donation!

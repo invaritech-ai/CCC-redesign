@@ -58,7 +58,7 @@ const Updates = () => {
                       )}
                       <h2 className="text-xl font-semibold mb-2">{update.title}</h2>
                       <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
-                        <Calendar className="h-4 w-4" />
+                        <Calendar className="h-4 w-4" aria-hidden="true" />
                         <span>{format(new Date(update.publishedAt), "PPP")}</span>
                       </div>
                       {update.excerpt && (
@@ -69,8 +69,9 @@ const Updates = () => {
                       <Link
                         to={`/updates/${update.slug?.current}`}
                         className="inline-flex items-center text-primary hover:underline"
+                        aria-label={`Read more about ${update.title}`}
                       >
-                        Read more <ArrowRight className="ml-1 h-4 w-4" />
+                        Read more <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
                       </Link>
                     </div>
                   </Card>

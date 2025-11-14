@@ -59,12 +59,12 @@ const Events = () => {
                       <h2 className="text-xl font-semibold mb-2">{event.title}</h2>
                       <div className="space-y-2 mb-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4" />
+                          <Calendar className="h-4 w-4" aria-hidden="true" />
                           <span>{format(new Date(event.date), "PPP 'at' p")}</span>
                         </div>
                         {event.location && (
                           <div className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4" />
+                            <MapPin className="h-4 w-4" aria-hidden="true" />
                             <span>{event.location}</span>
                           </div>
                         )}
@@ -77,8 +77,9 @@ const Events = () => {
                       <Link
                         to={`/events/${event.slug?.current}`}
                         className="inline-flex items-center text-primary hover:underline"
+                        aria-label={`Learn more about ${event.title}`}
                       >
-                        Learn more <ArrowRight className="ml-1 h-4 w-4" />
+                        Learn more <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
                       </Link>
                     </div>
                   </Card>

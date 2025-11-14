@@ -152,7 +152,7 @@ export const NoticeboardSection = () => {
                       <div className="flex items-start gap-4">
                         <div className="flex-shrink-0">
                           <div className="h-12 w-12 md:h-16 md:w-16 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary" />
+                            <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary" aria-hidden="true" />
                           </div>
                         </div>
                         <div className="flex-1 min-w-0">
@@ -164,8 +164,8 @@ export const NoticeboardSection = () => {
                           <p className="text-muted-foreground mb-4 md:mb-6 text-base md:text-lg">{notice.description}</p>
                           {notice.link && (
                             <Button variant="link" className="p-0 h-auto text-base md:text-lg" asChild>
-                              <Link to={notice.link}>
-                                Read more <ArrowRight className="ml-1 h-4 w-4 md:h-5 md:w-5" />
+                              <Link to={notice.link} aria-label={`Read more about ${notice.title}`}>
+                                Read more <ArrowRight className="ml-1 h-4 w-4 md:h-5 md:w-5" aria-hidden="true" />
                               </Link>
                             </Button>
                           )}

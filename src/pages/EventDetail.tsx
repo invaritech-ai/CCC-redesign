@@ -85,12 +85,12 @@ const EventDetail = () => {
             <h1 className="text-4xl md:text-5xl font-bold mb-6">{event.title}</h1>
             <div className="flex flex-wrap gap-4 text-lg opacity-90">
               <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
+                <Calendar className="h-5 w-5" aria-hidden="true" />
                 <span>{format(new Date(event.date), "PPP 'at' p")}</span>
               </div>
               {event.location && (
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5" />
+                  <MapPin className="h-5 w-5" aria-hidden="true" />
                   <span>{event.location}</span>
                 </div>
               )}

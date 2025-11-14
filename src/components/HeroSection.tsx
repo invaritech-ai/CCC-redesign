@@ -2,7 +2,8 @@ import { CheckCircle2, Award, Users, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import heroImage from "@/assets/hero-elderly-walking.jpg";
+import heroImageWebP from "@/assets/hero-elderly-walking.webp";
+import heroImageJPG from "@/assets/hero-elderly-walking.jpg";
 import { DonateNowButton } from "./DonateNowButton";
 
 export const HeroSection = () => {
@@ -73,14 +74,17 @@ export const HeroSection = () => {
                     {/* Right Image */}
                     <div className="relative">
                         <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
-                            <img
-                                src={heroImage}
-                                alt="Caring elderly community - two people walking together in a peaceful garden"
-                                className="w-full h-full object-cover"
-                                fetchpriority="high"
-                                width="800"
-                                height="600"
-                            />
+                            <picture>
+                                <source srcSet={heroImageWebP} type="image/webp" />
+                                <img
+                                    src={heroImageJPG}
+                                    alt="Caring elderly community - two people walking together in a peaceful garden"
+                                    className="w-full h-full object-cover"
+                                    fetchpriority="high"
+                                    width="800"
+                                    height="600"
+                                />
+                            </picture>
                         </div>
                         <div className="absolute -bottom-6 -left-6 bg-card p-4 rounded-xl shadow-lg border hidden md:block">
                             <p className="text-sm text-muted-foreground mb-1">

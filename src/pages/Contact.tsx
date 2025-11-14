@@ -79,7 +79,7 @@ const Contact = () => {
                   <CardContent className="pt-6">
                     <div className="flex gap-4 items-start">
                       <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
-                        <MapPin className="h-6 w-6 text-primary" />
+                        <MapPin className="h-6 w-6 text-primary" aria-hidden="true" />
                       </div>
                       <div>
                         <h3 className="font-semibold mb-1">Office Address</h3>
@@ -96,7 +96,7 @@ const Contact = () => {
                   <CardContent className="pt-6">
                     <div className="flex gap-4 items-start">
                       <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
-                        <Phone className="h-6 w-6 text-primary" />
+                        <Phone className="h-6 w-6 text-primary" aria-hidden="true" />
                       </div>
                       <div>
                         <h3 className="font-semibold mb-1">Phone</h3>
@@ -113,7 +113,7 @@ const Contact = () => {
                   <CardContent className="pt-6">
                     <div className="flex gap-4 items-start">
                       <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
-                        <Mail className="h-6 w-6 text-primary" />
+                        <Mail className="h-6 w-6 text-primary" aria-hidden="true" />
                       </div>
                       <div>
                         <h3 className="font-semibold mb-1">Email</h3>
@@ -130,7 +130,7 @@ const Contact = () => {
                   <CardContent className="pt-6">
                     <div className="flex gap-4 items-start">
                       <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
-                        <Clock className="h-6 w-6 text-primary" />
+                        <Clock className="h-6 w-6 text-primary" aria-hidden="true" />
                       </div>
                       <div>
                         <h3 className="font-semibold mb-1">Office Hours</h3>
@@ -174,7 +174,7 @@ const Contact = () => {
               <div className="bg-muted rounded-lg overflow-hidden" style={{ height: '400px' }}>
                 <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                   <div className="text-center">
-                    <MapPin className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                    <MapPin className="h-16 w-16 mx-auto mb-4 opacity-50" aria-hidden="true" />
                     <p>Interactive map would be displayed here</p>
                     <p className="text-sm mt-2">123 Victoria Road, Central, Hong Kong</p>
                   </div>

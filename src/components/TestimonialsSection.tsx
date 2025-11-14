@@ -126,7 +126,7 @@ export const TestimonialsSection = () => {
               {testimonials.map((testimonial) => (
                 <CarouselItem key={testimonial._id}>
                   <Card className="p-6 md:p-8 relative hover:shadow-lg transition-shadow">
-                    <Quote className="h-10 w-10 text-primary/20 mb-4" />
+                    <Quote className="h-10 w-10 text-primary/20 mb-4" aria-hidden="true" />
                     <p className="text-lg md:text-xl text-foreground mb-6 leading-relaxed italic">
                       "{testimonial.quote}"
                     </p>
