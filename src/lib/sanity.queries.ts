@@ -286,6 +286,34 @@ export const getAllUpdates = async () => {
 };
 
 /**
+ * Fetch all initiatives (updates with type "initiative")
+ */
+export const getInitiatives = async () => {
+    if (!isSanityConfigured()) return [];
+
+    const query = `*[_type == "update" && type == "initiative"] | order(publishedAt desc) {
+    _id,
+    title,
+    slug,
+    type,
+    publishedAt,
+    author,
+    excerpt,
+    tags,
+    categories,
+    "image": image.asset,
+    featured
+  }`;
+
+    try {
+        return await sanityClient.fetch(query);
+    } catch (error) {
+        console.error("Error fetching initiatives:", error);
+        return [];
+    }
+};
+
+/**
  * Fetch update by slug
  */
 export const getUpdateBySlug = async (slug: string) => {
@@ -558,8 +586,14 @@ export const getAllResources = async (category?: string) => {
     slug,
     description,
     category,
-    "file": file.asset,
-    "fileName": file.asset->originalFilename,
+    "file": file.asset->{
+      _id,
+      _type,
+      url,
+      originalFilename,
+      size,
+      mimeType
+    },
     featured
   }`;
 
