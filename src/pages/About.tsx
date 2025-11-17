@@ -1,132 +1,141 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { AboutHero } from "@/components/AboutHero";
+import { AboutIntroduction } from "@/components/AboutIntroduction";
+import { AboutHistory } from "@/components/AboutHistory";
+import { CommunityMembersSection } from "@/components/CommunityMembersSection";
+import { TeamMembersSection } from "@/components/TeamMembersSection";
+import { AnnualReportsSection } from "@/components/AnnualReportsSection";
+import { CoreValuesSection } from "@/components/CoreValuesSection";
 import { Heart, Users, Calendar, Award } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { getAllTeamMembers, getAllReports } from "@/lib/sanity.queries";
+import type { SanityTeamMember } from "@/lib/sanity.types";
 
 const About = () => {
+  const [teamMembers, setTeamMembers] = useState<SanityTeamMember[]>([]);
+  const [latestReport, setLatestReport] = useState<any | null>(null);
+  const [loadingTeam, setLoadingTeam] = useState(true);
+  const [loadingReports, setLoadingReports] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [teamData, reportsData] = await Promise.all([
+        getAllTeamMembers(),
+        getAllReports(),
+      ]);
+      setTeamMembers(teamData);
+      setLoadingTeam(false);
+      setLatestReport(reportsData.length > 0 ? reportsData[0] : null); // Show only latest report
+      setLoadingReports(false);
+    };
+    fetchData();
+  }, []);
+
+  const historyItems = [
+    {
+      year: "1978",
+      title: "The Beginning",
+      description: [
+        "China Coast Community Limited (CCC) was set up in 1978. It is approved as a charity under Section 88 of the Inland Revenue Ordinance.",
+        "The history of CCC dates back to March, 1978 when the Reverend Stephen Sidebotham, the Dean of St John's Cathedral, convened a meeting of those concerned with care of the elderly then in Hong Kong. A detailed survey revealed that there was an urgent need for residential facilities for people in Hong Kong whose main language was English and the concept of CCC was born.",
+      ],
+    },
+    {
+      year: "1979",
+      title: "First Home",
+      description:
+        "In 1979, through the support of the Hong Kong Jockey Club and an interest-free loan from the Hong Kong Government, 63 Cumberland Road was purchased and converted into residential accommodation for eight residents.",
+    },
+    {
+      year: "1982",
+      title: "Expansion",
+      description:
+        "This was subsequently extended in 1982 to provide additional facilities at the Home, financed by generous donations from a number of individual and corporate benefactors.",
+    },
+    {
+      year: "2000",
+      title: "Care and Attention Home",
+      description:
+        "The needs of the residents have changed drastically over the years resulting in the CCC becoming fully licensed as a Care and Attention Home in April 2000 with professional Nursing Care provided on a 24 hour basis.",
+    },
+    {
+      year: "Today",
+      title: "",
+      description:
+        "Most of our new admissions are still active people when they enter CCC. However, they have the security of knowing if they become less able or highly dependent they will be cared for with respect and dignity.",
+    },
+  ];
+
+  const coreValues = [
+    {
+      icon: Heart,
+      title: "Compassion",
+      description:
+        "Treating every individual with kindness, empathy, and respect.",
+    },
+    {
+      icon: Users,
+      title: "Community",
+      description:
+        "Building connections and fostering a sense of belonging for all.",
+    },
+    {
+      icon: Award,
+      title: "Excellence",
+      description:
+        "Providing the highest quality care and services to our members.",
+    },
+    {
+      icon: Calendar,
+      title: "Engagement",
+      description:
+        "Creating meaningful activities that enrich the lives of seniors.",
+    },
+  ];
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
-      
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="bg-primary text-primary-foreground py-20">
-          <div className="container mx-auto px-4">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">About China Coast Community</h1>
-            <p className="text-xl max-w-3xl opacity-90">
-              Providing compassionate care and community support for Hong Kong's English-speaking elderly since 1978.
-            </p>
-          </div>
-        </section>
 
-        {/* Mission Section */}
-        <section className="py-16">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold mb-6 text-center">Our Mission</h2>
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                China Coast Community was established to provide a caring, supportive environment for elderly English-speaking 
-                residents of Hong Kong. We believe that every senior deserves to live with dignity, surrounded by friends, 
-                and with access to quality care and meaningful activities.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Our community serves as a vital lifeline for seniors who may face isolation due to language barriers, 
-                offering them a place where they can connect with others who share their culture and experiences.
-              </p>
-            </div>
-          </div>
-        </section>
+      <main id="main-content" className="flex-1">
+        <AboutHero
+          title="Welcome to China Coast Community"
+          description="China Coast Community Limited (CCC) was set up in 1978. It is approved as a charity under Section 88 of the Inland Revenue Ordinance."
+          badgeText="Section 88 Charity"
+        />
 
-        {/* Values Section */}
-        <section className="py-16 bg-secondary">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-12 text-center">Our Core Values</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                      <Heart className="h-8 w-8 text-primary" aria-hidden="true" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">Compassion</h3>
-                    <p className="text-muted-foreground">
-                      Treating every individual with kindness, empathy, and respect.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+        <AboutIntroduction
+          title="About Us"
+          paragraphs={[
+            "China Coast Community Limited (CCC) was set up in 1978. It is approved as a charity under Section 88 of the Inland Revenue Ordinance.",
+            "The history of CCC dates back to March, 1978 when the Reverend Stephen Sidebotham, the Dean of St John's Cathedral, convened a meeting of those concerned with care of the elderly then in Hong Kong. A detailed survey revealed that there was an urgent need for residential facilities for people in Hong Kong whose main language was English and the concept of CCC was born.",
+          ]}
+        />
 
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                      <Users className="h-8 w-8 text-primary" aria-hidden="true" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">Community</h3>
-                    <p className="text-muted-foreground">
-                      Building connections and fostering a sense of belonging for all.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+        <AboutHistory title="Our History" items={historyItems} />
 
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                      <Award className="h-8 w-8 text-primary" aria-hidden="true" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">Excellence</h3>
-                    <p className="text-muted-foreground">
-                      Providing the highest quality care and services to our members.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+        <CommunityMembersSection
+          title="Community Members"
+          paragraphs={[
+            "In addition to our in-house residents, CCC also caters to over 80 Community Members who live in their own homes. The Community Members join in our regular outings and activities.",
+            "This gives the opportunity for both those in the Home and in the Community to meet and make new friends and to ease any loneliness they may experience.",
+          ]}
+        />
 
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                      <Calendar className="h-8 w-8 text-primary" aria-hidden="true" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">Engagement</h3>
-                    <p className="text-muted-foreground">
-                      Creating meaningful activities that enrich the lives of seniors.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
+        <TeamMembersSection
+          title="Our Team"
+          teamMembers={teamMembers}
+          loading={loadingTeam}
+        />
 
-        {/* History Section */}
-        <section className="py-16">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold mb-6 text-center">Our History</h2>
-              <div className="space-y-6 text-muted-foreground">
-                <p className="text-lg leading-relaxed">
-                  Founded in 1978, China Coast Community emerged from a recognized need to support Hong Kong's 
-                  English-speaking elderly population. What began as a small gathering has grown into a thriving 
-                  community organization serving hundreds of seniors across Hong Kong.
-                </p>
-                <p className="text-lg leading-relaxed">
-                  Over the decades, we have expanded our services to include health programs, social activities, 
-                  volunteer coordination, and essential support services. Our community center has become a 
-                  second home for many members, offering a warm, welcoming environment where lasting friendships 
-                  are formed.
-                </p>
-                <p className="text-lg leading-relaxed">
-                  Today, China Coast Community stands as a testament to the power of community care, supported 
-                  by dedicated volunteers, generous donors, and passionate staff members who share our vision 
-                  of dignified aging for all.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <AnnualReportsSection
+          title="Annual Reports"
+          latestReport={latestReport}
+          loading={loadingReports}
+        />
+
+        <CoreValuesSection title="Our Core Values" values={coreValues} />
       </main>
 
       <Footer />
