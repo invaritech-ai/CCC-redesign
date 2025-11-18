@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CookieBanner } from "@/components/CookieBanner";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
 
 // Keep Index synchronous for fastest initial load
 import Index from "./pages/Index";
@@ -79,6 +80,8 @@ const App = () => (
         </Suspense>
         {/* Cookie Information Banner - appears on all pages */}
         <CookieBanner />
+        {/* Floating WhatsApp Button - appears on all pages */}
+        <WhatsAppButton variant="floating" size="default" showText={false} />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

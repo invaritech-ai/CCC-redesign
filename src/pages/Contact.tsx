@@ -2,6 +2,7 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { DynamicForm } from "@/components/DynamicForm";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -132,6 +133,28 @@ const Contact = () => {
                         </p>
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="pt-6">
+                    <a
+                      href="https://wa.me/85261104078"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex gap-4 items-start hover:opacity-80 transition-opacity"
+                    >
+                      <div className="w-12 h-12 bg-[#25D366]/10 rounded-lg flex items-center justify-center shrink-0">
+                        <FaWhatsapp className="h-6 w-6 text-[#25D366]" aria-hidden="true" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold mb-1">WhatsApp</h3>
+                        <p className="text-muted-foreground">
+                          +852 6110 4078<br />
+                          <span className="text-[#25D366] font-medium">Click to message us</span>
+                        </p>
+                      </div>
+                    </a>
                   </CardContent>
                 </Card>
               </div>
