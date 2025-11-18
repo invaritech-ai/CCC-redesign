@@ -251,52 +251,40 @@ export default async function handler(
       console.log(`[Submit Form] Added Timestamp column to headers`);
     }
 
-    // Build values array matching headers
-    const timestamp = new Date().toISOString();
-    values.push(timestamp);
-    console.log(`[Submit Form] Building values array with timestamp: ${timestamp}`);
+    // Check if we need to add missing headers (form fields or file fields)
+    const formFieldNames = Object.keys(fields);
+    const fileFieldNames = Object.keys(fileLinks);
+    const allFieldNames = [...formFieldNames, ...fileFieldNames];
+    let headersUpdated = false;
+    const initialHeadersLength = headers.length;
 
-    // Add form fields
-    for (const header of headers) {
-      if (header === "Timestamp") {
-        continue; // Already added
-      }
-
-      // Check if this header matches a form field
-      const fieldValue = fields[header];
-      if (fieldValue !== undefined && fieldValue !== null) {
-        const stringValue = typeof fieldValue === "boolean" ? (fieldValue ? "Yes" : "No") : String(fieldValue);
-        values.push(stringValue);
-        console.log(`[Submit Form] Added field "${header}": ${stringValue.substring(0, 50)}${stringValue.length > 50 ? '...' : ''}`);
-      } else if (fileLinks[header]) {
-        // Check if this is a file field
-        values.push(fileLinks[header]);
-        console.log(`[Submit Form] Added file link for "${header}": ${fileLinks[header]}`);
-      } else {
-        values.push("");
-      }
-    }
-    console.log(`[Submit Form] Values array built with ${values.length} values`);
-
-    // If headers don't exist, create them first
-    if (headers.length === 0 || headers.length === 1) {
+    // If headers don't exist at all (empty or only Timestamp), create them from scratch
+    if (headers.length === 0 || (headers.length === 1 && headers.includes("Timestamp"))) {
       console.log(`[Submit Form] Creating new headers...`);
-      // Create headers from form fields and file fields
       headers = ["Timestamp"];
-      const formFieldNames = Object.keys(fields);
-      const fileFieldNames = Object.keys(fileLinks);
-
-      // Add all field names as headers
-      [...formFieldNames, ...fileFieldNames].forEach((fieldName) => {
+      allFieldNames.forEach((fieldName) => {
         if (!headers.includes(fieldName)) {
           headers.push(fieldName);
         }
       });
-
+      headersUpdated = true;
       console.log(`[Submit Form] Created headers (${headers.length}):`, headers);
+    } else {
+      // Headers exist, check for missing ones and add them
+      allFieldNames.forEach((fieldName) => {
+        if (!headers.includes(fieldName)) {
+          headers.push(fieldName);
+          headersUpdated = true;
+          console.log(`[Submit Form] Added missing header: "${fieldName}"`);
+        }
+      });
+    }
+
+    // If headers were updated, write them to the sheet
+    if (headersUpdated) {
+      console.log(`[Submit Form] Writing updated headers to sheet (${initialHeadersLength} -> ${headers.length} headers):`, headers);
 
       // Write headers
-      console.log(`[Submit Form] Writing headers to sheet...`);
       await sheets.spreadsheets.values.update({
         spreadsheetId: sheetId,
         range: `${sheetName}!1:1`,
@@ -306,23 +294,33 @@ export default async function handler(
         },
       });
       console.log(`[Submit Form] Headers written successfully`);
+    }
 
-      // Rebuild values array with correct order
-      values = [timestamp];
-      headers.slice(1).forEach((header) => {
-        if (fields[header] !== undefined && fields[header] !== null) {
-          const fieldValue = fields[header];
-          values.push(
-            typeof fieldValue === "boolean" ? (fieldValue ? "Yes" : "No") : String(fieldValue)
-          );
+    // Build values array matching headers
+    const timestamp = new Date().toISOString();
+    console.log(`[Submit Form] Building values array with timestamp: ${timestamp}`);
+
+    // Build values array in the same order as headers
+    headers.forEach((header) => {
+      if (header === "Timestamp") {
+        values.push(timestamp);
+      } else {
+        // Check if this header matches a form field
+        const fieldValue = fields[header];
+        if (fieldValue !== undefined && fieldValue !== null) {
+          const stringValue = typeof fieldValue === "boolean" ? (fieldValue ? "Yes" : "No") : String(fieldValue);
+          values.push(stringValue);
+          console.log(`[Submit Form] Added field "${header}": ${stringValue.substring(0, 50)}${stringValue.length > 50 ? '...' : ''}`);
         } else if (fileLinks[header]) {
+          // Check if this is a file field
           values.push(fileLinks[header]);
+          console.log(`[Submit Form] Added file link for "${header}": ${fileLinks[header]}`);
         } else {
           values.push("");
         }
-      });
-      console.log(`[Submit Form] Rebuilt values array with ${values.length} values`);
-    }
+      }
+    });
+    console.log(`[Submit Form] Values array built with ${values.length} values`);
 
     // Append data row
     console.log(`[Submit Form] Appending data row to sheet...`);
