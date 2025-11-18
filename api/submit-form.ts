@@ -4,358 +4,302 @@ import { config } from "dotenv";
 import { resolve } from "path";
 import { put } from "@vercel/blob";
 
-// Load .env.local in local development (not in production where Vercel handles env vars)
-// VERCEL_ENV is not set when running `vercel dev` locally, or is set to "development"
+// Load .env.local in local development
 if (!process.env.VERCEL_ENV || process.env.VERCEL_ENV === "development") {
-  config({ path: resolve(process.cwd(), ".env.local") });
+    config({ path: resolve(process.cwd(), ".env.local") });
 }
 
 interface FormSubmissionPayload {
-  formName: string;
-  googleSheetUrl: string;
-  fields: Record<string, any>;
-  fileFields?: Record<string, { name: string; data: string; type: string }>;
+    formName: string;
+    googleSheetUrl: string;
+    fields: Record<string, string | boolean | number | null | undefined>;
+    fileFields?: Record<string, { name: string; data: string; type: string }>;
 }
+
+const SHEET_NAME = "Sheet1";
+const TIMESTAMP_HEADER = "Timestamp";
 
 /**
  * Extract sheet ID from Google Sheets URL
  */
 function extractSheetId(url: string): string | null {
-  try {
     const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
     return match ? match[1] : null;
-  } catch {
-    return null;
-  }
+}
+
+/**
+ * Sanitize string for use in file paths
+ */
+function sanitizeForPath(str: string): string {
+    return str.replace(/[^a-zA-Z0-9-_.]/g, "-");
 }
 
 /**
  * Upload file to Vercel Blob Storage
  */
 async function uploadFileToBlob(
-  fileName: string,
-  fileData: string,
-  mimeType: string,
-  formName: string,
-  token: string
+    fileName: string,
+    fileData: string,
+    mimeType: string,
+    formName: string,
+    token: string
 ): Promise<{ url: string } | { error: string }> {
-  const startTime = Date.now();
-  console.log(`[Blob Upload] Starting upload for file: ${fileName} (${mimeType}), size: ${fileData.length} chars (base64)`);
-  
-  try {
-    // Convert base64 to Buffer
-    const fileBuffer = Buffer.from(fileData, "base64");
-    console.log(`[Blob Upload] Converted to buffer, size: ${fileBuffer.length} bytes`);
-    
-    // Create organized path: form-submissions/{formName}/{timestamp}-{fileName}
-    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    const sanitizedFormName = formName.replace(/[^a-zA-Z0-9-_]/g, "-");
-    const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9-_.]/g, "-");
-    const blobPath = `form-submissions/${sanitizedFormName}/${timestamp}-${sanitizedFileName}`;
-    console.log(`[Blob Upload] Blob path: ${blobPath}`);
-    
-    // Upload to Vercel Blob Storage
-    console.log(`[Blob Upload] Calling Vercel Blob put()...`);
-    const blob = await put(blobPath, fileBuffer, {
-      access: "public",
-      addRandomSuffix: true,
-      contentType: mimeType,
-      token: token,
-    });
-    
-    const duration = Date.now() - startTime;
-    console.log(`[Blob Upload] Success! Uploaded to: ${blob.url} (took ${duration}ms)`);
-    return { url: blob.url };
-  } catch (error: any) {
-    const duration = Date.now() - startTime;
-    console.error(`[Blob Upload] Error after ${duration}ms:`, {
-      message: error.message,
-      name: error.name,
-      stack: error.stack,
-      fileName,
-      mimeType,
-      formName,
-    });
-    return { 
-      error: error.message || "Failed to upload file to blob storage" 
-    };
-  }
+    const startTime = Date.now();
+
+    try {
+        const fileBuffer = Buffer.from(fileData, "base64");
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+        const blobPath = `form-submissions/${sanitizeForPath(
+            formName
+        )}/${timestamp}-${sanitizeForPath(fileName)}`;
+
+        const blob = await put(blobPath, fileBuffer, {
+            access: "public",
+            addRandomSuffix: true,
+            contentType: mimeType,
+            token,
+        });
+
+        console.log(
+            `[Blob Upload] Success: ${fileName} -> ${blob.url} (${
+                Date.now() - startTime
+            }ms)`
+        );
+        return { url: blob.url };
+    } catch (error: unknown) {
+        const errorMessage =
+            error instanceof Error
+                ? error.message
+                : "Failed to upload file to blob storage";
+        console.error(`[Blob Upload] Failed: ${fileName}`, errorMessage);
+        return { error: errorMessage };
+    }
 }
 
-
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
-) {
-  const requestStartTime = Date.now();
-  console.log(`[Submit Form] ${req.method} request received at ${new Date().toISOString()}`);
-  console.log(`[Submit Form] Request headers:`, {
-    'content-type': req.headers['content-type'],
-    'content-length': req.headers['content-length'],
-    'user-agent': req.headers['user-agent'],
-  });
-
-  // Only allow POST requests
-  if (req.method !== "POST") {
-    console.warn(`[Submit Form] Method not allowed: ${req.method}`);
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  try {
-    console.log(`[Submit Form] Parsing request body...`);
-    const { formName, googleSheetUrl, fields, fileFields } =
-      req.body as FormSubmissionPayload;
-
-    console.log(`[Submit Form] Payload received:`, {
-      formName,
-      googleSheetUrl,
-      fieldsCount: Object.keys(fields || {}).length,
-      fileFieldsCount: fileFields ? Object.keys(fileFields).length : 0,
-      fileFieldNames: fileFields ? Object.keys(fileFields) : [],
-    });
-
-    // Validate required fields
-    if (!formName || !googleSheetUrl || !fields) {
-      console.error(`[Submit Form] Validation failed:`, {
-        hasFormName: !!formName,
-        hasGoogleSheetUrl: !!googleSheetUrl,
-        hasFields: !!fields,
-      });
-      return res.status(400).json({
-        error: "Missing required fields: formName, googleSheetUrl, and fields",
-      });
-    }
-
-    // Check for environment variables
-    console.log(`[Submit Form] Checking environment variables...`);
-    const serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n");
-    const blobToken = process.env.CCC_READ_WRITE_TOKEN;
-
-    console.log(`[Submit Form] Environment variables status:`, {
-      hasServiceAccountEmail: !!serviceAccountEmail,
-      hasPrivateKey: !!privateKey,
-      privateKeyLength: privateKey?.length || 0,
-      hasBlobToken: !!blobToken,
-      blobTokenLength: blobToken?.length || 0,
-      vercelEnv: process.env.VERCEL_ENV,
-    });
-
-    if (!serviceAccountEmail || !privateKey) {
-      console.error(`[Submit Form] Missing Google credentials`);
-      return res.status(500).json({
-        error: "Server configuration error: Missing Google credentials",
-        debug: {
-          hasEmail: !!serviceAccountEmail,
-          hasKey: !!privateKey,
-        },
-      });
-    }
-
-    // Check for Blob Storage token if file uploads are present
-    if (fileFields && Object.keys(fileFields).length > 0 && !blobToken) {
-      console.error(`[Submit Form] Missing CCC_READ_WRITE_TOKEN for file uploads`);
-      return res.status(500).json({
-        error: "Server configuration error: Missing CCC_READ_WRITE_TOKEN for file uploads",
-        debug: {
-          hasBlobToken: !!blobToken,
-          fileFieldsCount: Object.keys(fileFields).length,
-        },
-      });
-    }
-
-    // Authenticate with Google (only Sheets scope, no Drive)
-    console.log(`[Submit Form] Authenticating with Google...`);
-    const auth = new google.auth.JWT({
-      email: serviceAccountEmail,
-      key: privateKey,
-      scopes: [
-        "https://www.googleapis.com/auth/spreadsheets",
-      ],
-    });
-
-    // Extract sheet ID from URL
-    console.log(`[Submit Form] Extracting sheet ID from URL: ${googleSheetUrl}`);
-    const sheetId = extractSheetId(googleSheetUrl);
-    if (!sheetId) {
-      console.error(`[Submit Form] Invalid Google Sheet URL`);
-      return res.status(400).json({ error: "Invalid Google Sheet URL" });
-    }
-    console.log(`[Submit Form] Extracted sheet ID: ${sheetId}`);
-
-    // Process file uploads to Vercel Blob Storage
-    console.log(`[Submit Form] Processing file uploads...`);
+/**
+ * Process file uploads and return file links
+ */
+async function processFileUploads(
+    fileFields: Record<string, { name: string; data: string; type: string }>,
+    formName: string,
+    blobToken: string
+): Promise<Record<string, string>> {
     const fileLinks: Record<string, string> = {};
-    if (fileFields && Object.keys(fileFields).length > 0) {
-      console.log(`[Submit Form] Found ${Object.keys(fileFields).length} file(s) to upload`);
-      for (const [fieldName, fileData] of Object.entries(fileFields)) {
-        console.log(`[Submit Form] Uploading file field "${fieldName}": ${fileData.name}`);
+
+    for (const [fieldName, fileData] of Object.entries(fileFields)) {
         const uploadResult = await uploadFileToBlob(
-          fileData.name,
-          fileData.data,
-          fileData.type,
-          formName,
-          blobToken!
+            fileData.name,
+            fileData.data,
+            fileData.type,
+            formName,
+            blobToken
         );
-        if ("url" in uploadResult) {
-          fileLinks[fieldName] = uploadResult.url;
-          console.log(`[Submit Form] File "${fieldName}" uploaded successfully: ${uploadResult.url}`);
-        } else {
-          // If file upload fails, return error immediately
-          console.error(`[Submit Form] File upload failed for "${fieldName}":`, uploadResult.error);
-          return res.status(500).json({
-            error: `Failed to upload file "${fileData.name}": ${uploadResult.error}`,
-            fieldName,
-          });
+
+        if ("error" in uploadResult) {
+            throw new Error(
+                `Failed to upload file "${fileData.name}": ${uploadResult.error}`
+            );
         }
-      }
-      console.log(`[Submit Form] All files uploaded successfully. Total: ${Object.keys(fileLinks).length}`);
-    } else {
-      console.log(`[Submit Form] No files to upload`);
+
+        fileLinks[fieldName] = uploadResult.url;
     }
 
-    // Prepare data row for Google Sheets
-    console.log(`[Submit Form] Initializing Google Sheets API...`);
-    const sheets = google.sheets({ version: "v4", auth });
+    return fileLinks;
+}
 
-    // Get existing headers or create new row
-    const sheetName = "Sheet1"; // Default sheet name
-    let headers: string[] = [];
-    let values: any[] = [];
-
-    console.log(`[Submit Form] Fetching existing headers from sheet "${sheetName}"...`);
-    try {
-      // Try to get existing headers
-      const headerResponse = await sheets.spreadsheets.values.get({
-        spreadsheetId: sheetId,
-        range: `${sheetName}!1:1`,
-      });
-
-      if (
-        headerResponse.data.values &&
-        headerResponse.data.values.length > 0
-      ) {
-        headers = headerResponse.data.values[0] as string[];
-        console.log(`[Submit Form] Found existing headers (${headers.length}):`, headers);
-      } else {
-        console.log(`[Submit Form] No existing headers found, will create new ones`);
-      }
-    } catch (error: any) {
-      // If sheet doesn't exist or is empty, we'll create headers
-      console.log(`[Submit Form] Could not fetch headers (will create new):`, error.message);
+/**
+ * Get or create headers for the sheet
+ */
+async function getOrCreateHeaders(
+    sheets: ReturnType<typeof google.sheets>,
+    sheetId: string,
+    existingHeaders: string[],
+    allFieldNames: string[]
+): Promise<string[]> {
+    // Handle empty sheet
+    if (existingHeaders.length === 0) {
+        const headers = [TIMESTAMP_HEADER, ...allFieldNames];
+        await sheets.spreadsheets.values.update({
+            spreadsheetId: sheetId,
+            range: `${SHEET_NAME}!1:1`,
+            valueInputOption: "RAW",
+            requestBody: { values: [headers] },
+        });
+        return headers;
     }
 
-    // Add timestamp column if not exists
-    if (!headers.includes("Timestamp")) {
-      headers.push("Timestamp");
-      console.log(`[Submit Form] Added Timestamp column to headers`);
+    // Preserve existing headers and add missing ones
+    const hadTimestamp = existingHeaders.includes(TIMESTAMP_HEADER);
+    const headersWithoutTimestamp = existingHeaders.filter(
+        (h) => h !== TIMESTAMP_HEADER
+    );
+    const headersToAdd = allFieldNames.filter(
+        (name) => !headersWithoutTimestamp.includes(name)
+    );
+
+    if (!hadTimestamp || headersToAdd.length > 0) {
+        const finalHeaders = [
+            TIMESTAMP_HEADER,
+            ...headersWithoutTimestamp,
+            ...headersToAdd,
+        ];
+        await sheets.spreadsheets.values.update({
+            spreadsheetId: sheetId,
+            range: `${SHEET_NAME}!1:1`,
+            valueInputOption: "RAW",
+            requestBody: { values: [finalHeaders] },
+        });
+        return finalHeaders;
     }
 
-    // Check if we need to add missing headers (form fields or file fields)
-    const formFieldNames = Object.keys(fields);
-    const fileFieldNames = Object.keys(fileLinks);
-    const allFieldNames = [...formFieldNames, ...fileFieldNames];
-    let headersUpdated = false;
-    const initialHeadersLength = headers.length;
+    return [TIMESTAMP_HEADER, ...headersWithoutTimestamp];
+}
 
-    // If headers don't exist at all (empty or only Timestamp), create them from scratch
-    if (headers.length === 0 || (headers.length === 1 && headers.includes("Timestamp"))) {
-      console.log(`[Submit Form] Creating new headers...`);
-      headers = ["Timestamp"];
-      allFieldNames.forEach((fieldName) => {
-        if (!headers.includes(fieldName)) {
-          headers.push(fieldName);
+/**
+ * Build values array matching headers exactly
+ */
+function buildValuesArray(
+    headers: string[],
+    timestamp: string,
+    fields: Record<string, string | boolean | number | null | undefined>,
+    fileLinks: Record<string, string>
+): (string | number)[] {
+    return headers.map((header) => {
+        if (header === TIMESTAMP_HEADER) {
+            return timestamp;
         }
-      });
-      headersUpdated = true;
-      console.log(`[Submit Form] Created headers (${headers.length}):`, headers);
-    } else {
-      // Headers exist, check for missing ones and add them
-      allFieldNames.forEach((fieldName) => {
-        if (!headers.includes(fieldName)) {
-          headers.push(fieldName);
-          headersUpdated = true;
-          console.log(`[Submit Form] Added missing header: "${fieldName}"`);
-        }
-      });
-    }
 
-    // If headers were updated, write them to the sheet
-    if (headersUpdated) {
-      console.log(`[Submit Form] Writing updated headers to sheet (${initialHeadersLength} -> ${headers.length} headers):`, headers);
-
-      // Write headers
-      await sheets.spreadsheets.values.update({
-        spreadsheetId: sheetId,
-        range: `${sheetName}!1:1`,
-        valueInputOption: "RAW",
-        requestBody: {
-          values: [headers],
-        },
-      });
-      console.log(`[Submit Form] Headers written successfully`);
-    }
-
-    // Build values array matching headers
-    const timestamp = new Date().toISOString();
-    console.log(`[Submit Form] Building values array with timestamp: ${timestamp}`);
-
-    // Build values array in the same order as headers
-    headers.forEach((header) => {
-      if (header === "Timestamp") {
-        values.push(timestamp);
-      } else {
-        // Check if this header matches a form field
         const fieldValue = fields[header];
         if (fieldValue !== undefined && fieldValue !== null) {
-          const stringValue = typeof fieldValue === "boolean" ? (fieldValue ? "Yes" : "No") : String(fieldValue);
-          values.push(stringValue);
-          console.log(`[Submit Form] Added field "${header}": ${stringValue.substring(0, 50)}${stringValue.length > 50 ? '...' : ''}`);
-        } else if (fileLinks[header]) {
-          // Check if this is a file field
-          values.push(fileLinks[header]);
-          console.log(`[Submit Form] Added file link for "${header}": ${fileLinks[header]}`);
-        } else {
-          values.push("");
+            return typeof fieldValue === "boolean"
+                ? fieldValue
+                    ? "Yes"
+                    : "No"
+                : String(fieldValue);
         }
-      }
-    });
-    console.log(`[Submit Form] Values array built with ${values.length} values`);
 
-    // Append data row
-    console.log(`[Submit Form] Appending data row to sheet...`);
-    console.log(`[Submit Form] Data row values:`, values.map((v, i) => `${headers[i] || `[${i}]`}: ${String(v).substring(0, 50)}${String(v).length > 50 ? '...' : ''}`));
-    
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: sheetId,
-      range: `${sheetName}!A:Z`,
-      valueInputOption: "RAW",
-      requestBody: {
-        values: [values],
-      },
+        return fileLinks[header] || "";
     });
-    console.log(`[Submit Form] Data row appended successfully`);
-
-    const totalDuration = Date.now() - requestStartTime;
-    console.log(`[Submit Form] ✅ Success! Form submitted in ${totalDuration}ms`);
-    
-    return res.status(200).json({
-      success: true,
-      message: "Form submitted successfully",
-    });
-  } catch (error: any) {
-    const totalDuration = Date.now() - requestStartTime;
-    console.error(`[Submit Form] ❌ Error after ${totalDuration}ms:`, {
-      message: error.message,
-      name: error.name,
-      stack: error.stack,
-      code: error.code,
-      response: error.response?.data,
-    });
-    
-    return res.status(500).json({
-      error: error.message || "Failed to submit form",
-    });
-  }
 }
 
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+    const requestStartTime = Date.now();
+
+    if (req.method !== "POST") {
+        return res.status(405).json({ error: "Method not allowed" });
+    }
+
+    try {
+        const { formName, googleSheetUrl, fields, fileFields } =
+            req.body as FormSubmissionPayload;
+
+        // Validate required fields
+        if (!formName || !googleSheetUrl || !fields) {
+            return res.status(400).json({
+                error: "Missing required fields: formName, googleSheetUrl, and fields",
+            });
+        }
+
+        // Check environment variables
+        const serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+        const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(
+            /\\n/g,
+            "\n"
+        );
+        const blobToken = process.env.CCC_READ_WRITE_TOKEN;
+
+        if (!serviceAccountEmail || !privateKey) {
+            return res.status(500).json({
+                error: "Server configuration error: Missing Google credentials",
+            });
+        }
+
+        if (fileFields && Object.keys(fileFields).length > 0 && !blobToken) {
+            return res.status(500).json({
+                error: "Server configuration error: Missing CCC_READ_WRITE_TOKEN for file uploads",
+            });
+        }
+
+        // Authenticate with Google
+        const auth = new google.auth.JWT({
+            email: serviceAccountEmail,
+            key: privateKey,
+            scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+        });
+
+        // Extract sheet ID
+        const sheetId = extractSheetId(googleSheetUrl);
+        if (!sheetId) {
+            return res.status(400).json({ error: "Invalid Google Sheet URL" });
+        }
+
+        // Process file uploads
+        const fileLinks =
+            fileFields && Object.keys(fileFields).length > 0
+                ? await processFileUploads(fileFields, formName, blobToken!)
+                : {};
+
+        // Initialize Google Sheets API
+        const sheets = google.sheets({ version: "v4", auth });
+
+        // Get existing headers
+        let existingHeaders: string[] = [];
+        try {
+            const headerResponse = await sheets.spreadsheets.values.get({
+                spreadsheetId: sheetId,
+                range: `${SHEET_NAME}!1:1`,
+            });
+            if (headerResponse.data.values?.[0]) {
+                existingHeaders = headerResponse.data.values[0] as string[];
+            }
+        } catch {
+            // Sheet might be empty, continue with empty headers
+        }
+
+        // Get all field names
+        const allFieldNames = [
+            ...Object.keys(fields),
+            ...Object.keys(fileLinks),
+        ];
+
+        // Get or create headers
+        const headers = await getOrCreateHeaders(
+            sheets,
+            sheetId,
+            existingHeaders,
+            allFieldNames
+        );
+
+        // Build values array
+        const timestamp = new Date().toISOString();
+        const values = buildValuesArray(headers, timestamp, fields, fileLinks);
+
+        // Append data row
+        await sheets.spreadsheets.values.append({
+            spreadsheetId: sheetId,
+            range: `${SHEET_NAME}!A:Z`,
+            valueInputOption: "RAW",
+            requestBody: { values: [values] },
+        });
+
+        console.log(
+            `[Submit Form] ✅ Success (${Date.now() - requestStartTime}ms)`
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Form submitted successfully",
+        });
+    } catch (error: unknown) {
+        const errorMessage =
+            error instanceof Error ? error.message : "Failed to submit form";
+        console.error(
+            `[Submit Form] ❌ Error (${Date.now() - requestStartTime}ms):`,
+            errorMessage
+        );
+
+        return res.status(500).json({
+            error: errorMessage,
+        });
+    }
+}
