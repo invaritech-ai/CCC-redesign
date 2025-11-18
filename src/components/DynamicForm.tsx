@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import type { SanityFormBuilder, SanityFormField } from "@/lib/sanity.types";
-import { validateFile, fileToBase64 } from "@/lib/fileValidation";
+import { validateFile, fileToBase64, MAX_FILE_SIZE } from "@/lib/fileValidation";
 import { Upload, X, FileText } from "lucide-react";
 
 interface DynamicFormProps {
@@ -305,7 +305,7 @@ export const DynamicForm = ({ formConfig }: DynamicFormProps) => {
                                 />
                               </div>
                               <p className="text-sm text-muted-foreground">
-                                Allowed: DOCX, DOC, TXT, PDF (max 10MB)
+                                Allowed: DOCX, DOC, TXT, PDF (max {MAX_FILE_SIZE / (1024 * 1024)}MB)
                               </p>
                             </div>
                           )}
