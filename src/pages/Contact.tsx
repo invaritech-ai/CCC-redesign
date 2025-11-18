@@ -4,9 +4,6 @@ import { DynamicForm } from "@/components/DynamicForm";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 import { getFormByPage } from "@/lib/sanity.queries";
 import type { SanityFormBuilder } from "@/lib/sanity.types";
@@ -31,12 +28,16 @@ const Contact = () => {
       
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-primary text-primary-foreground py-20">
-          <div className="container mx-auto px-4">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Get in Touch</h1>
-            <p className="text-xl max-w-3xl opacity-90">
-              We'd love to hear from you. Whether you're interested in our services, want to volunteer, or have questions, reach out to us.
-            </p>
+        <section className="bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center">
+          <div className="container mx-auto px-4 w-full">
+            <div className="max-w-4xl md:mx-auto md:text-center">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                Get in Touch
+              </h1>
+              <p className="text-lg md:text-xl max-w-3xl leading-relaxed opacity-90 md:mx-auto">
+                We'd love to hear from you. Whether you're interested in our services, want to volunteer, or have questions, reach out to us.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -45,41 +46,14 @@ const Contact = () => {
             <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
               {/* Contact Form */}
               <div>
-                <h2 className="text-3xl font-bold mb-6">Send Us a Message</h2>
-                <form className="space-y-6">
+                {formConfig ? (
+                  <DynamicForm formConfig={formConfig} inline />
+                ) : (
                   <div>
-                    <Label htmlFor="name">Full Name</Label>
-                    <Input id="name" placeholder="Enter your name" className="mt-2" />
+                    <h2 className="text-3xl font-bold mb-6">Send Us a Message</h2>
+                    <p className="text-muted-foreground">Loading form...</p>
                   </div>
-                  
-                  <div>
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" type="email" placeholder="your@email.com" className="mt-2" />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" type="tel" placeholder="+852" className="mt-2" />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="subject">Subject</Label>
-                    <Input id="subject" placeholder="What is this regarding?" className="mt-2" />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="message">Message</Label>
-                    <Textarea 
-                      id="message" 
-                      placeholder="Tell us more about how we can help you..."
-                      className="mt-2 min-h-[150px]"
-                    />
-                  </div>
-                  
-                  <Button type="submit" size="lg" className="w-full" variant="success">
-                    Send Message
-                  </Button>
-                </form>
+                )}
               </div>
 
               {/* Contact Information */}
@@ -205,8 +179,6 @@ const Contact = () => {
             </div>
           </div>
         </section>
-
-        {formConfig && <DynamicForm formConfig={formConfig} />}
       </main>
 
       <Footer />

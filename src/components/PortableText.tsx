@@ -125,7 +125,7 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                             src={imageUrl}
                             alt={imageBlock.alt || ""}
                             loading="lazy"
-                            className="w-full rounded-lg my-6"
+                            className="max-w-[300px] w-full rounded-lg my-6 mx-auto"
                             width={imageBlock.asset.metadata?.dimensions?.width}
                             height={
                                 imageBlock.asset.metadata?.dimensions?.height

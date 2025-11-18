@@ -23,9 +23,10 @@ import { Upload, X, FileText } from "lucide-react";
 
 interface DynamicFormProps {
   formConfig: SanityFormBuilder;
+  inline?: boolean;
 }
 
-export const DynamicForm = ({ formConfig }: DynamicFormProps) => {
+export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
@@ -219,157 +220,175 @@ export const DynamicForm = ({ formConfig }: DynamicFormProps) => {
 
   // If no valid fields, show a message
   if (sortedFields.length === 0) {
+    const EmptyState = (
+      <div className="text-center p-8 border rounded-md bg-muted">
+        <p className="text-muted-foreground">
+          No valid form fields found. Please check the form configuration.
+        </p>
+      </div>
+    );
+
+    if (inline) {
+      return EmptyState;
+    }
+
     return (
       <section className="py-12 md:py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
-            <div className="text-center p-8 border rounded-md bg-muted">
-              <p className="text-muted-foreground">
-                No valid form fields found. Please check the form configuration.
-              </p>
-            </div>
+            {EmptyState}
           </div>
         </div>
       </section>
     );
   }
 
+  const formContent = (
+    <>
+      <div className="mb-8">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4">{formConfig.formName}</h2>
+        {formConfig.formDescription && (
+          <p className="text-lg text-muted-foreground">{formConfig.formDescription}</p>
+        )}
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {sortedFields.map((field) => (
+            <FormField
+              key={field.fieldName}
+              control={form.control}
+              name={field.fieldName}
+              render={({ field: formField }) => (
+                <FormItem>
+                  <FormLabel>
+                    {field.fieldName}
+                    {field.required && <span className="text-destructive ml-1">*</span>}
+                  </FormLabel>
+                  {field.fieldType === "upload" ? (
+                    // Upload fields don't use FormControl (file inputs are uncontrolled)
+                    <div className="space-y-2">
+                      {uploadedFiles[field.fieldName] ? (
+                        <div className="flex items-center justify-between p-3 border rounded-md bg-muted">
+                          <div className="flex items-center gap-2">
+                            <FileText className="h-4 w-4 text-muted-foreground" />
+                            <div>
+                              <p className="text-sm font-medium">
+                                {uploadedFiles[field.fieldName].name}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {formatFileSize(uploadedFiles[field.fieldName].size)}
+                              </p>
+                            </div>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeFile(field.fieldName)}
+                            disabled={isSubmitting}
+                            className="h-8 w-8"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Label
+                              htmlFor={field.fieldName}
+                              className="flex items-center gap-2 px-4 py-2 border rounded-md cursor-pointer hover:bg-accent transition-colors"
+                            >
+                              <Upload className="h-4 w-4" />
+                              <span>Choose file</span>
+                            </Label>
+                            <Input
+                              id={field.fieldName}
+                              type="file"
+                              accept=".docx,.doc,.txt,.pdf"
+                              onChange={(e) => handleFileChange(field.fieldName, e)}
+                              disabled={isSubmitting}
+                              className="hidden"
+                            />
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            Allowed: DOCX, DOC, TXT, PDF (max {MAX_FILE_SIZE / (1024 * 1024)}MB)
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : field.fieldType === "boolean" ? (
+                    // Boolean fields need a single wrapper div for FormControl
+                    <FormControl>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          checked={formField.value}
+                          onCheckedChange={formField.onChange}
+                          disabled={isSubmitting}
+                        />
+                        <Label className="font-normal">
+                          {field.placeholder || "I agree"}
+                        </Label>
+                      </div>
+                    </FormControl>
+                  ) : field.fieldType === "text" ? (
+                    // Text fields use FormControl with Input
+                    <FormControl>
+                      <Input
+                        {...formField}
+                        placeholder={field.placeholder || undefined}
+                        type="text"
+                        disabled={isSubmitting}
+                      />
+                    </FormControl>
+                  ) : field.fieldType === "textarea" ? (
+                    // Textarea fields use FormControl with Textarea
+                    <FormControl>
+                      <Textarea
+                        {...formField}
+                        placeholder={field.placeholder || undefined}
+                        disabled={isSubmitting}
+                        className="min-h-[120px]"
+                      />
+                    </FormControl>
+                  ) : (
+                    // Fallback for unexpected field types - render text input
+                    <FormControl>
+                      <Input
+                        {...formField}
+                        placeholder={field.placeholder || `Unexpected field type: ${field.fieldType}`}
+                        type="text"
+                        disabled={isSubmitting}
+                        className="border-destructive"
+                      />
+                    </FormControl>
+                  )}
+                  {field.placeholder && field.fieldType !== "boolean" && field.fieldType !== "upload" && (
+                    <FormDescription>{field.placeholder}</FormDescription>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+
+          <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </Button>
+        </form>
+      </Form>
+    </>
+  );
+
+  if (inline) {
+    return <div>{formContent}</div>;
+  }
+
   return (
     <section className="py-12 md:py-20">
       <div className="container mx-auto px-4">
         <div className="max-w-2xl mx-auto">
-          <div className="mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">{formConfig.formName}</h2>
-            {formConfig.formDescription && (
-              <p className="text-lg text-muted-foreground">{formConfig.formDescription}</p>
-            )}
-          </div>
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {sortedFields.map((field) => (
-                <FormField
-                  key={field.fieldName}
-                  control={form.control}
-                  name={field.fieldName}
-                  render={({ field: formField }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {field.fieldName}
-                        {field.required && <span className="text-destructive ml-1">*</span>}
-                      </FormLabel>
-                      {field.fieldType === "upload" ? (
-                        // Upload fields don't use FormControl (file inputs are uncontrolled)
-                        <div className="space-y-2">
-                          {uploadedFiles[field.fieldName] ? (
-                            <div className="flex items-center justify-between p-3 border rounded-md bg-muted">
-                              <div className="flex items-center gap-2">
-                                <FileText className="h-4 w-4 text-muted-foreground" />
-                                <div>
-                                  <p className="text-sm font-medium">
-                                    {uploadedFiles[field.fieldName].name}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    {formatFileSize(uploadedFiles[field.fieldName].size)}
-                                  </p>
-                                </div>
-                              </div>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => removeFile(field.fieldName)}
-                                disabled={isSubmitting}
-                                className="h-8 w-8"
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          ) : (
-                            <div>
-                              <div className="flex items-center gap-2 mb-2">
-                                <Label
-                                  htmlFor={field.fieldName}
-                                  className="flex items-center gap-2 px-4 py-2 border rounded-md cursor-pointer hover:bg-accent transition-colors"
-                                >
-                                  <Upload className="h-4 w-4" />
-                                  <span>Choose file</span>
-                                </Label>
-                                <Input
-                                  id={field.fieldName}
-                                  type="file"
-                                  accept=".docx,.doc,.txt,.pdf"
-                                  onChange={(e) => handleFileChange(field.fieldName, e)}
-                                  disabled={isSubmitting}
-                                  className="hidden"
-                                />
-                              </div>
-                              <p className="text-sm text-muted-foreground">
-                                Allowed: DOCX, DOC, TXT, PDF (max {MAX_FILE_SIZE / (1024 * 1024)}MB)
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      ) : field.fieldType === "boolean" ? (
-                        // Boolean fields need a single wrapper div for FormControl
-                        <FormControl>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              checked={formField.value}
-                              onCheckedChange={formField.onChange}
-                              disabled={isSubmitting}
-                            />
-                            <Label className="font-normal">
-                              {field.placeholder || "I agree"}
-                            </Label>
-                          </div>
-                        </FormControl>
-                      ) : field.fieldType === "text" ? (
-                        // Text fields use FormControl with Input
-                        <FormControl>
-                          <Input
-                            {...formField}
-                            placeholder={field.placeholder || undefined}
-                            type="text"
-                            disabled={isSubmitting}
-                          />
-                        </FormControl>
-                      ) : field.fieldType === "textarea" ? (
-                        // Textarea fields use FormControl with Textarea
-                        <FormControl>
-                          <Textarea
-                            {...formField}
-                            placeholder={field.placeholder || undefined}
-                            disabled={isSubmitting}
-                            className="min-h-[120px]"
-                          />
-                        </FormControl>
-                      ) : (
-                        // Fallback for unexpected field types - render text input
-                        <FormControl>
-                          <Input
-                            {...formField}
-                            placeholder={field.placeholder || `Unexpected field type: ${field.fieldType}`}
-                            type="text"
-                            disabled={isSubmitting}
-                            className="border-destructive"
-                          />
-                        </FormControl>
-                      )}
-                      {field.placeholder && field.fieldType !== "boolean" && field.fieldType !== "upload" && (
-                        <FormDescription>{field.placeholder}</FormDescription>
-                      )}
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ))}
-
-              <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Submitting..." : "Submit"}
-              </Button>
-            </form>
-          </Form>
+          {formContent}
         </div>
       </div>
     </section>
