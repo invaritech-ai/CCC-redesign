@@ -28,23 +28,8 @@ const ReportDetail = () => {
         return (
             <div className="min-h-screen flex flex-col">
                 <Navigation />
-                <main className="flex-1">
-                    <section className="bg-primary text-primary-foreground py-20">
-                        <div className="container mx-auto px-4">
-                            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                                Annual Report
-                            </h1>
-                        </div>
-                    </section>
-                    <section className="py-16">
-                        <div className="container mx-auto px-4">
-                            <div className="max-w-4xl mx-auto">
-                                <p className="text-muted-foreground">
-                                    Loading...
-                                </p>
-                            </div>
-                        </div>
-                    </section>
+                <main className="flex-1 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 </main>
                 <Footer />
             </div>
@@ -55,19 +40,15 @@ const ReportDetail = () => {
         return (
             <div className="min-h-screen flex flex-col">
                 <Navigation />
-                <main className="flex-1">
-                    <section className="bg-primary text-primary-foreground py-20">
-                        <div className="container mx-auto px-4">
-                            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                                Annual Report
-                            </h1>
-                        </div>
-                    </section>
-                    <section className="py-16">
-                        <div className="container mx-auto px-4">
-                            <div className="max-w-4xl mx-auto text-center">
-                                <p className="text-lg text-muted-foreground">
-                                    Report not found.
+                <main id="main-content" className="flex-1">
+                    <section className="bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center">
+                        <div className="container mx-auto px-4 w-full">
+                            <div className="max-w-4xl md:mx-auto md:text-center">
+                                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                                    Report Not Found
+                                </h1>
+                                <p className="text-lg md:text-xl max-w-3xl leading-relaxed opacity-90 md:mx-auto">
+                                    The report you're looking for doesn't exist.
                                 </p>
                             </div>
                         </div>
@@ -82,44 +63,48 @@ const ReportDetail = () => {
         <div className="min-h-screen flex flex-col">
             <Navigation />
 
-            <main className="flex-1">
-                <section className="bg-primary text-primary-foreground py-20">
-                    <div className="container mx-auto px-4">
-                        <div className="flex items-center gap-3 mb-4">
-                            <FileText className="h-8 w-8" />
-                            <span className="text-2xl font-semibold opacity-90">
-                                {report.year}
-                            </span>
+            <main id="main-content" className="flex-1">
+                <section 
+                    className={`relative bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center ${
+                        report.image ? 'bg-cover bg-center' : ''
+                    }`}
+                    style={report.image ? {
+                        backgroundImage: `url(${getImageUrl(report.image, {
+                            width: 1920,
+                            height: 1080,
+                            format: "webp",
+                        })})`
+                    } : undefined}
+                >
+                    {/* Dark overlay */}
+                    {report.image && (
+                        <div className="absolute inset-0 bg-black/60"></div>
+                    )}
+                    
+                    {/* Content */}
+                    <div className="container mx-auto px-4 w-full relative z-10">
+                        <div className="max-w-4xl md:mx-auto md:text-center">
+                            <div className="flex items-center justify-center gap-3 mb-4">
+                                <FileText className="h-6 w-6 md:h-8 md:w-8" />
+                                <span className="text-xl md:text-2xl font-semibold opacity-90">
+                                    {report.year}
+                                </span>
+                            </div>
+                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                                {report.title}
+                            </h1>
+                            {report.author && (
+                                <p className="text-lg md:text-xl opacity-90">
+                                    By {report.author}
+                                </p>
+                            )}
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                            {report.title}
-                        </h1>
-                        {report.author && (
-                            <p className="text-xl opacity-90">
-                                By {report.author}
-                            </p>
-                        )}
                     </div>
                 </section>
 
                 <section className="py-16">
                     <div className="container mx-auto px-4">
                         <div className="max-w-4xl mx-auto">
-                            {report.image && (
-                                <img
-                                    src={
-                                        getImageUrl(report.image, {
-                                            width: 1200,
-                                            height: 600,
-                                            format: "webp",
-                                        }) || ""
-                                    }
-                                    alt={report.title}
-                                    className="w-full h-96 object-cover rounded-lg mb-8"
-                                    width="1200"
-                                    height="600"
-                                />
-                            )}
 
                             {report.description && (
                                 <div className="prose prose-lg max-w-none mb-8">

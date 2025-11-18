@@ -2,15 +2,17 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { PageContent } from "@/components/PageContent";
 import { DynamicForm } from "@/components/DynamicForm";
-import { useEffect, useState } from "react";
-import { getLatestEvents, getPageContent, getFormByPage } from "@/lib/sanity.queries";
+import { useEffect, useState, useMemo } from "react";
+import { getAllEvents, getPageContent, getFormByPage } from "@/lib/sanity.queries";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Calendar, MapPin, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
 import { getImageUrl } from "@/lib/sanityImage";
 import type { SanityEvent, SanityFormBuilder, SanityPageContent } from "@/lib/sanity.types";
+import { SearchAndFilter } from "@/components/SearchAndFilter";
 
 // Helper function to update meta tags
 const updateMetaTag = (name: string, content: string, isProperty = false) => {
@@ -31,11 +33,15 @@ const Events = () => {
     const [pageContent, setPageContent] = useState<SanityPageContent | null>(null);
     const [formConfig, setFormConfig] = useState<SanityFormBuilder | null>(null);
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState<string>("all");
+    const [dateFilter, setDateFilter] = useState<string>("all");
+    const [displayCount, setDisplayCount] = useState(12);
 
     useEffect(() => {
         const fetchData = async () => {
             const [eventsData, content, form] = await Promise.all([
-                getLatestEvents(10),
+                getAllEvents(),
                 getPageContent("events"),
                 getFormByPage("events"),
             ]);
@@ -95,6 +101,81 @@ const Events = () => {
         };
     }, [pageContent]);
 
+    // Get unique categories from events
+    const availableCategories = useMemo(() => {
+        const categories = events
+            .map((event) => event.category)
+            .filter((cat): cat is string => cat !== undefined && cat !== null);
+        return Array.from(new Set(categories)).sort();
+    }, [events]);
+
+    // Filter events based on search, category, and date
+    const filteredEvents = useMemo(() => {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
+        return events.filter((event) => {
+            // Category filter
+            if (selectedCategory !== "all" && event.category !== selectedCategory) {
+                return false;
+            }
+
+            // Date filter
+            if (dateFilter !== "all") {
+                const eventDate = new Date(event.date);
+                eventDate.setHours(0, 0, 0, 0); // Reset time to start of day
+                if (dateFilter === "upcoming" && eventDate < now) {
+                    return false;
+                }
+                if (dateFilter === "past" && eventDate >= now) {
+                    return false;
+                }
+            }
+
+            // Search filter
+            if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+                const matchesTitle = event.title?.toLowerCase().includes(query);
+                const matchesDescription = event.description?.toLowerCase().includes(query);
+                const matchesLocation = event.location?.toLowerCase().includes(query);
+                return matchesTitle || matchesDescription || matchesLocation;
+            }
+
+            return true;
+        });
+    }, [events, searchQuery, selectedCategory, dateFilter]);
+
+    // Get displayed events (paginated)
+    const displayedEvents = useMemo(() => {
+        return filteredEvents.slice(0, displayCount);
+    }, [filteredEvents, displayCount]);
+
+    const handleLoadMore = () => {
+        setDisplayCount((prev) => prev + 12);
+    };
+
+    const handleClearFilters = () => {
+        setSearchQuery("");
+        setSelectedCategory("all");
+        setDateFilter("all");
+        setDisplayCount(12);
+    };
+
+    // Reset pagination when filters change
+    useEffect(() => {
+        setDisplayCount(12);
+    }, [searchQuery, selectedCategory, dateFilter]);
+
+    const categoryFilterOptions = availableCategories.map((category) => ({
+        label: category,
+        value: category,
+    }));
+
+    const dateFilterOptions = [
+        { label: "All Events", value: "all" },
+        { label: "Upcoming", value: "upcoming" },
+        { label: "Past", value: "past" },
+    ];
+
     return (
         <div className="min-h-screen flex flex-col">
             <Navigation />
@@ -132,86 +213,134 @@ const Events = () => {
                                 </p>
                             </div>
                         ) : events.length > 0 ? (
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-                                {events.map((event) => (
-                                    <Card
-                                        key={event._id}
-                                        className="overflow-hidden hover:shadow-lg transition-shadow"
-                                    >
-                                        {event.image && (
-                                            <img
-                                                src={
-                                                    getImageUrl(event.image, {
-                                                        width: 800,
-                                                        height: 400,
-                                                        format: "webp",
-                                                    }) || ""
-                                                }
-                                                alt={event.title}
-                                                className="w-full h-48 object-cover"
-                                                width="800"
-                                                height="400"
-                                            />
-                                        )}
-                                        <div className="p-6">
-                                            {event.featured && (
-                                                <Badge
-                                                    variant="default"
-                                                    className="mb-3"
+                            <>
+                                <SearchAndFilter
+                                    searchValue={searchQuery}
+                                    onSearchChange={setSearchQuery}
+                                    filters={[
+                                        {
+                                            label: "Category",
+                                            key: "category",
+                                            options: categoryFilterOptions,
+                                            value: selectedCategory,
+                                            onChange: setSelectedCategory,
+                                        },
+                                        {
+                                            label: "Date",
+                                            key: "date",
+                                            options: dateFilterOptions,
+                                            value: dateFilter,
+                                            onChange: setDateFilter,
+                                        },
+                                    ]}
+                                    onClearFilters={handleClearFilters}
+                                    displayedCount={displayedEvents.length}
+                                    totalCount={filteredEvents.length}
+                                />
+
+                                {displayedEvents.length > 0 ? (
+                                    <>
+                                        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-2 max-w-7xl mx-auto">
+                                            {displayedEvents.map((event) => (
+                                                <Card
+                                                    key={event._id}
+                                                    className="overflow-hidden hover:shadow-lg transition-shadow"
                                                 >
-                                                    Featured
-                                                </Badge>
-                                            )}
-                                            <h2 className="text-xl font-semibold mb-2">
-                                                {event.title}
-                                            </h2>
-                                            <div className="space-y-2 mb-4 text-sm text-muted-foreground">
-                                                <div className="flex items-center gap-2">
-                                                    <Calendar
-                                                        className="h-4 w-4"
-                                                        aria-hidden="true"
-                                                    />
-                                                    <span>
-                                                        {format(
-                                                            new Date(
-                                                                event.date
-                                                            ),
-                                                            "PPP 'at' p"
-                                                        )}
-                                                    </span>
-                                                </div>
-                                                {event.location && (
-                                                    <div className="flex items-center gap-2">
-                                                        <MapPin
-                                                            className="h-4 w-4"
-                                                            aria-hidden="true"
+                                                    {event.image && (
+                                                        <img
+                                                            src={
+                                                                getImageUrl(event.image, {
+                                                                    width: 800,
+                                                                    height: 400,
+                                                                    format: "webp",
+                                                                }) || ""
+                                                            }
+                                                            alt={event.title}
+                                                            className="w-full h-32 md:h-24 object-cover"
+                                                            width="800"
+                                                            height="400"
                                                         />
-                                                        <span>
-                                                            {event.location}
-                                                        </span>
+                                                    )}
+                                                    <div className="p-4 md:p-3">
+                                                        {event.featured && (
+                                                            <Badge
+                                                                variant="default"
+                                                                className="mb-1.5 md:mb-1 text-xs"
+                                                            >
+                                                                Featured
+                                                            </Badge>
+                                                        )}
+                                                        <h2 className="text-lg font-semibold mb-1.5 md:mb-1 leading-tight line-clamp-2">
+                                                            {event.title}
+                                                        </h2>
+                                                        <div className="space-y-1 mb-1.5 md:mb-1 text-xs text-muted-foreground">
+                                                            <div className="flex items-center gap-1.5">
+                                                                <Calendar
+                                                                    className="h-3 w-3"
+                                                                    aria-hidden="true"
+                                                                />
+                                                                <span className="line-clamp-1">
+                                                                    {format(
+                                                                        new Date(
+                                                                            event.date
+                                                                        ),
+                                                                        "PPP 'at' p"
+                                                                    )}
+                                                                </span>
+                                                            </div>
+                                                            {event.location && (
+                                                                <div className="flex items-center gap-1.5">
+                                                                    <MapPin
+                                                                        className="h-3 w-3"
+                                                                        aria-hidden="true"
+                                                                    />
+                                                                    <span className="line-clamp-1">
+                                                                        {event.location}
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        {event.description && (
+                                                            <p className="text-sm text-muted-foreground mb-1.5 md:mb-1 line-clamp-2">
+                                                                {event.description}
+                                                            </p>
+                                                        )}
+                                                        <Link
+                                                            to={`/events/${event.slug?.current}`}
+                                                            className="inline-flex items-center text-primary hover:underline text-base font-semibold py-2 mt-3"
+                                                            aria-label={`Learn more about ${event.title}`}
+                                                        >
+                                                            Learn more{" "}
+                                                            <ArrowRight
+                                                                className="ml-2 h-5 w-5"
+                                                                aria-hidden="true"
+                                                            />
+                                                        </Link>
                                                     </div>
-                                                )}
-                                            </div>
-                                            {event.description && (
-                                                <p className="text-muted-foreground mb-4 line-clamp-3">
-                                                    {event.description}
-                                                </p>
-                                            )}
-                                            <Link
-                                                to={`/events/${event.slug?.current}`}
-                                                className="inline-flex items-center text-primary hover:underline"
-                                                aria-label={`Learn more about ${event.title}`}
-                                            >
-                                                Learn more{" "}
-                                                <ArrowRight
-                                                    className="ml-1 h-4 w-4"
-                                                    aria-hidden="true"
-                                                />
-                                            </Link>
+                                                </Card>
+                                            ))}
                                         </div>
-                                    </Card>
-                                ))}
-                            </div>
+
+                                        {displayedEvents.length < filteredEvents.length && (
+                                            <div className="text-center mt-8">
+                                                <Button
+                                                    onClick={handleLoadMore}
+                                                    variant="outline"
+                                                    className="min-w-[150px]"
+                                                >
+                                                    Load More
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className="max-w-4xl mx-auto text-center py-12">
+                                        <p className="text-lg text-muted-foreground">
+                                            No events found matching your filters.
+                                        </p>
+                                    </div>
+                                )}
+                            </>
                         ) : (
                             <div className="max-w-4xl mx-auto text-center py-12">
                                 <p className="text-lg text-muted-foreground">
