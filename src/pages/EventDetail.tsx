@@ -30,23 +30,8 @@ const EventDetail = () => {
         return (
             <div className="min-h-screen flex flex-col">
                 <Navigation />
-                <main className="flex-1">
-                    <section className="bg-primary text-primary-foreground py-20">
-                        <div className="container mx-auto px-4">
-                            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                                Event
-                            </h1>
-                        </div>
-                    </section>
-                    <section className="py-16">
-                        <div className="container mx-auto px-4">
-                            <div className="max-w-4xl mx-auto">
-                                <p className="text-muted-foreground">
-                                    Loading...
-                                </p>
-                            </div>
-                        </div>
-                    </section>
+                <main className="flex-1 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 </main>
                 <Footer />
             </div>
@@ -57,19 +42,15 @@ const EventDetail = () => {
         return (
             <div className="min-h-screen flex flex-col">
                 <Navigation />
-                <main className="flex-1">
-                    <section className="bg-primary text-primary-foreground py-20">
-                        <div className="container mx-auto px-4">
-                            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                                Event
-                            </h1>
-                        </div>
-                    </section>
-                    <section className="py-16">
-                        <div className="container mx-auto px-4">
-                            <div className="max-w-4xl mx-auto text-center">
-                                <p className="text-lg text-muted-foreground">
-                                    Event not found.
+                <main id="main-content" className="flex-1">
+                    <section className="bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center">
+                        <div className="container mx-auto px-4 w-full">
+                            <div className="max-w-4xl md:mx-auto md:text-center">
+                                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                                    Event Not Found
+                                </h1>
+                                <p className="text-lg md:text-xl max-w-3xl leading-relaxed opacity-90 md:mx-auto">
+                                    The event you're looking for doesn't exist.
                                 </p>
                             </div>
                         </div>
@@ -84,36 +65,55 @@ const EventDetail = () => {
         <div className="min-h-screen flex flex-col">
             <Navigation />
 
-            <main className="flex-1">
-                <section className="bg-primary text-primary-foreground py-20">
-                    <div className="container mx-auto px-4">
-                        {event.featured && (
-                            <Badge variant="secondary" className="mb-4">
-                                Featured Event
-                            </Badge>
-                        )}
-                        <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                            {event.title}
-                        </h1>
-                        <div className="flex flex-wrap gap-4 text-lg opacity-90">
-                            <div className="flex items-center gap-2">
-                                <Calendar
-                                    className="h-5 w-5"
-                                    aria-hidden="true"
-                                />
-                                <span>
-                                    {format(new Date(event.date), "PPP 'at' p")}
-                                </span>
-                            </div>
-                            {event.location && (
+            <main id="main-content" className="flex-1">
+                <section 
+                    className={`relative bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center ${
+                        event.image ? 'bg-cover bg-center' : ''
+                    }`}
+                    style={event.image ? {
+                        backgroundImage: `url(${getImageUrl(event.image, {
+                            width: 1920,
+                            height: 1080,
+                            format: "webp",
+                        })})`
+                    } : undefined}
+                >
+                    {/* Dark overlay */}
+                    {event.image && (
+                        <div className="absolute inset-0 bg-black/60"></div>
+                    )}
+                    
+                    {/* Content */}
+                    <div className="container mx-auto px-4 w-full relative z-10">
+                        <div className="max-w-4xl md:mx-auto md:text-center">
+                            {event.featured && (
+                                <Badge className="mb-6 bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 md:mx-auto">
+                                    Featured Event
+                                </Badge>
+                            )}
+                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                                {event.title}
+                            </h1>
+                            <div className="flex flex-wrap justify-center gap-4 text-lg md:text-xl opacity-90">
                                 <div className="flex items-center gap-2">
-                                    <MapPin
+                                    <Calendar
                                         className="h-5 w-5"
                                         aria-hidden="true"
                                     />
-                                    <span>{event.location}</span>
+                                    <span>
+                                        {format(new Date(event.date), "PPP 'at' p")}
+                                    </span>
                                 </div>
-                            )}
+                                {event.location && (
+                                    <div className="flex items-center gap-2">
+                                        <MapPin
+                                            className="h-5 w-5"
+                                            aria-hidden="true"
+                                        />
+                                        <span>{event.location}</span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -121,21 +121,6 @@ const EventDetail = () => {
                 <section className="py-16">
                     <div className="container mx-auto px-4">
                         <div className="max-w-4xl mx-auto">
-                            {event.image && (
-                                <img
-                                    src={
-                                        getImageUrl(event.image, {
-                                            width: 1200,
-                                            height: 600,
-                                            format: "webp",
-                                        }) || ""
-                                    }
-                                    alt={event.title}
-                                    className="w-full h-96 object-cover rounded-lg mb-8"
-                                    width="1200"
-                                    height="600"
-                                />
-                            )}
 
                             {event.description && (
                                 <div className="prose prose-lg max-w-none mb-8">

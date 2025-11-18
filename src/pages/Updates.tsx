@@ -108,15 +108,17 @@ const Updates = () => {
                         badgeText={pageContent.badgeText}
                     />
                 ) : (
-                    <section className="bg-primary text-primary-foreground py-20">
-                        <div className="container mx-auto px-4">
-                            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                                Updates
-                            </h1>
-                            <p className="text-xl max-w-3xl opacity-90">
-                                Latest news, announcements, and updates from China
-                                Coast Community.
-                            </p>
+                    <section className="bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center">
+                        <div className="container mx-auto px-4 w-full">
+                            <div className="max-w-4xl md:mx-auto md:text-center">
+                                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                                    Updates
+                                </h1>
+                                <p className="text-lg md:text-xl max-w-3xl leading-relaxed opacity-90 md:mx-auto">
+                                    Latest news, announcements, and updates from China
+                                    Coast Community.
+                                </p>
+                            </div>
                         </div>
                     </section>
                 )}

@@ -127,23 +127,8 @@ const UpdateDetail = () => {
         return (
             <div className="min-h-screen flex flex-col">
                 <Navigation />
-                <main className="flex-1">
-                    <section className="bg-primary text-primary-foreground py-20">
-                        <div className="container mx-auto px-4">
-                            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                                Update
-                            </h1>
-                        </div>
-                    </section>
-                    <section className="py-16">
-                        <div className="container mx-auto px-4">
-                            <div className="max-w-4xl mx-auto">
-                                <p className="text-muted-foreground">
-                                    Loading...
-                                </p>
-                            </div>
-                        </div>
-                    </section>
+                <main className="flex-1 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 </main>
                 <Footer />
             </div>
@@ -154,19 +139,15 @@ const UpdateDetail = () => {
         return (
             <div className="min-h-screen flex flex-col">
                 <Navigation />
-                <main className="flex-1">
-                    <section className="bg-primary text-primary-foreground py-20">
-                        <div className="container mx-auto px-4">
-                            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                                Update
-                            </h1>
-                        </div>
-                    </section>
-                    <section className="py-16">
-                        <div className="container mx-auto px-4">
-                            <div className="max-w-4xl mx-auto text-center">
-                                <p className="text-lg text-muted-foreground">
-                                    Update not found.
+                <main id="main-content" className="flex-1">
+                    <section className="bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center">
+                        <div className="container mx-auto px-4 w-full">
+                            <div className="max-w-4xl md:mx-auto md:text-center">
+                                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                                    Update Not Found
+                                </h1>
+                                <p className="text-lg md:text-xl max-w-3xl leading-relaxed opacity-90 md:mx-auto">
+                                    The update you're looking for doesn't exist.
                                 </p>
                             </div>
                         </div>
@@ -181,47 +162,66 @@ const UpdateDetail = () => {
         <div className="min-h-screen flex flex-col">
             <Navigation />
 
-            <main className="flex-1">
-                <section className="bg-primary text-primary-foreground py-20">
-                    <div className="container mx-auto px-4">
-                        {update.featured && (
-                            <Badge variant="secondary" className="mb-4">
-                                Featured
-                            </Badge>
-                        )}
-                        <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                            {update.title}
-                        </h1>
-                        <div className="flex flex-wrap gap-4 text-lg opacity-90">
-                            <div className="flex items-center gap-2">
-                                <Calendar
-                                    className="h-5 w-5"
-                                    aria-hidden="true"
-                                />
-                                <span>
-                                    {format(
-                                        new Date(update.publishedAt),
-                                        "PPP"
-                                    )}
-                                </span>
-                            </div>
-                            {update.author && (
+            <main id="main-content" className="flex-1">
+                <section 
+                    className={`relative bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center ${
+                        update.image ? 'bg-cover bg-center' : ''
+                    }`}
+                    style={update.image ? {
+                        backgroundImage: `url(${getImageUrl(update.image, {
+                            width: 1920,
+                            height: 1080,
+                            format: "webp",
+                        })})`
+                    } : undefined}
+                >
+                    {/* Dark overlay */}
+                    {update.image && (
+                        <div className="absolute inset-0 bg-black/60"></div>
+                    )}
+                    
+                    {/* Content */}
+                    <div className="container mx-auto px-4 w-full relative z-10">
+                        <div className="max-w-4xl md:mx-auto md:text-center">
+                            {update.featured && (
+                                <Badge className="mb-6 bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 md:mx-auto">
+                                    Featured
+                                </Badge>
+                            )}
+                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                                {update.title}
+                            </h1>
+                            <div className="flex flex-wrap justify-center gap-4 text-lg md:text-xl opacity-90">
                                 <div className="flex items-center gap-2">
-                                    <User
+                                    <Calendar
                                         className="h-5 w-5"
                                         aria-hidden="true"
                                     />
-                                    <span>{update.author}</span>
+                                    <span>
+                                        {format(
+                                            new Date(update.publishedAt),
+                                            "PPP"
+                                        )}
+                                    </span>
                                 </div>
-                            )}
-                            {update.type && (
-                                <Badge
-                                    variant="outline"
-                                    className="bg-primary/20 text-primary-foreground border-primary-foreground/20"
-                                >
-                                    {update.type}
-                                </Badge>
-                            )}
+                                {update.author && (
+                                    <div className="flex items-center gap-2">
+                                        <User
+                                            className="h-5 w-5"
+                                            aria-hidden="true"
+                                        />
+                                        <span>{update.author}</span>
+                                    </div>
+                                )}
+                                {update.type && (
+                                    <Badge
+                                        variant="outline"
+                                        className="bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30"
+                                    >
+                                        {update.type}
+                                    </Badge>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -229,21 +229,6 @@ const UpdateDetail = () => {
                 <section className="py-16">
                     <div className="container mx-auto px-4">
                         <div className="max-w-4xl mx-auto">
-                            {update.image && (
-                                <img
-                                    src={
-                                        getImageUrl(update.image, {
-                                            width: 1200,
-                                            height: 600,
-                                            format: "webp",
-                                        }) || ""
-                                    }
-                                    alt={update.title}
-                                    className="w-full h-96 object-cover rounded-lg mb-8"
-                                    width="1200"
-                                    height="600"
-                                />
-                            )}
 
                             {update.excerpt && (
                                 <p className="text-xl text-muted-foreground mb-8 leading-relaxed italic">
