@@ -69,7 +69,7 @@ const renderTextWithMarks = (
                                         ? "noopener noreferrer"
                                         : undefined
                                 }
-                                className="text-primary hover:underline"
+                                className="content-link"
                             >
                                 {element}
                             </a>

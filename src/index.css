@@ -219,6 +219,16 @@ All colors MUST be HSL.
     will-change: transform;
 }
 
+/* Content link styles - for Sanity content and other content areas */
+/* Apply this class to links in content areas, not to buttons, logos, or navigation */
+@layer utilities {
+    .content-link {
+        @apply text-primary underline;
+        text-decoration-thickness: 1.5px;
+        text-underline-offset: 3px;
+    }
+}
+
 /* Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
     *,
