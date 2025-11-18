@@ -1,7 +1,24 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { DynamicForm } from "@/components/DynamicForm";
+import { useEffect, useState } from "react";
+import { getFormByPage } from "@/lib/sanity.queries";
+import type { SanityFormBuilder } from "@/lib/sanity.types";
 
 const Privacy = () => {
+  const [formConfig, setFormConfig] = useState<SanityFormBuilder | null>(null);
+
+  useEffect(() => {
+    const fetchForm = async () => {
+      try {
+        const form = await getFormByPage("privacy");
+        setFormConfig(form);
+      } catch (error) {
+        // Silently fail if form doesn't exist
+      }
+    };
+    fetchForm();
+  }, []);
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
@@ -55,6 +72,8 @@ const Privacy = () => {
             </div>
           </div>
         </section>
+
+        {formConfig && <DynamicForm formConfig={formConfig} />}
       </main>
 
       <Footer />

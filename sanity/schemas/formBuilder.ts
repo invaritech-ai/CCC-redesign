@@ -24,9 +24,6 @@ export default {
       description: "Select which page this form should appear on",
       options: {
         list: [
-          { title: "Home", value: "" },
-          { title: "About", value: "about" },
-          { title: "Future", value: "future" },
           { title: "Contact", value: "contact" },
           { title: "Community", value: "community" },
           { title: "Waitlist", value: "waitlist" },

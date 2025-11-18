@@ -1,13 +1,30 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { DynamicForm } from "@/components/DynamicForm";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { useEffect, useState } from "react";
+import { getFormByPage } from "@/lib/sanity.queries";
+import type { SanityFormBuilder } from "@/lib/sanity.types";
 
 const Contact = () => {
+  const [formConfig, setFormConfig] = useState<SanityFormBuilder | null>(null);
+
+  useEffect(() => {
+    const fetchForm = async () => {
+      try {
+        const form = await getFormByPage("contact");
+        setFormConfig(form);
+      } catch (error) {
+        // Silently fail if form doesn't exist
+      }
+    };
+    fetchForm();
+  }, []);
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
@@ -188,6 +205,8 @@ const Contact = () => {
             </div>
           </div>
         </section>
+
+        {formConfig && <DynamicForm formConfig={formConfig} />}
       </main>
 
       <Footer />

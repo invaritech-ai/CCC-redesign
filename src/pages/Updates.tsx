@@ -1,26 +1,32 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { DynamicForm } from "@/components/DynamicForm";
 import { useEffect, useState } from "react";
-import { getLatestUpdates } from "@/lib/sanity.queries";
+import { getLatestUpdates, getFormByPage } from "@/lib/sanity.queries";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { Calendar, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
 import { getImageUrl } from "@/lib/sanityImage";
-import type { SanityUpdate } from "@/lib/sanity.types";
+import type { SanityUpdate, SanityFormBuilder } from "@/lib/sanity.types";
 
 const Updates = () => {
     const [updates, setUpdates] = useState<SanityUpdate[]>([]);
+    const [formConfig, setFormConfig] = useState<SanityFormBuilder | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchUpdates = async () => {
-            const data = await getLatestUpdates(10);
-            setUpdates(data);
+        const fetchData = async () => {
+            const [updatesData, form] = await Promise.all([
+                getLatestUpdates(10),
+                getFormByPage("updates"),
+            ]);
+            setUpdates(updatesData);
+            setFormConfig(form);
             setLoading(false);
         };
-        fetchUpdates();
+        fetchData();
     }, []);
 
     return (
@@ -126,6 +132,8 @@ const Updates = () => {
                         )}
                     </div>
                 </section>
+
+                {formConfig && <DynamicForm formConfig={formConfig} />}
             </main>
 
             <Footer />

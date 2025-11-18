@@ -1,24 +1,30 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { DynamicForm } from "@/components/DynamicForm";
 import { useEffect, useState } from "react";
-import { getAllReports } from "@/lib/sanity.queries";
+import { getAllReports, getFormByPage } from "@/lib/sanity.queries";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { FileText, ArrowRight, Download } from "lucide-react";
 import { getImageUrl, getImageUrlFromString } from "@/lib/sanityImage";
-import type { SanityReport } from "@/lib/sanity.types";
+import type { SanityReport, SanityFormBuilder } from "@/lib/sanity.types";
 
 const Reports = () => {
     const [reports, setReports] = useState<SanityReport[]>([]);
+    const [formConfig, setFormConfig] = useState<SanityFormBuilder | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchReports = async () => {
-            const data = await getAllReports();
-            setReports(data);
+        const fetchData = async () => {
+            const [reportsData, form] = await Promise.all([
+                getAllReports(),
+                getFormByPage("reports"),
+            ]);
+            setReports(reportsData);
+            setFormConfig(form);
             setLoading(false);
         };
-        fetchReports();
+        fetchData();
     }, []);
 
     return (
@@ -129,6 +135,8 @@ const Reports = () => {
                         )}
                     </div>
                 </section>
+
+                {formConfig && <DynamicForm formConfig={formConfig} />}
             </main>
 
             <Footer />

@@ -1,7 +1,25 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { DynamicForm } from "@/components/DynamicForm";
+import { useEffect, useState } from "react";
+import { getFormByPage } from "@/lib/sanity.queries";
+import type { SanityFormBuilder } from "@/lib/sanity.types";
 
 const SupportDonate = () => {
+  const [formConfig, setFormConfig] = useState<SanityFormBuilder | null>(null);
+
+  useEffect(() => {
+    const fetchForm = async () => {
+      try {
+        // Support/Donate page uses "support/donate" as pageSlug
+        const form = await getFormByPage("support/donate");
+        setFormConfig(form);
+      } catch (error) {
+        // Silently fail if form doesn't exist
+      }
+    };
+    fetchForm();
+  }, []);
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
@@ -25,6 +43,8 @@ const SupportDonate = () => {
             </div>
           </div>
         </section>
+
+        {formConfig && <DynamicForm formConfig={formConfig} />}
       </main>
 
       <Footer />
