@@ -36,7 +36,8 @@ async function uploadFileToBlob(
   fileName: string,
   fileData: string,
   mimeType: string,
-  formName: string
+  formName: string,
+  token: string
 ): Promise<{ url: string } | { error: string }> {
   const startTime = Date.now();
   console.log(`[Blob Upload] Starting upload for file: ${fileName} (${mimeType}), size: ${fileData.length} chars (base64)`);
@@ -59,6 +60,7 @@ async function uploadFileToBlob(
       access: "public",
       addRandomSuffix: true,
       contentType: mimeType,
+      token: token,
     });
     
     const duration = Date.now() - startTime;
@@ -128,7 +130,7 @@ export default async function handler(
     console.log(`[Submit Form] Checking environment variables...`);
     const serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
     const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n");
-    const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
+    const blobToken = process.env.CCC_READ_WRITE_TOKEN;
 
     console.log(`[Submit Form] Environment variables status:`, {
       hasServiceAccountEmail: !!serviceAccountEmail,
@@ -152,9 +154,9 @@ export default async function handler(
 
     // Check for Blob Storage token if file uploads are present
     if (fileFields && Object.keys(fileFields).length > 0 && !blobToken) {
-      console.error(`[Submit Form] Missing BLOB_READ_WRITE_TOKEN for file uploads`);
+      console.error(`[Submit Form] Missing CCC_READ_WRITE_TOKEN for file uploads`);
       return res.status(500).json({
-        error: "Server configuration error: Missing BLOB_READ_WRITE_TOKEN for file uploads",
+        error: "Server configuration error: Missing CCC_READ_WRITE_TOKEN for file uploads",
         debug: {
           hasBlobToken: !!blobToken,
           fileFieldsCount: Object.keys(fileFields).length,
@@ -192,7 +194,8 @@ export default async function handler(
           fileData.name,
           fileData.data,
           fileData.type,
-          formName
+          formName,
+          blobToken!
         );
         if ("url" in uploadResult) {
           fileLinks[fieldName] = uploadResult.url;
