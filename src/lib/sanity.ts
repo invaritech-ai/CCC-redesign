@@ -9,12 +9,6 @@ const apiVersion = import.meta.env.VITE_SANITY_API_VERSION || "2024-01-01";
 // These cookies do not store personal information and are essential for the service
 const useCdn = true;
 
-if (!projectId) {
-    console.warn(
-        "Sanity project ID is not configured. Please set VITE_SANITY_PROJECT_ID in your .env.local file."
-    );
-}
-
 export const sanityClient = createClient({
     projectId: projectId || "",
     dataset,

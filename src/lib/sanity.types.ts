@@ -34,9 +34,17 @@ export interface SanityFileAsset extends SanityAsset {
 export interface SanityBlock {
     _type: "block";
     style?: string;
+    listItem?: "bullet" | "number";
+    level?: number;
     children?: Array<{
         text: string;
         _type: string;
+        marks?: string[];
+    }>;
+    markDefs?: Array<{
+        _key: string;
+        _type: string;
+        href?: string;
     }>;
 }
 
@@ -223,4 +231,33 @@ export interface SanityPressRelease {
         url?: string;
     }>;
     featured?: boolean;
+}
+
+// Form Field
+export interface SanityFormField {
+    fieldName: string;
+    fieldType: "text" | "textarea" | "boolean" | "upload";
+    required?: boolean;
+    placeholder?: string;
+    order?: number;
+}
+
+// Form Builder
+export interface SanityFormBuilder {
+    _id: string;
+    formName: string;
+    formDescription?: string;
+    pageSlug: string;
+    googleSheetUrl: string;
+    fields?: SanityFormField[];
+}
+
+// Page Content
+export interface SanityPageContent {
+    _id: string;
+    pageSlug: string;
+    heading: string;
+    subheading?: string;
+    content?: SanityPortableTextBlock[];
+    badgeText?: string;
 }

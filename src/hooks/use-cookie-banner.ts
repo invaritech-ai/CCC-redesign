@@ -36,7 +36,6 @@ export const useCookieBanner = () => {
       }
     } catch (error) {
       // If localStorage fails, show banner to be safe
-      console.warn("Failed to read cookie banner state:", error);
       setIsVisible(true);
     } finally {
       setIsLoading(false);
@@ -53,7 +52,6 @@ export const useCookieBanner = () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       setIsVisible(false);
     } catch (error) {
-      console.warn("Failed to save cookie banner acknowledgment:", error);
       // Still hide the banner even if storage fails
       setIsVisible(false);
     }

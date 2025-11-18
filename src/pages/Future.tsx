@@ -33,7 +33,6 @@ const Future = () => {
                     null;
                 setLeaflet(leafletResource);
             } catch (error) {
-                console.error("Error fetching leaflet:", error);
             }
         };
         fetchLeaflet();

@@ -16,7 +16,6 @@ export const UpcomingInitiativesSection = () => {
         const data = await getInitiatives();
         setInitiatives(data);
       } catch (error) {
-        console.error("Error fetching initiatives:", error);
       } finally {
         setLoading(false);
       }

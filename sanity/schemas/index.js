@@ -9,6 +9,8 @@ import resource from './resource';
 import gallery from './gallery';
 import caseStudy from './caseStudy';
 import pressRelease from './pressRelease';
+import pageContent from './pageContent';
+import formBuilder from './formBuilder';
 
 export const schemaTypes = [
   event,
@@ -22,5 +24,7 @@ export const schemaTypes = [
   gallery,
   caseStudy,
   pressRelease,
+  pageContent,
+  formBuilder,
 ];
 

@@ -26,7 +26,6 @@ export const getFeaturedEvents = async () => {
     try {
         return await sanityClient.fetch(query);
     } catch (error) {
-        console.error("Error fetching events:", error);
         return [];
     }
 };
@@ -55,7 +54,6 @@ export const getRecentUpdate = async () => {
         const updates = await sanityClient.fetch(query);
         return updates[0] || null;
     } catch (error) {
-        console.error("Error fetching recent update:", error);
         return null;
     }
 };
@@ -83,7 +81,6 @@ export const getFeaturedUpdate = async () => {
     try {
         return await sanityClient.fetch(query);
     } catch (error) {
-        console.error("Error fetching featured update:", error);
         return null;
     }
 };
@@ -111,7 +108,6 @@ export const getFeaturedUpdates = async (limit: number = 10) => {
     try {
         return await sanityClient.fetch(query, { limit });
     } catch (error) {
-        console.error("Error fetching featured updates:", error);
         return [];
     }
 };
@@ -139,7 +135,6 @@ export const getLatestUpdates = async (limit: number = 10) => {
     try {
         return await sanityClient.fetch(query, { limit });
     } catch (error) {
-        console.error("Error fetching latest updates:", error);
         return [];
     }
 };
@@ -168,7 +163,6 @@ export const getLatestEvents = async (limit: number = 10) => {
     try {
         return await sanityClient.fetch(query, { limit });
     } catch (error) {
-        console.error("Error fetching latest events:", error);
         return [];
     }
 };
@@ -194,7 +188,6 @@ export const getLatestTestimonials = async (limit: number = 10) => {
     try {
         return await sanityClient.fetch(query, { limit });
     } catch (error) {
-        console.error("Error fetching latest testimonials:", error);
         return [];
     }
 };
@@ -223,7 +216,6 @@ export const getAllEvents = async () => {
     try {
         return await sanityClient.fetch(query);
     } catch (error) {
-        console.error("Error fetching all events:", error);
         return [];
     }
 };
@@ -252,7 +244,6 @@ export const getEventBySlug = async (slug: string) => {
     try {
         return await sanityClient.fetch(query, { slug });
     } catch (error) {
-        console.error("Error fetching event by slug:", error);
         return null;
     }
 };
@@ -280,7 +271,6 @@ export const getAllUpdates = async () => {
     try {
         return await sanityClient.fetch(query);
     } catch (error) {
-        console.error("Error fetching updates:", error);
         return [];
     }
 };
@@ -308,7 +298,6 @@ export const getInitiatives = async () => {
     try {
         return await sanityClient.fetch(query);
     } catch (error) {
-        console.error("Error fetching initiatives:", error);
         return [];
     }
 };
@@ -357,7 +346,6 @@ export const getUpdateBySlug = async (slug: string) => {
     try {
         return await sanityClient.fetch(query, { slug });
     } catch (error) {
-        console.error("Error fetching update by slug:", error);
         return null;
     }
 };
@@ -384,7 +372,6 @@ export const getAllReports = async () => {
     try {
         return await sanityClient.fetch(query);
     } catch (error) {
-        console.error("Error fetching reports:", error);
         return [];
     }
 };
@@ -411,7 +398,6 @@ export const getReportBySlug = async (slug: string) => {
     try {
         return await sanityClient.fetch(query, { slug });
     } catch (error) {
-        console.error("Error fetching report by slug:", error);
         return null;
     }
 };
@@ -436,7 +422,6 @@ export const getAllPartners = async () => {
     try {
         return await sanityClient.fetch(query);
     } catch (error) {
-        console.error("Error fetching partners:", error);
         return [];
     }
 };
@@ -463,7 +448,6 @@ export const getFeaturedTestimonial = async () => {
         const testimonials = await sanityClient.fetch(query);
         return testimonials || null;
     } catch (error) {
-        console.error("Error fetching featured testimonial:", error);
         return null;
     }
 };
@@ -489,7 +473,6 @@ export const getAllTestimonials = async () => {
     try {
         return await sanityClient.fetch(query);
     } catch (error) {
-        console.error("Error fetching testimonials:", error);
         return [];
     }
 };
@@ -514,7 +497,6 @@ export const getAllTeamMembers = async () => {
     try {
         return await sanityClient.fetch(query);
     } catch (error) {
-        console.error("Error fetching team members:", error);
         return [];
     }
 };
@@ -539,7 +521,6 @@ export const getTeamMemberById = async (id: string) => {
     try {
         return await sanityClient.fetch(query, { id });
     } catch (error) {
-        console.error("Error fetching team member:", error);
         return null;
     }
 };
@@ -565,7 +546,6 @@ export const getAllFAQs = async (category?: string) => {
     try {
         return await sanityClient.fetch(query, category ? { category } : {});
     } catch (error) {
-        console.error("Error fetching FAQs:", error);
         return [];
     }
 };
@@ -600,7 +580,6 @@ export const getAllResources = async (category?: string) => {
     try {
         return await sanityClient.fetch(query, category ? { category } : {});
     } catch (error) {
-        console.error("Error fetching resources:", error);
         return [];
     }
 };
@@ -625,7 +604,6 @@ export const getResourceBySlug = async (slug: string) => {
     try {
         return await sanityClient.fetch(query, { slug });
     } catch (error) {
-        console.error("Error fetching resource by slug:", error);
         return null;
     }
 };
@@ -657,7 +635,6 @@ export const getAllGalleries = async (category?: string) => {
     try {
         return await sanityClient.fetch(query, category ? { category } : {});
     } catch (error) {
-        console.error("Error fetching galleries:", error);
         return [];
     }
 };
@@ -685,7 +662,6 @@ export const getGalleryBySlug = async (slug: string) => {
     try {
         return await sanityClient.fetch(query, { slug });
     } catch (error) {
-        console.error("Error fetching gallery by slug:", error);
         return null;
     }
 };
@@ -713,7 +689,6 @@ export const getAllCaseStudies = async () => {
     try {
         return await sanityClient.fetch(query);
     } catch (error) {
-        console.error("Error fetching case studies:", error);
         return [];
     }
 };
@@ -741,7 +716,6 @@ export const getCaseStudyBySlug = async (slug: string) => {
     try {
         return await sanityClient.fetch(query, { slug });
     } catch (error) {
-        console.error("Error fetching case study by slug:", error);
         return null;
     }
 };
@@ -765,7 +739,6 @@ export const getAllPressReleases = async () => {
     try {
         return await sanityClient.fetch(query);
     } catch (error) {
-        console.error("Error fetching press releases:", error);
         return [];
     }
 };
@@ -789,7 +762,76 @@ export const getPressReleaseBySlug = async (slug: string) => {
     try {
         return await sanityClient.fetch(query, { slug });
     } catch (error) {
-        console.error("Error fetching press release by slug:", error);
+        return null;
+    }
+};
+
+/**
+ * Fetch page content by page slug
+ */
+export const getPageContent = async (pageSlug: string) => {
+    if (!isSanityConfigured()) return null;
+
+    const query = `*[_type == "pageContent" && pageSlug == $pageSlug][0] {
+    _id,
+    pageSlug,
+    heading,
+    subheading,
+    content[]{
+      ...,
+      _type == "image" => {
+        ...,
+        asset->{
+          _id,
+          _type,
+          url,
+          metadata {
+            dimensions
+          }
+        }
+      },
+      markDefs[]{
+        ...,
+        _type == "link" => {
+          ...,
+          href
+        }
+      }
+    },
+    badgeText
+  }`;
+
+    try {
+        return await sanityClient.fetch(query, { pageSlug });
+    } catch (error) {
+        return null;
+    }
+};
+
+/**
+ * Fetch form builder configuration by page slug
+ */
+export const getFormByPage = async (pageSlug: string) => {
+    if (!isSanityConfigured()) return null;
+
+    const query = `*[_type == "formBuilder" && pageSlug == $pageSlug][0] {
+    _id,
+    formName,
+    formDescription,
+    pageSlug,
+    googleSheetUrl,
+    fields[]{
+      fieldName,
+      fieldType,
+      required,
+      placeholder,
+      order
+    } | order(order asc)
+  }`;
+
+    try {
+        return await sanityClient.fetch(query, { pageSlug });
+    } catch (error) {
         return null;
     }
 };
