@@ -29,6 +29,7 @@ const EventDetail = lazy(() => import("./pages/EventDetail"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const CMSPage = lazy(() => import("./pages/CMSPage"));
+const BoardGovernance = lazy(() => import("./pages/BoardGovernance"));
 
 const queryClient = new QueryClient();
 
@@ -100,7 +101,7 @@ const App = () => (
                         />
                         <Route
                             path="/who-we-are/board-governance"
-                            element={<CMSPage slug="board-governance" />}
+                            element={<BoardGovernance />}
                         />
                         <Route
                             path="/who-we-are/team"

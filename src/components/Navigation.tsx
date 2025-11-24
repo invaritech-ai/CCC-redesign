@@ -34,7 +34,6 @@ const NAV_ITEMS: NavItem[] = [
       { label: "Our History", href: "/who-we-are/history" },
       { label: "Our Mission & Values", href: "/who-we-are/mission-values" },
       { label: "Board & Governance", href: "/who-we-are/board-governance" },
-      { label: "Our Team", href: "/who-we-are/team" },
       {
         label: "Publications",
         children: [
@@ -146,11 +145,11 @@ const DesktopNavItem = ({ item }: { item: NavItem }) => {
   if (!hasChildren) {
     return (
       <NavigationMenuItem>
-        <Link to={item.href || "#"}>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+        <NavigationMenuLink asChild>
+          <Link to={item.href || "#"} className={navigationMenuTriggerStyle()}>
             {item.label}
-          </NavigationMenuLink>
-        </Link>
+          </Link>
+        </NavigationMenuLink>
       </NavigationMenuItem>
     );
   }
