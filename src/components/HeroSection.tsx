@@ -1,4 +1,4 @@
-import { CheckCircle2, Award, Users, ArrowRight } from "lucide-react";
+import { CheckCircle2, Award, Users, ArrowRight, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
@@ -8,18 +8,20 @@ import { DonateNowButton } from "./DonateNowButton";
 
 export const HeroSection = () => {
     return (
-        <section className="relative py-16 md:min-h-screen md:flex md:items-center bg-secondary/30">
+        <section className="relative py-12 md:py-16 md:min-h-[calc(100vh-180px)] md:flex md:items-center bg-secondary/30">
             <div className="container mx-auto px-4 w-full">
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
                     {/* Left Content */}
                     <div className="space-y-8">
-                        <Badge
-                            variant="neutral"
-                            className="gap-1.5 px-3 py-1.5 bg-muted-foreground text-background"
-                        >
-                            <div className="h-2 w-2 rounded-full bg-secondary animate-pulse" />
-                            Currently Closed for Redevelopment
-                        </Badge>
+                        <div className="inline-flex items-center gap-3 px-4 py-2.5 sm:px-5 sm:py-3 bg-muted-foreground/90 text-background rounded-lg border-2 border-background/20 shadow-md">
+                            <Building2 className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" aria-hidden="true" />
+                            <div className="flex items-center gap-2">
+                                <div className="h-2.5 w-2.5 rounded-full bg-secondary animate-pulse" />
+                                <span className="text-sm sm:text-base font-semibold">
+                                    Currently Closed for Redevelopment
+                                </span>
+                            </div>
+                        </div>
 
                         <div className="space-y-4">
                             <h1 className="text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight">

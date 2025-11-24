@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Navigation } from "@/components/Navigation";
+import { RedevelopmentBanner } from "@/components/RedevelopmentBanner";
 import { HeroSection } from "@/components/HeroSection";
 
 // Lazy load below-the-fold sections
@@ -69,6 +70,7 @@ const Index = () => {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
             />
             <Navigation />
+            <RedevelopmentBanner />
             <main id="main-content" className="flex-1">
                 {/* 1. Hero Section with both CTAs */}
                 <HeroSection />
