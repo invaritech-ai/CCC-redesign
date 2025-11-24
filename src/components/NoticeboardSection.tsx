@@ -52,7 +52,7 @@ export const NoticeboardSection = () => {
                     description: update.excerpt || "",
                     featured: update.featured,
                     slug: update.slug?.current,
-                    link: `/updates/${update.slug?.current}`,
+                    link: `/news/${update.slug?.current}`,
                 });
             }
 
@@ -66,7 +66,7 @@ export const NoticeboardSection = () => {
                     description: event.description || "",
                     featured: event.featured,
                     slug: event.slug?.current,
-                    link: `/events/${event.slug?.current}`,
+                    link: `/care-community/activities-and-events/${event.slug?.current}`,
                 });
             });
 

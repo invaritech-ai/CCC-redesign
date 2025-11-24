@@ -22,7 +22,7 @@ export const DonateNowButton = ({
       className={cn(gap, "min-h-[44px] min-w-[44px]", className)} 
       asChild
     >
-      <Link to="/support/donate" className="min-h-[44px] flex items-center justify-center">
+      <Link to="/donate" className="min-h-[44px] flex items-center justify-center">
         <Heart className={iconSize} aria-hidden="true" />
         Donate Now
       </Link>

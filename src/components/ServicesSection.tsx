@@ -14,14 +14,14 @@ export const ServicesSection = () => {
       icon: Users,
       title: "Community Members Program",
       description: "Over 80 members enjoy regular outings, activities, and social connections while living independently. A vibrant community to ease loneliness.",
-      link: "/community",
+      link: "/care-community/community-members-programme",
       category: "Community",
     },
     {
       icon: Calendar,
       title: "Activities & Outings",
       description: "Regular social events, cultural outings, and activities that bring both residents and community members together to make new friends.",
-      link: "/events",
+      link: "/care-community/activities-and-events",
       category: "Events",
     },
   ];

@@ -8,7 +8,7 @@ export const KeyHighlightsSection = () => {
             description:
                 "Discover our vision for redevelopment and expansion to serve more seniors across Hong Kong.",
             icon: Target,
-            link: "/future",
+            link: "/redevelopment",
             category: "Vision",
         },
         {
@@ -16,7 +16,7 @@ export const KeyHighlightsSection = () => {
             description:
                 "Join over 80 community members in regular activities, outings, and social connections.",
             icon: Users,
-            link: "/community",
+            link: "/care-community/community-members-programme",
             category: "Community",
         },
         {
@@ -32,7 +32,7 @@ export const KeyHighlightsSection = () => {
             description:
                 "Make a difference by donating your time. Help us create a caring community for Hong Kong's elderly.",
             icon: HeartHandshake,
-            link: "/volunteer",
+            link: "/get-involved/volunteer",
             category: "Get Involved",
         },
     ];

@@ -63,7 +63,7 @@ export const HeroSection = () => {
                                 className="gap-2"
                                 asChild
                             >
-                                <Link to="/future">
+                                <Link to="/redevelopment">
                                     Learn more about Redevelopment
                                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                                 </Link>

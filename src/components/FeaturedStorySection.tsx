@@ -209,7 +209,7 @@ export const FeaturedStorySection = () => {
                                                     </p>
                                                     {story.slug?.current && (
                                                         <Link
-                                                            to={`/updates/${story.slug.current}`}
+                                                            to={`/news/${story.slug.current}`}
                                                             className="text-primary hover:underline text-sm mt-2 inline-block"
                                                         >
                                                             Read full story →
