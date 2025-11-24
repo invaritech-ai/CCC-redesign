@@ -81,6 +81,8 @@ const App = () => (
                             path="/who-we-are/publications/annual-reports"
                             element={<Reports />}
                         />
+                        {/* Shorter route alias for reports listing */}
+                        <Route path="/reports" element={<Reports />} />
                         <Route path="/news" element={<Updates />} />
                         <Route
                             path="/care-community/activities-and-events"
@@ -142,6 +144,11 @@ const App = () => (
                         />
                         <Route
                             path="/who-we-are/publications/annual-reports/:slug"
+                            element={<ReportDetail />}
+                        />
+                        {/* Shorter route alias for reports */}
+                        <Route
+                            path="/reports/:slug"
                             element={<ReportDetail />}
                         />
 
