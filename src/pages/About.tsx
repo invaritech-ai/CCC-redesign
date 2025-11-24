@@ -1,141 +1,58 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { AboutHero } from "@/components/AboutHero";
-import { AboutIntroduction } from "@/components/AboutIntroduction";
-import { AboutHistory } from "@/components/AboutHistory";
-import { CommunityMembersSection } from "@/components/CommunityMembersSection";
-import { TeamMembersSection } from "@/components/TeamMembersSection";
-import { AnnualReportsSection } from "@/components/AnnualReportsSection";
-import { CoreValuesSection } from "@/components/CoreValuesSection";
-import { Heart, Users, Calendar, Award } from "lucide-react";
-import { useEffect, useState } from "react";
-import { getAllTeamMembers, getAllReports } from "@/lib/sanity.queries";
-import type { SanityTeamMember } from "@/lib/sanity.types";
+import { AboutUniqueIdentity } from "@/components/AboutUniqueIdentity";
+import { AboutCommitmentSection } from "@/components/AboutCommitmentSection";
+import { AboutRedevelopmentSection } from "@/components/AboutRedevelopmentSection";
+import { AboutCTASection } from "@/components/AboutCTASection";
 
 const About = () => {
-  const [teamMembers, setTeamMembers] = useState<SanityTeamMember[]>([]);
-  const [latestReport, setLatestReport] = useState<any | null>(null);
-  const [loadingTeam, setLoadingTeam] = useState(true);
-  const [loadingReports, setLoadingReports] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const [teamData, reportsData] = await Promise.all([
-        getAllTeamMembers(),
-        getAllReports(),
-      ]);
-      setTeamMembers(teamData);
-      setLoadingTeam(false);
-      setLatestReport(reportsData.length > 0 ? reportsData[0] : null); // Show only latest report
-      setLoadingReports(false);
-    };
-    fetchData();
-  }, []);
-
-  const historyItems = [
-    {
-      year: "1978",
-      title: "The Beginning",
-      description: [
-        "China Coast Community Limited (CCC) was set up in 1978. It is approved as a charity under Section 88 of the Inland Revenue Ordinance.",
-        "The history of CCC dates back to March, 1978 when the Reverend Stephen Sidebotham, the Dean of St John's Cathedral, convened a meeting of those concerned with care of the elderly then in Hong Kong. A detailed survey revealed that there was an urgent need for residential facilities for people in Hong Kong whose main language was English and the concept of CCC was born.",
-      ],
-    },
-    {
-      year: "1979",
-      title: "First Home",
-      description:
-        "In 1979, through the support of the Hong Kong Jockey Club and an interest-free loan from the Hong Kong Government, 63 Cumberland Road was purchased and converted into residential accommodation for eight residents.",
-    },
-    {
-      year: "1982",
-      title: "Expansion",
-      description:
-        "This was subsequently extended in 1982 to provide additional facilities at the Home, financed by generous donations from a number of individual and corporate benefactors.",
-    },
-    {
-      year: "2000",
-      title: "Care and Attention Home",
-      description:
-        "The needs of the residents have changed drastically over the years resulting in the CCC becoming fully licensed as a Care and Attention Home in April 2000 with professional Nursing Care provided on a 24 hour basis.",
-    },
-    {
-      year: "Today",
-      title: "",
-      description:
-        "Most of our new admissions are still active people when they enter CCC. However, they have the security of knowing if they become less able or highly dependent they will be cared for with respect and dignity.",
-    },
-  ];
-
-  const coreValues = [
-    {
-      icon: Heart,
-      title: "Compassion",
-      description:
-        "Treating every individual with kindness, empathy, and respect.",
-    },
-    {
-      icon: Users,
-      title: "Community",
-      description:
-        "Building connections and fostering a sense of belonging for all.",
-    },
-    {
-      icon: Award,
-      title: "Excellence",
-      description:
-        "Providing the highest quality care and services to our members.",
-    },
-    {
-      icon: Calendar,
-      title: "Engagement",
-      description:
-        "Creating meaningful activities that enrich the lives of seniors.",
-    },
-  ];
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
 
       <main id="main-content" className="flex-1">
+        {/* Hero Section */}
         <AboutHero
-          title="Welcome to China Coast Community"
-          description="China Coast Community Limited (CCC) was set up in 1978. It is approved as a charity under Section 88 of the Inland Revenue Ordinance."
-          badgeText="Section 88 Charity"
+          title="A Caring Home for Hong Kong's English-Speaking Elders"
+          description="For over 45 years, China Coast Community has been Hong Kong's only residential care home dedicated to English-speaking elderly persons of all creeds, cultures, and ethnicities. We provide exceptional care, foster community, and champion dignity for every senior we serve."
         />
 
-        <AboutIntroduction
-          title="About Us"
+        {/* Our Unique Identity */}
+        <AboutUniqueIdentity
+          title="Our Unique Place in Hong Kong's Community"
           paragraphs={[
-            "China Coast Community Limited (CCC) was set up in 1978. It is approved as a charity under Section 88 of the Inland Revenue Ordinance.",
-            "The history of CCC dates back to March, 1978 when the Reverend Stephen Sidebotham, the Dean of St John's Cathedral, convened a meeting of those concerned with care of the elderly then in Hong Kong. A detailed survey revealed that there was an urgent need for residential facilities for people in Hong Kong whose main language was English and the concept of CCC was born.",
+            "Since 1978, China Coast Community (CCC) has stood apart as the sole residential care home in Hong Kong exclusively for English-speaking elderly individuals. Our commitment extends beyond language; we embrace all creeds, cultures, and ethnicities, ensuring a truly inclusive environment. From our inception, we have proudly allocated 30% of our residential facilities to those receiving CSSA or equivalent support, upholding our founding principle of accessible, high-quality care for all.",
+          ]}
+          pullQuote="For 45 years, CCC delivered excellent care to all its residents and extended its reach to its English-speaking community members."
+        />
+
+        {/* Our Commitment to the Community */}
+        <AboutCommitmentSection
+          title="Continuing Our Mission: Care Beyond Our Walls"
+          paragraphs={[
+            "While our residential home at 63 Cumberland Road undergoes an exciting redevelopment, our dedication to the English-speaking elderly community remains unwavering. We have temporarily suspended residential services to build a state-of-the-art modern facility, expected to reopen by mid-2028. In the interim, CCC has intensified its focus on supporting elders in the wider community. We currently serve 78 active Community Members, providing vital social connections and activities to combat isolation and loneliness. Our team also continues to pay regular visits to former residents, ensuring their ongoing well-being and connection to the CCC family.",
+          ]}
+          stats={[
+            { number: "78", label: "Current Community Members" },
+            { number: "131", label: "Enquiries for residential places upon reopening" },
+            { number: "80", label: "Persons on the waiting list for a place" },
           ]}
         />
 
-        <AboutHistory title="Our History" items={historyItems} />
-
-        <CommunityMembersSection
-          title="Community Members"
+        {/* Looking Ahead: Our Redevelopment Journey */}
+        <AboutRedevelopmentSection
+          title="Building a State-of-the-Art Home for the Future"
           paragraphs={[
-            "In addition to our in-house residents, CCC also caters to over 80 Community Members who live in their own homes. The Community Members join in our regular outings and activities.",
-            "This gives the opportunity for both those in the Home and in the Community to meet and make new friends and to ease any loneliness they may experience.",
+            "Our redevelopment project at 63 Cumberland Road is progressing, thanks to significant funding from the Hong Kong Jockey Club Charities Trust and consent from the Lands Department. The new CCC Home will feature two 3-storey blocks, accommodating 45 beds and an Isolation Room, with 39 single and 3 double rooms—most with en-suite shower facilities. Designed with cutting-edge gerontechnology and beautiful outdoor spaces, our new home will offer world-standard facilities, providing a safe, comfortable, and friendly place for our residents to live in privacy and age-in-place with dignity. We anticipate being operational again as a residential home by 2028/early 2029.",
           ]}
         />
 
-        <TeamMembersSection
-          title="Our Team"
-          teamMembers={teamMembers}
-          loading={loadingTeam}
+        {/* Call to Action Section */}
+        <AboutCTASection
+          title="Join Our Journey"
+          description="Your support helps us create a safe, modern home to reopen stronger. Discover how you can make a difference today."
         />
-
-        <AnnualReportsSection
-          title="Annual Reports"
-          latestReport={latestReport}
-          loading={loadingReports}
-        />
-
-        <CoreValuesSection title="Our Core Values" values={coreValues} />
       </main>
 
       <Footer />
