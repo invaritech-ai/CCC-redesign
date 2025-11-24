@@ -798,7 +798,12 @@ export const getPageContent = async (pageSlug: string) => {
         }
       }
     },
-    badgeText
+    badgeText,
+    "heroImage": heroImage.asset,
+    bottomImages[]{
+      "image": image.asset,
+      alt
+    }
   }`;
 
     try {

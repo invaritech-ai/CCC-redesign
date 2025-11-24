@@ -145,6 +145,8 @@ const CMSPage = ({ slug }: CMSPageProps) => {
                         subheading={pageContent.subheading}
                         content={pageContent.content}
                         badgeText={pageContent.badgeText}
+                        heroImage={pageContent.heroImage}
+                        bottomImages={pageContent.bottomImages}
                     />
                 ) : (
                     <section className="bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center">

@@ -33,73 +33,133 @@ const CMSPage = lazy(() => import("./pages/CMSPage"));
 const queryClient = new QueryClient();
 
 const LoadingFallback = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-  </div>
+    <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
 );
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        {/* Skip to main content link for keyboard users */}
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:p-4 focus:bg-primary focus:text-primary-foreground focus:rounded-br-md focus:outline-none focus:ring-2 focus:ring-ring"
-        >
-          Skip to main content
-        </a>
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
-            {/* Static Routes */}
-            <Route path="/" element={<Index />} />
-            <Route path="/who-we-are/about" element={<About />} />
-            <Route path="/redevelopment" element={<Future />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/care-community/community-members-programme" element={<Community />} />
-            <Route path="/waitlist" element={<Waitlist />} />
-            <Route path="/get-involved/volunteer" element={<Volunteer />} />
-            <Route path="/donate" element={<SupportDonate />} />
-            <Route path="/support/confirmation" element={<SupportConfirmation />} />
-            <Route path="/support/payment-failed" element={<SupportPaymentFailed />} />
-            <Route path="/who-we-are/publications/annual-reports" element={<Reports />} />
-            <Route path="/news" element={<Updates />} />
-            <Route path="/care-community/activities-and-events" element={<Events />} />
-            <Route path="/privacy" element={<Privacy />} />
-            
-            {/* CMS Pages */}
-            <Route path="/who-we-are/history" element={<CMSPage slug="who-we-are/history" />} />
-            <Route path="/who-we-are/mission-values" element={<CMSPage slug="mission-values" />} />
-            <Route path="/who-we-are/board-governance" element={<CMSPage slug="board-governance" />} />
-            <Route path="/who-we-are/team" element={<CMSPage slug="team" />} />
-            <Route path="/care-community/life-at-ccc" element={<CMSPage slug="life-at-ccc" />} />
-            <Route path="/care-community/care-and-attention-home" element={<CMSPage slug="care-and-attention-home" />} />
-            <Route path="/care-community/faqs" element={<CMSPage slug="faqs" />} />
-            <Route path="/news/noticeboard" element={<CMSPage slug="noticeboard" />} />
-            <Route path="/news/stories" element={<CMSPage slug="stories" />} />
-            <Route path="/news/media-and-press" element={<CMSPage slug="media-and-press" />} />
+    <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+                {/* Skip to main content link for keyboard users */}
+                <a
+                    href="#main-content"
+                    className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:p-4 focus:bg-primary focus:text-primary-foreground focus:rounded-br-md focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                    Skip to main content
+                </a>
+                <Suspense fallback={<LoadingFallback />}>
+                    <Routes>
+                        {/* Static Routes */}
+                        <Route path="/" element={<Index />} />
+                        <Route path="/who-we-are/about" element={<About />} />
+                        <Route path="/redevelopment" element={<Future />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route
+                            path="/care-community/community-members-programme"
+                            element={<Community />}
+                        />
+                        <Route path="/waitlist" element={<Waitlist />} />
+                        <Route
+                            path="/get-involved/volunteer"
+                            element={<Volunteer />}
+                        />
+                        <Route path="/donate" element={<SupportDonate />} />
+                        <Route
+                            path="/support/confirmation"
+                            element={<SupportConfirmation />}
+                        />
+                        <Route
+                            path="/support/payment-failed"
+                            element={<SupportPaymentFailed />}
+                        />
+                        <Route
+                            path="/who-we-are/publications/annual-reports"
+                            element={<Reports />}
+                        />
+                        <Route path="/news" element={<Updates />} />
+                        <Route
+                            path="/care-community/activities-and-events"
+                            element={<Events />}
+                        />
+                        <Route path="/privacy" element={<Privacy />} />
 
-            {/* Legacy Redirects (Optional - handled by 404 or manual redirect if needed, but for now just new structure) */}
-            
-            {/* Dynamic Routes */}
-            <Route path="/news/:slug" element={<UpdateDetail />} />
-            <Route path="/care-community/activities-and-events/:slug" element={<EventDetail />} />
-            <Route path="/who-we-are/publications/annual-reports/:slug" element={<ReportDetail />} />
-            
-            {/* 404 Route */}
-            <Route path="/404" element={<NotFound />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-        {/* Cookie Information Banner - appears on all pages */}
-        <CookieBanner />
-        {/* Floating WhatsApp Button - appears on all pages */}
-        <WhatsAppButton variant="floating" size="default" showText={false} />
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+                        {/* CMS Pages */}
+                        <Route
+                            path="/who-we-are/history"
+                            element={<CMSPage slug="who-we-are/history" />}
+                        />
+                        <Route
+                            path="/who-we-are/mission-values"
+                            element={
+                                <CMSPage slug="who-we-are/mission-values" />
+                            }
+                        />
+                        <Route
+                            path="/who-we-are/board-governance"
+                            element={<CMSPage slug="board-governance" />}
+                        />
+                        <Route
+                            path="/who-we-are/team"
+                            element={<CMSPage slug="team" />}
+                        />
+                        <Route
+                            path="/care-community/life-at-ccc"
+                            element={<CMSPage slug="life-at-ccc" />}
+                        />
+                        <Route
+                            path="/care-community/care-and-attention-home"
+                            element={<CMSPage slug="care-and-attention-home" />}
+                        />
+                        <Route
+                            path="/care-community/faqs"
+                            element={<CMSPage slug="faqs" />}
+                        />
+                        <Route
+                            path="/news/noticeboard"
+                            element={<CMSPage slug="noticeboard" />}
+                        />
+                        <Route
+                            path="/news/stories"
+                            element={<CMSPage slug="stories" />}
+                        />
+                        <Route
+                            path="/news/media-and-press"
+                            element={<CMSPage slug="media-and-press" />}
+                        />
+
+                        {/* Legacy Redirects (Optional - handled by 404 or manual redirect if needed, but for now just new structure) */}
+
+                        {/* Dynamic Routes */}
+                        <Route path="/news/:slug" element={<UpdateDetail />} />
+                        <Route
+                            path="/care-community/activities-and-events/:slug"
+                            element={<EventDetail />}
+                        />
+                        <Route
+                            path="/who-we-are/publications/annual-reports/:slug"
+                            element={<ReportDetail />}
+                        />
+
+                        {/* 404 Route */}
+                        <Route path="/404" element={<NotFound />} />
+                        <Route path="*" element={<NotFound />} />
+                    </Routes>
+                </Suspense>
+                {/* Cookie Information Banner - appears on all pages */}
+                <CookieBanner />
+                {/* Floating WhatsApp Button - appears on all pages */}
+                <WhatsAppButton
+                    variant="floating"
+                    size="default"
+                    showText={false}
+                />
+            </BrowserRouter>
+        </TooltipProvider>
+    </QueryClientProvider>
 );
 
 export default App;

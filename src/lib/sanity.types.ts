@@ -260,4 +260,9 @@ export interface SanityPageContent {
     subheading?: string;
     content?: SanityPortableTextBlock[];
     badgeText?: string;
+    heroImage?: SanityImageSource;
+    bottomImages?: Array<{
+        image?: SanityImageSource;
+        alt?: string;
+    }>;
 }

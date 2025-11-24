@@ -6,6 +6,7 @@ import type {
 } from "@/lib/sanity.types";
 import { getImageUrlFromString } from "@/lib/sanityImage";
 import { Timeline } from "@/components/Timeline";
+import { Grid } from "@/components/Grid";
 
 interface PortableTextProps {
     blocks: SanityPortableTextBlock[];
@@ -15,6 +16,12 @@ interface PortableTextProps {
 interface TimelineItem {
     year: string;
     title?: string;
+    description: string;
+}
+
+interface GridItem {
+    icon: string;
+    title: string;
     description: string;
 }
 
@@ -99,6 +106,142 @@ const filterTimelineTags = (
     }
 
     return filtered;
+};
+
+// Helper function to filter grid tags from children (similar to filterTimelineTags)
+const filterGridTags = (
+    children: SanityBlock["children"],
+    gridStartIndex: number,
+    gridEndIndex: number
+): SanityBlock["children"] => {
+    if (!children) return children;
+
+    let currentPos = 0;
+    const filtered: SanityBlock["children"] = [];
+
+    for (const child of children) {
+        const childText = child.text || "";
+        const childStart = currentPos;
+        const childEnd = currentPos + childText.length;
+
+        // Check if this child contains grid tags
+        if (childEnd <= gridStartIndex) {
+            // Child is completely before grid, keep it
+            filtered.push(child);
+        } else if (childStart >= gridEndIndex) {
+            // Child is completely after grid, keep it
+            filtered.push(child);
+        } else if (
+            childStart < gridStartIndex &&
+            childEnd > gridEndIndex
+        ) {
+            // Child spans across grid tags - split it
+            const beforeText = childText.substring(
+                0,
+                gridStartIndex - childStart
+            );
+            const afterText = childText.substring(
+                gridEndIndex - childStart
+            );
+
+            if (beforeText) {
+                filtered.push({ ...child, text: beforeText });
+            }
+            if (afterText) {
+                filtered.push({ ...child, text: afterText });
+            }
+        } else if (
+            childStart < gridStartIndex &&
+            childEnd > gridStartIndex
+        ) {
+            // Child ends in grid start - keep only before part
+            const beforeText = childText.substring(
+                0,
+                gridStartIndex - childStart
+            );
+            if (beforeText) {
+                filtered.push({ ...child, text: beforeText });
+            }
+        } else if (
+            childStart < gridEndIndex &&
+            childEnd > gridEndIndex
+        ) {
+            // Child starts in grid end - keep only after part
+            const afterText = childText.substring(
+                gridEndIndex - childStart
+            );
+            if (afterText) {
+                filtered.push({ ...child, text: afterText });
+            }
+        }
+        // If child is completely within grid tags, skip it
+
+        currentPos = childEnd;
+    }
+
+    return filtered;
+};
+
+// Helper function to parse grid content
+const parseGridContent = (text: string): GridItem[] => {
+    // Extract content between <grid> and </grid> tags
+    const gridMatch = text.match(/<grid>([\s\S]*?)<\/grid>/i);
+    if (!gridMatch) return [];
+
+    const gridContent = gridMatch[1].trim();
+    if (!gridContent) return [];
+
+    const items: GridItem[] = [];
+    const lines = gridContent.split("\n");
+
+    let currentItem: Partial<GridItem> | null = null;
+    let descriptionLines: string[] = [];
+
+    for (let i = 0; i < lines.length; i++) {
+        const trimmedLine = lines[i].trim();
+
+        // Check if this line starts a new grid entry (IconName: Title format)
+        // Pattern: IconName: Title (e.g., "FaHeart: Compassion" or "HeartIcon: Compassion")
+        // Supports any icon name format from react-icons (Fa*, Hi*, Md*, etc.) or custom names
+        // Icon name must start with uppercase letter (typical for component names)
+        const iconTitleMatch = trimmedLine.match(/^([A-Z][A-Za-z0-9]*):\s*(.+)$/);
+        if (iconTitleMatch) {
+            // Save previous item if exists
+            if (currentItem && currentItem.icon) {
+                items.push({
+                    icon: currentItem.icon,
+                    title: currentItem.title || "",
+                    description: descriptionLines.join(" ").trim(),
+                });
+            }
+
+            // Start new item
+            currentItem = {
+                icon: iconTitleMatch[1].trim(),
+                title: iconTitleMatch[2].trim(),
+            };
+            descriptionLines = [];
+        } else if (currentItem && trimmedLine) {
+            // This is a description line for the current item
+            // Remove surrounding quotes if present
+            const cleanLine = trimmedLine.replace(/^["']|["']$/g, "");
+            descriptionLines.push(cleanLine);
+        } else if (!trimmedLine && currentItem && descriptionLines.length > 0) {
+            // Empty line after description - continue collecting (might be multi-paragraph)
+            // Don't reset, just continue
+        }
+    }
+
+    // Don't forget the last item
+    if (currentItem && currentItem.icon) {
+        items.push({
+            icon: currentItem.icon,
+            title: currentItem.title || "",
+            description: descriptionLines.join(" ").trim(),
+        });
+    }
+
+    return items;
 };
 
 // Helper function to parse timeline content
@@ -245,6 +388,11 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
     let insideTimeline = false;
     let timelineStartIndex = -1;
 
+    // Track grid state - collect text across blocks
+    let gridText = "";
+    let insideGrid = false;
+    let gridStartIndex = -1;
+
     const flushList = () => {
         if (listItems.length > 0) {
             const ListTag = currentListType === "number" ? "ol" : "ul";
@@ -283,6 +431,24 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
         }
     };
 
+    const processGrid = () => {
+        if (gridText) {
+            const gridItems = parseGridContent(gridText);
+            if (gridItems.length > 0) {
+                flushList();
+                elements.push(
+                    <Grid
+                        key={`grid-${gridStartIndex}`}
+                        items={gridItems}
+                    />
+                );
+            }
+            gridText = "";
+            insideGrid = false;
+            gridStartIndex = -1;
+        }
+    };
+
     blocks.forEach((block, index) => {
         // Handle image blocks
         if (block._type === "image") {
@@ -313,12 +479,13 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
         if (block._type === "block") {
             const textBlock = block as SanityBlock;
 
-            // Extract plain text for timeline detection
+            // Extract plain text for timeline and grid detection
             const plainText = extractTextFromBlock(textBlock.children);
 
-            // Track if we need to filter timeline tags from children
+            // Track if we need to filter timeline/grid tags from children
             let filteredChildren = textBlock.children;
             let hasTimelineInBlock = false;
+            let hasGridInBlock = false;
 
             // Check if timeline starts in this block
             if (plainText.includes("<timeline>")) {
@@ -403,6 +570,91 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                 } else {
                     // Still collecting timeline content
                     timelineText += "\n" + plainText;
+                    return; // Skip normal rendering
+                }
+            }
+
+            // Check if grid starts in this block
+            if (plainText.includes("<grid>")) {
+                insideGrid = true;
+                gridStartIndex = gridStartIndex === -1 ? index : gridStartIndex;
+                const startIndex = plainText.indexOf("<grid>");
+
+                // Check if grid also ends in this block
+                if (plainText.includes("</grid>")) {
+                    const endIndex = plainText.indexOf("</grid>");
+                    // Extract content between tags
+                    gridText = plainText.substring(
+                        startIndex,
+                        endIndex + 7
+                    ); // 7 = length of "</grid>"
+                    processGrid();
+
+                    // Filter grid tags from children before rendering
+                    hasGridInBlock = true;
+                    filteredChildren = filterGridTags(
+                        filteredChildren,
+                        startIndex,
+                        endIndex + 7
+                    );
+
+                    // Continue processing remaining text after </grid> if any
+                    const remainingText = plainText
+                        .substring(endIndex + 7)
+                        .trim();
+                    if (
+                        !remainingText &&
+                        (!filteredChildren || filteredChildren.length === 0)
+                    ) {
+                        return; // Skip this block if no remaining content
+                    }
+                    // Process remaining text as normal content below
+                } else {
+                    // Grid starts but doesn't end in this block
+                    gridText = plainText.substring(startIndex);
+
+                    // Filter grid start tag from children
+                    hasGridInBlock = true;
+                    filteredChildren = filterGridTags(
+                        filteredChildren,
+                        startIndex,
+                        plainText.length
+                    );
+
+                    if (!filteredChildren || filteredChildren.length === 0) {
+                        return; // Skip normal rendering, wait for closing tag
+                    }
+                    // Process remaining text before grid as normal content below
+                }
+            } else if (insideGrid) {
+                // We're inside a grid, check if it ends in this block
+                if (plainText.includes("</grid>")) {
+                    const endIndex = plainText.indexOf("</grid>");
+                    gridText += "\n" + plainText.substring(0, endIndex + 7);
+                    processGrid();
+
+                    // Filter grid end tag from children before rendering
+                    hasGridInBlock = true;
+                    filteredChildren = filterGridTags(
+                        filteredChildren,
+                        0,
+                        endIndex + 7
+                    );
+
+                    // Continue processing remaining text after </grid> if any
+                    const remainingText = plainText
+                        .substring(endIndex + 7)
+                        .trim();
+                    if (
+                        !remainingText &&
+                        (!filteredChildren || filteredChildren.length === 0)
+                    ) {
+                        return; // Skip this block if no remaining content
+                    }
+                    // Process remaining text as normal content below
+                } else {
+                    // Still collecting grid content
+                    gridText += "\n" + plainText;
                     return; // Skip normal rendering
                 }
             }
@@ -517,6 +769,11 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
     // Process any remaining timeline content
     if (insideTimeline) {
         processTimeline();
+    }
+
+    // Process any remaining grid content
+    if (insideGrid) {
+        processGrid();
     }
 
     return <div className={`space-y-2 ${className}`}>{elements}</div>;
