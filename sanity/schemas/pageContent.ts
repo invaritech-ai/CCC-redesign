@@ -85,10 +85,10 @@ export default {
                             media: "image",
                             alt: "alt",
                         },
-                        prepare({ alt }: any) {
+                        prepare({ alt, media }: any) {
                             return {
                                 title: alt || "Image without alt text",
-                                media: "image",
+                                media,
                             };
                         },
                     },
