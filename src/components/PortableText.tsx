@@ -131,18 +131,13 @@ const filterGridTags = (
         } else if (childStart >= gridEndIndex) {
             // Child is completely after grid, keep it
             filtered.push(child);
-        } else if (
-            childStart < gridStartIndex &&
-            childEnd > gridEndIndex
-        ) {
+        } else if (childStart < gridStartIndex && childEnd > gridEndIndex) {
             // Child spans across grid tags - split it
             const beforeText = childText.substring(
                 0,
                 gridStartIndex - childStart
             );
-            const afterText = childText.substring(
-                gridEndIndex - childStart
-            );
+            const afterText = childText.substring(gridEndIndex - childStart);
 
             if (beforeText) {
                 filtered.push({ ...child, text: beforeText });
@@ -150,10 +145,7 @@ const filterGridTags = (
             if (afterText) {
                 filtered.push({ ...child, text: afterText });
             }
-        } else if (
-            childStart < gridStartIndex &&
-            childEnd > gridStartIndex
-        ) {
+        } else if (childStart < gridStartIndex && childEnd > gridStartIndex) {
             // Child ends in grid start - keep only before part
             const beforeText = childText.substring(
                 0,
@@ -162,14 +154,9 @@ const filterGridTags = (
             if (beforeText) {
                 filtered.push({ ...child, text: beforeText });
             }
-        } else if (
-            childStart < gridEndIndex &&
-            childEnd > gridEndIndex
-        ) {
+        } else if (childStart < gridEndIndex && childEnd > gridEndIndex) {
             // Child starts in grid end - keep only after part
-            const afterText = childText.substring(
-                gridEndIndex - childStart
-            );
+            const afterText = childText.substring(gridEndIndex - childStart);
             if (afterText) {
                 filtered.push({ ...child, text: afterText });
             }
@@ -204,7 +191,9 @@ const parseGridContent = (text: string): GridItem[] => {
         // Pattern: IconName: Title (e.g., "FaHeart: Compassion" or "HeartIcon: Compassion")
         // Supports any icon name format from react-icons (Fa*, Hi*, Md*, etc.) or custom names
         // Icon name must start with uppercase letter (typical for component names)
-        const iconTitleMatch = trimmedLine.match(/^([A-Z][A-Za-z0-9]*):\s*(.+)$/);
+        const iconTitleMatch = trimmedLine.match(
+            /^([A-Z][A-Za-z0-9]*):\s*(.+)$/
+        );
         if (iconTitleMatch) {
             // Save previous item if exists
             if (currentItem && currentItem.icon) {
@@ -437,10 +426,7 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
             if (gridItems.length > 0) {
                 flushList();
                 elements.push(
-                    <Grid
-                        key={`grid-${gridStartIndex}`}
-                        items={gridItems}
-                    />
+                    <Grid key={`grid-${gridStartIndex}`} items={gridItems} />
                 );
             }
             gridText = "";
@@ -584,16 +570,17 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                 if (plainText.includes("</grid>")) {
                     const endIndex = plainText.indexOf("</grid>");
                     // Extract content between tags
-                    gridText = plainText.substring(
-                        startIndex,
-                        endIndex + 7
-                    ); // 7 = length of "</grid>"
+                    gridText = plainText.substring(startIndex, endIndex + 7); // 7 = length of "</grid>"
                     processGrid();
 
                     // Filter grid tags from children before rendering
+                    // Use textBlock.children (original) instead of filteredChildren
+                    // because indices are calculated from plainText which is based on original
+                    // This fixes the bug where grid filtering used filteredChildren (already modified by timeline)
+                    // but indices were from plainText (based on original)
                     hasGridInBlock = true;
                     filteredChildren = filterGridTags(
-                        filteredChildren,
+                        textBlock.children,
                         startIndex,
                         endIndex + 7
                     );
@@ -614,9 +601,13 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                     gridText = plainText.substring(startIndex);
 
                     // Filter grid start tag from children
+                    // Use textBlock.children (original) instead of filteredChildren
+                    // because indices are calculated from plainText which is based on original
+                    // This fixes the bug where grid filtering used filteredChildren (already modified by timeline)
+                    // but indices were from plainText (based on original)
                     hasGridInBlock = true;
                     filteredChildren = filterGridTags(
-                        filteredChildren,
+                        textBlock.children,
                         startIndex,
                         plainText.length
                     );
@@ -634,9 +625,13 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                     processGrid();
 
                     // Filter grid end tag from children before rendering
+                    // Use textBlock.children (original) instead of filteredChildren
+                    // because indices are calculated from plainText which is based on original
+                    // This fixes the bug where grid filtering used filteredChildren (already modified by timeline)
+                    // but indices were from plainText (based on original)
                     hasGridInBlock = true;
                     filteredChildren = filterGridTags(
-                        filteredChildren,
+                        textBlock.children,
                         0,
                         endIndex + 7
                     );
