@@ -70,7 +70,7 @@ const App = () => (
             <Route path="/privacy" element={<Privacy />} />
             
             {/* CMS Pages */}
-            <Route path="/who-we-are/history" element={<CMSPage slug="history" />} />
+            <Route path="/who-we-are/history" element={<CMSPage slug="who-we-are/history" />} />
             <Route path="/who-we-are/mission-values" element={<CMSPage slug="mission-values" />} />
             <Route path="/who-we-are/board-governance" element={<CMSPage slug="board-governance" />} />
             <Route path="/who-we-are/team" element={<CMSPage slug="team" />} />

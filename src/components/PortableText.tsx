@@ -5,11 +5,160 @@ import type {
     SanityImageBlock,
 } from "@/lib/sanity.types";
 import { getImageUrlFromString } from "@/lib/sanityImage";
+import { Timeline } from "@/components/Timeline";
 
 interface PortableTextProps {
     blocks: SanityPortableTextBlock[];
     className?: string;
 }
+
+interface TimelineItem {
+    year: string;
+    title?: string;
+    description: string;
+}
+
+// Helper function to extract plain text from block children
+const extractTextFromBlock = (children?: SanityBlock["children"]): string => {
+    if (!children) return "";
+    return children
+        .map((child) => child.text || "")
+        .join("")
+        .trim();
+};
+
+// Helper function to filter timeline tags from children
+const filterTimelineTags = (
+    children: SanityBlock["children"],
+    timelineStartIndex: number,
+    timelineEndIndex: number
+): SanityBlock["children"] => {
+    if (!children) return children;
+
+    let currentPos = 0;
+    const filtered: SanityBlock["children"] = [];
+
+    for (const child of children) {
+        const childText = child.text || "";
+        const childStart = currentPos;
+        const childEnd = currentPos + childText.length;
+
+        // Check if this child contains timeline tags
+        if (childEnd <= timelineStartIndex) {
+            // Child is completely before timeline, keep it
+            filtered.push(child);
+        } else if (childStart >= timelineEndIndex) {
+            // Child is completely after timeline, keep it
+            filtered.push(child);
+        } else if (
+            childStart < timelineStartIndex &&
+            childEnd > timelineEndIndex
+        ) {
+            // Child spans across timeline tags - split it
+            const beforeText = childText.substring(
+                0,
+                timelineStartIndex - childStart
+            );
+            const afterText = childText.substring(
+                timelineEndIndex - childStart
+            );
+
+            if (beforeText) {
+                filtered.push({ ...child, text: beforeText });
+            }
+            if (afterText) {
+                filtered.push({ ...child, text: afterText });
+            }
+        } else if (
+            childStart < timelineStartIndex &&
+            childEnd > timelineStartIndex
+        ) {
+            // Child ends in timeline start - keep only before part
+            const beforeText = childText.substring(
+                0,
+                timelineStartIndex - childStart
+            );
+            if (beforeText) {
+                filtered.push({ ...child, text: beforeText });
+            }
+        } else if (
+            childStart < timelineEndIndex &&
+            childEnd > timelineEndIndex
+        ) {
+            // Child starts in timeline end - keep only after part
+            const afterText = childText.substring(
+                timelineEndIndex - childStart
+            );
+            if (afterText) {
+                filtered.push({ ...child, text: afterText });
+            }
+        }
+        // If child is completely within timeline tags, skip it
+
+        currentPos = childEnd;
+    }
+
+    return filtered;
+};
+
+// Helper function to parse timeline content
+const parseTimelineContent = (text: string): TimelineItem[] => {
+    // Extract content between <timeline> and </timeline> tags
+    const timelineMatch = text.match(/<timeline>([\s\S]*?)<\/timeline>/i);
+    if (!timelineMatch) return [];
+
+    const timelineContent = timelineMatch[1].trim();
+    if (!timelineContent) return [];
+
+    const items: TimelineItem[] = [];
+    const lines = timelineContent.split("\n");
+
+    let currentItem: Partial<TimelineItem> | null = null;
+    let descriptionLines: string[] = [];
+
+    for (let i = 0; i < lines.length; i++) {
+        const trimmedLine = lines[i].trim();
+
+        // Check if this line starts a new timeline entry (YEAR: Title format)
+        const yearTitleMatch = trimmedLine.match(
+            /^(\d{4}(?:\s*\([^)]+\))?):\s*(.+)$/
+        );
+        if (yearTitleMatch) {
+            // Save previous item if exists
+            if (currentItem && currentItem.year) {
+                items.push({
+                    year: currentItem.year,
+                    title: currentItem.title,
+                    description: descriptionLines.join(" ").trim(),
+                });
+            }
+
+            // Start new item
+            currentItem = {
+                year: yearTitleMatch[1].trim(),
+                title: yearTitleMatch[2].trim(),
+            };
+            descriptionLines = [];
+        } else if (currentItem && trimmedLine) {
+            // This is a description line for the current item
+            descriptionLines.push(trimmedLine);
+        } else if (!trimmedLine && currentItem && descriptionLines.length > 0) {
+            // Empty line after description - continue collecting (might be multi-paragraph)
+            // Don't reset, just continue
+        }
+    }
+
+    // Don't forget the last item
+    if (currentItem && currentItem.year) {
+        items.push({
+            year: currentItem.year,
+            title: currentItem.title,
+            description: descriptionLines.join(" ").trim(),
+        });
+    }
+
+    return items;
+};
 
 // Helper function to render text with marks (bold, italic, links, etc.)
 const renderTextWithMarks = (
@@ -91,6 +240,11 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
     let listItems: ReactNode[] = [];
     const elements: ReactNode[] = [];
 
+    // Track timeline state - collect text across blocks
+    let timelineText = "";
+    let insideTimeline = false;
+    let timelineStartIndex = -1;
+
     const flushList = () => {
         if (listItems.length > 0) {
             const ListTag = currentListType === "number" ? "ol" : "ul";
@@ -108,6 +262,24 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
             );
             listItems = [];
             currentListType = null;
+        }
+    };
+
+    const processTimeline = () => {
+        if (timelineText) {
+            const timelineItems = parseTimelineContent(timelineText);
+            if (timelineItems.length > 0) {
+                flushList();
+                elements.push(
+                    <Timeline
+                        key={`timeline-${timelineStartIndex}`}
+                        items={timelineItems}
+                    />
+                );
+            }
+            timelineText = "";
+            insideTimeline = false;
+            timelineStartIndex = -1;
         }
     };
 
@@ -141,8 +313,102 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
         if (block._type === "block") {
             const textBlock = block as SanityBlock;
 
+            // Extract plain text for timeline detection
+            const plainText = extractTextFromBlock(textBlock.children);
+
+            // Track if we need to filter timeline tags from children
+            let filteredChildren = textBlock.children;
+            let hasTimelineInBlock = false;
+
+            // Check if timeline starts in this block
+            if (plainText.includes("<timeline>")) {
+                insideTimeline = true;
+                timelineStartIndex =
+                    timelineStartIndex === -1 ? index : timelineStartIndex;
+                const startIndex = plainText.indexOf("<timeline>");
+
+                // Check if timeline also ends in this block
+                if (plainText.includes("</timeline>")) {
+                    const endIndex = plainText.indexOf("</timeline>");
+                    // Extract content between tags
+                    timelineText = plainText.substring(
+                        startIndex,
+                        endIndex + 11
+                    ); // 11 = length of "</timeline>"
+                    processTimeline();
+
+                    // Filter timeline tags from children before rendering
+                    hasTimelineInBlock = true;
+                    filteredChildren = filterTimelineTags(
+                        textBlock.children,
+                        startIndex,
+                        endIndex + 11
+                    );
+
+                    // Continue processing remaining text after </timeline> if any
+                    const remainingText = plainText
+                        .substring(endIndex + 11)
+                        .trim();
+                    if (
+                        !remainingText &&
+                        (!filteredChildren || filteredChildren.length === 0)
+                    ) {
+                        return; // Skip this block if no remaining content
+                    }
+                    // Process remaining text as normal content below
+                } else {
+                    // Timeline starts but doesn't end in this block
+                    timelineText = plainText.substring(startIndex);
+
+                    // Filter timeline start tag from children
+                    hasTimelineInBlock = true;
+                    filteredChildren = filterTimelineTags(
+                        textBlock.children,
+                        startIndex,
+                        plainText.length
+                    );
+
+                    if (!filteredChildren || filteredChildren.length === 0) {
+                        return; // Skip normal rendering, wait for closing tag
+                    }
+                    // Process remaining text before timeline as normal content below
+                }
+            } else if (insideTimeline) {
+                // We're inside a timeline, check if it ends in this block
+                if (plainText.includes("</timeline>")) {
+                    const endIndex = plainText.indexOf("</timeline>");
+                    timelineText +=
+                        "\n" + plainText.substring(0, endIndex + 11);
+                    processTimeline();
+
+                    // Filter timeline end tag from children before rendering
+                    hasTimelineInBlock = true;
+                    filteredChildren = filterTimelineTags(
+                        textBlock.children,
+                        0,
+                        endIndex + 11
+                    );
+
+                    // Continue processing remaining text after </timeline> if any
+                    const remainingText = plainText
+                        .substring(endIndex + 11)
+                        .trim();
+                    if (
+                        !remainingText &&
+                        (!filteredChildren || filteredChildren.length === 0)
+                    ) {
+                        return; // Skip this block if no remaining content
+                    }
+                    // Process remaining text as normal content below
+                } else {
+                    // Still collecting timeline content
+                    timelineText += "\n" + plainText;
+                    return; // Skip normal rendering
+                }
+            }
+
             // Skip empty blocks (blocks with only empty text)
-            const hasContent = textBlock.children?.some(
+            const hasContent = filteredChildren?.some(
                 (child) => child.text && child.text.trim() !== ""
             );
             if (!hasContent) {
@@ -154,7 +420,7 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
             }
 
             const textContent = renderTextWithMarks(
-                textBlock.children,
+                filteredChildren,
                 textBlock.markDefs
             );
 
@@ -247,6 +513,11 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
 
     // Flush any remaining list items
     flushList();
+
+    // Process any remaining timeline content
+    if (insideTimeline) {
+        processTimeline();
+    }
 
     return <div className={`space-y-2 ${className}`}>{elements}</div>;
 };

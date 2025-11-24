@@ -19,22 +19,9 @@ export default {
     },
     {
       name: "pageSlug",
-      title: "Page to Show Form On",
+      title: "Page Slug",
       type: "string",
-      description: "Select which page this form should appear on",
-      options: {
-        list: [
-          { title: "Contact", value: "contact" },
-          { title: "Community", value: "community" },
-          { title: "Waitlist", value: "waitlist" },
-          { title: "Volunteer", value: "volunteer" },
-          { title: "Support/Donate", value: "support/donate" },
-          { title: "Reports", value: "reports" },
-          { title: "Updates", value: "updates" },
-          { title: "Events", value: "events" },
-          { title: "Privacy", value: "privacy" },
-        ],
-      },
+      description: "Enter the page slug where this form should appear (e.g., 'contact', 'who-we-are/history', 'support/donate')",
       validation: (Rule: any) => Rule.required(),
     },
     {
