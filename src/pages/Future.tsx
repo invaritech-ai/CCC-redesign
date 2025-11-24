@@ -1,15 +1,14 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { AboutHero } from "@/components/AboutHero";
-import { AboutIntroduction } from "@/components/AboutIntroduction";
 import { ProjectTimeline } from "@/components/ProjectTimeline";
 import { ImageGallery } from "@/components/ImageGallery";
-import { UpcomingInitiativesSection } from "@/components/UpcomingInitiativesSection";
-import { CTASection } from "@/components/CTASection";
-import { DonateNowButton } from "@/components/DonateNowButton";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { Mail } from "lucide-react";
+import { WhyRedevelopingSection } from "@/components/WhyRedevelopingSection";
+import { WhatIsBeingBuiltSection } from "@/components/WhatIsBeingBuiltSection";
+import { WhereResidentsAreNowSection } from "@/components/WhereResidentsAreNowSection";
+import { HowCareContinuesSection } from "@/components/HowCareContinuesSection";
+import { GovernanceTeamSection } from "@/components/GovernanceTeamSection";
+import { HowToSupportSection } from "@/components/HowToSupportSection";
 
 const Future = () => {
     // Timeline phases for the reconstruction project
@@ -77,197 +76,122 @@ const Future = () => {
             <main id="main-content" className="flex-1">
                 {/* Hero Section */}
                 <AboutHero
-                    title="Future"
-                    description="China Coast Community launches reconstruction project."
-                    badgeText="Reconstruction Project"
+                    title="Redeveloping our home at 63 Cumberland Road"
+                    description="We are rebuilding China Coast Community's residential care home to create a safer, more modern environment for future generations of elders, while continuing to care for our community throughout construction."
+                    badgeText="Redevelopment Project"
                 />
 
-                {/* Introduction Section */}
-                <AboutIntroduction
-                    title="Building the Future"
+                {/* Section 2: Why we are redeveloping */}
+                <WhyRedevelopingSection
+                    title="Why is CCC redeveloping?"
                     paragraphs={[
-                        "The China Coast Community (CCC) is launching a long-planned reconstruction project, which will add more beds to the home and make it a state-of-the-art care facility.",
-                        "The new 45-bed facility will comprise mostly single rooms with en suite shower rooms, that will allow CCC Residents to live with dignity and in privacy. The 3-storey building will be future-proofed, with foundations supporting an additional floor, if in the future this is permitted.",
-                        "One of CCC's aims is to reach out to the elderly who have memory issues and to provide support for their families and carers. CCC is re-vamping a wide range of services and facilities, not only for its Residents but also for CCC Community Members, who will be assisted to remain independently in the community for as long as they can manage. Re-commencing post-Covid, activities and social events will be arranged for Residents and Community Members, including during the period of the redevelopment.",
-                        "CCC is the only Residential Care Home for the Elderly in Hong Kong providing services for elderly persons of all nationalities, ethnicities, religions and cultures who are linked by the ability to speak the English language.",
-                        "The construction of the new building alone will cost around $HK100 million, and fundraising for the new project is now underway.",
+                        "The building at 63 Cumberland Road, which housed CCC for many years, reached a point where significant upgrading was required to meet current safety and building standards and to prepare for future care needs. After careful review, the Board decided that a full redevelopment would best secure the long-term future of CCC as a home for English-speaking elders in Hong Kong.",
+                    ]}
+                    benefits={[
+                        "Provide a modern, safe residential care home designed to current regulations.",
+                        "Improve accessibility and comfort for elders with higher care needs.",
+                        "Create a building that can sustain CCC's mission for many more decades.",
+                    ]}
+                    quote={{
+                        text: "After studying the options, CCC's Consultants advised us that the existing buildings could not be extensively renovated to achieve CCC's goal. Reconstruction was the only feasible way to provide the optimal services for our residents and the community. The Consultants also advised that it was not feasible to re-build with the residents in situ as it would be too dusty, too noisy, too disruptive, and potentially dangerous for them.",
+                        author: "Corinne Remedios, Chair of CCC's Executive Committee",
+                    }}
+                />
+
+                {/* Section 3: What is being built */}
+                <WhatIsBeingBuiltSection
+                    title="What the new home will offer"
+                    introParagraph="The new building is being designed as a purpose-built residential care home. While technical details may evolve as the project progresses, the intention is to:"
+                    intentions={[
+                        "Provide comfortable bedrooms with improved privacy and accessibility.",
+                        "Include dedicated spaces for activities, dining, physiotherapy and quiet rest.",
+                        "Meet up-to-date fire, health and safety standards.",
+                        "Enable CCC to continue serving a similar number of residents, with flexibility as care needs change.",
+                    ]}
+                    paragraphs={[
+                        "The new 45-bed facility will comprise mostly single rooms (39 single and 3 double rooms) with en suite shower rooms, allowing CCC Residents to live with dignity and in privacy. Corridors and room doors will be wide enough to permit a bed to pass through. There will be 2 lifts, one of which will accommodate a hospital bed.",
+                        "There will be an Education Room and a Rehabilitation Room, with an outdoor hydrotherapy pool. There will be a pantry and communal areas on each floor. The Living and Dining Rooms will open onto outdoor spaces, providing opportunity for Residents, their families and visitors to spend quality time together at the Home.",
+                        "The 3-storey building will be future-proofed, with foundations supporting an additional floor, if in the future this is permitted.",
+                        "On the first and second floors, some rooms will be in secure areas, to accommodate Residents with memory issues who tend to wander. All ground floor rooms will have direct access into the garden.",
+                        "The design is being guided by the needs of elders in Hong Kong, the experience of CCC's long-serving staff, and the requirements of regulators. The new design will make full use of the grounds and will be a mix of communal areas, residential rooms and garden space, which the architect has made a key feature of the design.",
+                    ]}
+                    quotes={[
+                        {
+                            text: "The site has such a nice environment, there is such calmness there in the context of Hong Kong, so I try to capture that calmness, that quietness, this landscape, the garden space – the greenery is very precious. I want to integrate all that into the building,",
+                            author: "Billy Tam, Lead Architect",
+                        },
+                        {
+                            text: "For some of the residents who are on the first or second floor, even if they have limited mobility and can't go down into the garden itself, the design means that they will feel they are in the garden,",
+                            author: "Billy Tam, Lead Architect",
+                        },
                     ]}
                 />
 
-                {/* Donate and Get Involved CTAs */}
-                <section className="py-12 md:py-16 bg-secondary/30">
-                    <div className="container mx-auto px-4">
-                        <div className="max-w-4xl mx-auto flex flex-wrap gap-4 justify-center">
-                            <DonateNowButton size="lg" />
-                            <Button variant="outline" size="lg" className="gap-2" asChild>
-                                <Link to="/get-involved/volunteer">
-                                    <Mail className="h-5 w-5" aria-hidden="true" />
-                                    Get Involved
-                                </Link>
-                            </Button>
-                        </div>
-                        <p className="text-center text-muted-foreground mt-4">
-                            If you would like to support us, please do get in
-                            touch.
-                        </p>
-                    </div>
-                </section>
-
-                {/* The Past Section */}
+                {/* Section 4: Timeline and current status */}
                 <section className="py-12 md:py-20">
+                    <ProjectTimeline phases={timelinePhases} />
                     <div className="container mx-auto px-4">
-                        <div className="max-w-4xl mx-auto">
-                            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-                                The Past
-                            </h2>
-                            <div className="space-y-6">
-                                <p className="text-base md:text-lg text-foreground leading-relaxed">
-                                    The buildings at 63 Cumberland Road, were
-                                    constructed in the 1930s and 1980s. All save
-                                    for 2 rooms share communal bathrooms. The
-                                    facilities are now out-dated and do not
-                                    reflect current standards for elderly care
-                                    e.g. the corridors are not wide enough for 2
-                                    wheelchairs to pass each other; there is
-                                    only one small lift that does not
-                                    accommodate a bed; there is a difference in
-                                    height between 2 parts of the building,
-                                    which is a challenge for Residents with
-                                    mobility issues. Matters have become more
-                                    acute because, as compared with the
-                                    Residents when CCC first opened, the current
-                                    profile of CCC Residents is older and
-                                    frailer, many being wheelchair or bed-bound.
-                                    Moreover, the building and its facilities
-                                    have required repeated and costly
-                                    renovations and repair.
-                                </p>
-                                <p className="text-base md:text-lg text-foreground leading-relaxed">
-                                    CCC appointed Consultants – Architects,
-                                    Structural Engineers, Planners – to carry
-                                    out feasibility studies and advise on the
-                                    way forward, with the objective that the
-                                    elderly be enabled to age-in-place, with
-                                    dignity and privacy.
-                                </p>
-                                <blockquote className="border-l-4 border-primary pl-6 py-2 italic text-base md:text-lg text-foreground">
-                                    "After studying the options, CCC's
-                                    Consultants advised us that the existing
-                                    buildings could not be extensively renovated
-                                    to achieve CCC's goal. Reconstruction was
-                                    the only feasible way to provide the optimal
-                                    services for our residents and the
-                                    community. The Consultants also advised that
-                                    it was not feasible to re-build with the
-                                    residents in situ as it would be too dusty,
-                                    too noisy, too disruptive, and potentially
-                                    dangerous for them."{" "}
-                                    <span className="font-semibold not-italic">
-                                        — Corinne Remedios, Chair of CCC's
-                                        Executive Committee
-                                    </span>
-                                </blockquote>
-                            </div>
+                        <div className="max-w-4xl mx-auto text-center mt-6">
+                            <p className="text-base md:text-lg text-muted-foreground">
+                                We will update this page as key milestones are reached.
+                            </p>
                         </div>
                     </div>
                 </section>
 
-                {/* The Future Section */}
-                <section className="py-12 md:py-20 bg-secondary/30">
-                    <div className="container mx-auto px-4">
-                        <div className="max-w-4xl mx-auto">
-                            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-                                The Future
-                            </h2>
-                            <div className="space-y-6">
-                                <p className="text-base md:text-lg text-foreground leading-relaxed">
-                                    Key elements of the project include making
-                                    sure the new home is more accessible for
-                                    residents and more fit for purpose.
-                                    Corridors and room doors will be wide enough
-                                    to permit a bed to pass through. There will
-                                    be 2 lifts, one of which will accommodate a
-                                    hospital bed. There will be an Education
-                                    Room and a Rehabilitation Room, with an
-                                    outdoor hydrotherapy pool. There will be a
-                                    pantry and communal areas on each floor. The
-                                    Living and Dining Rooms will open onto
-                                    outdoor spaces, providing opportunity for
-                                    Residents, their families and visitors to
-                                    spend quality time together at the Home. On
-                                    the first and second floors, some rooms will
-                                    be in secure areas, to accommodate Residents
-                                    with memory issues who tend to wander. There
-                                    will be 3 double rooms to cater for couples.
-                                    The rest will be single rooms with en suite
-                                    shower rooms, except for 4 single rooms. All
-                                    ground floor rooms will have direct access
-                                    into the garden.
-                                </p>
-                                <p className="text-base md:text-lg text-foreground leading-relaxed">
-                                    The new design will make full use of the
-                                    grounds and will be a mix of communal areas,
-                                    residential rooms and garden space, which
-                                    the architect has made a key feature of the
-                                    design.
-                                </p>
-                                <blockquote className="border-l-4 border-primary pl-6 py-2 italic text-base md:text-lg text-foreground">
-                                    "The site has such a nice environment, there
-                                    is such calmness there in the context of
-                                    Hong Kong, so I try to capture that
-                                    calmness, that quietness, this landscape,
-                                    the garden space – the greenery is very
-                                    precious. I want to integrate all that into
-                                    the building,"{" "}
-                                    <span className="font-semibold not-italic">
-                                        — Billy Tam, Lead Architect
-                                    </span>
-                                </blockquote>
-                                <blockquote className="border-l-4 border-primary pl-6 py-2 italic text-base md:text-lg text-foreground">
-                                    "For some of the residents who are on the
-                                    first or second floor, even if they have
-                                    limited mobility and can't go down into the
-                                    garden itself, the design means that they
-                                    will feel they are in the garden,"{" "}
-                                    <span className="font-semibold not-italic">
-                                        — Billy Tam, Lead Architect
-                                    </span>
-                                </blockquote>
-                                <p className="text-base md:text-lg text-foreground leading-relaxed">
-                                    The Architect's General Building Plans have
-                                    been submitted and Buildings Department
-                                    Approval has been given to demolish and
-                                    construct. CCC is currently working with
-                                    other Departments to obtain the remaining
-                                    consents for the re-development to go ahead.
-                                    The pre-construction work is therefore in
-                                    its final phase.
-                                </p>
-                                <p className="text-base md:text-lg text-foreground leading-relaxed">
-                                    Once work commences, the new facility should
-                                    be completed in two to three years. Funding
-                                    is now being sought and your help would be
-                                    greatly appreciated.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                {/* Section 5: Where residents and services are now */}
+                <WhereResidentsAreNowSection
+                    title="Where are CCC's residents now?"
+                    paragraphs={[
+                        "During redevelopment, CCC is not operating a residential care home at 63 Cumberland Road. Our former residents have moved to alternative accommodation, and CCC has stayed in close contact with them and their families.",
+                    ]}
+                    communityItems={[
+                        "We launched a Community Membership scheme to support former residents and other English-speaking elders.",
+                        "We organise regular outings and social events, such as Bingos at Zetland Hall and seasonal gatherings.",
+                        "We provide ongoing outreach to help elders remain connected and supported.",
+                    ]}
+                />
 
-                {/* Project Timeline */}
-                <ProjectTimeline phases={timelinePhases} />
+                {/* Section 6: How care continues during redevelopment */}
+                <HowCareContinuesSection
+                    title="Continuing care during redevelopment"
+                    paragraphs={[
+                        "Although our building is being redeveloped, our commitment to elders has not paused.",
+                    ]}
+                    teamActivities={[
+                        "Keeps in touch with former residents and Community Members.",
+                        "Organises social, recreational and seasonal events.",
+                        "Helps reduce isolation by keeping connections alive within the CCC community.",
+                    ]}
+                    closingParagraph="Our motto, 'Proud to care', continues to guide every decision we make, including how we manage this transition period."
+                />
 
-                {/* Image Gallery */}
+                {/* Section 7: Governance & professional team */}
+                <GovernanceTeamSection
+                    title="How the project is governed"
+                    introText="The redevelopment is overseen by CCC's volunteer Executive Committee and Management Committee, with a dedicated Project Management Committee providing specialist oversight."
+                    projectManagerName="Ms Tiffany Wong"
+                    projectManagerJoinedDate="July 2025"
+                />
+
+                {/* Section 8: How you can support */}
+                <HowToSupportSection
+                    title="How you can support the redevelopment"
+                    paragraphs={[
+                        "Redeveloping our home is a major undertaking for a small charity. We are deeply grateful to the individuals, families, companies and foundations who are helping to make it possible.",
+                    ]}
+                    supportOptions={[
+                        "Making a donation to help fund the redevelopment and our ongoing outreach to elders.",
+                        "Partnering with CCC through corporate or foundation giving.",
+                        "Helping to spread the word about CCC within the English-speaking Hong Kong community.",
+                    ]}
+                />
+
+                {/* Section 9: Image Gallery */}
                 <ImageGallery
                     images={galleryImages}
                     title="Project Visualizations"
                 />
-
-                {/* Upcoming Initiatives */}
-                <UpcomingInitiativesSection />
-
-                {/* CTA Section */}
-                <CTASection />
             </main>
 
             <Footer />
