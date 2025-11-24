@@ -3,54 +3,28 @@ import { Footer } from "@/components/Footer";
 import { AboutHero } from "@/components/AboutHero";
 import { AboutIntroduction } from "@/components/AboutIntroduction";
 import { ProjectTimeline } from "@/components/ProjectTimeline";
-import { FundraisingProgress } from "@/components/FundraisingProgress";
 import { ImageGallery } from "@/components/ImageGallery";
 import { UpcomingInitiativesSection } from "@/components/UpcomingInitiativesSection";
 import { CTASection } from "@/components/CTASection";
+import { DonateNowButton } from "@/components/DonateNowButton";
 import { Button } from "@/components/ui/button";
-import { Download, ExternalLink } from "lucide-react";
-import { useEffect, useState } from "react";
-import { getAllResources } from "@/lib/sanity.queries";
-import type { SanityResource } from "@/lib/sanity.types";
-import { getImageUrlFromString } from "@/lib/sanityImage";
+import { Link } from "react-router-dom";
+import { Mail } from "lucide-react";
 
 const Future = () => {
-    const [leaflet, setLeaflet] = useState<SanityResource | null>(null);
-
-    useEffect(() => {
-        const fetchLeaflet = async () => {
-            try {
-                // Try to find a resource with category "brochures" or title containing "leaflet" or "reconstruction"
-                const resources = await getAllResources("brochures");
-                const leafletResource =
-                    resources.find(
-                        (r) =>
-                            r.title?.toLowerCase().includes("leaflet") ||
-                            r.title?.toLowerCase().includes("reconstruction") ||
-                            r.title?.toLowerCase().includes("information")
-                    ) ||
-                    resources[0] ||
-                    null;
-                setLeaflet(leafletResource);
-            } catch (error) {
-                console.error("Error fetching leaflet:", error);
-            }
-        };
-        fetchLeaflet();
-    }, []);
     // Timeline phases for the reconstruction project
     const timelinePhases = [
         {
             name: "Pre-Construction Phase",
-            status: "in-progress" as const,
+            status: "completed" as const,
             description:
-                "Feasibility studies completed. Architect's General Building Plans submitted and Buildings Department Approval received for demolition and construction. Currently working with other Departments to obtain remaining consents.",
+                "Feasibility studies completed. Architect's General Building Plans submitted and Buildings Department Approval received for demolition and construction. All consents have been obtained.",
         },
         {
             name: "Construction Phase",
-            status: "upcoming" as const,
+            status: "in-progress" as const,
             description:
-                "Once all approvals are obtained, construction will commence. The new facility should be completed in two to three years.",
+                "Construction is currently underway. The new facility should be completed in two to three years.",
         },
         {
             name: "Completion & Opening",
@@ -60,31 +34,39 @@ const Future = () => {
         },
     ];
 
-    // Gallery images - using placeholder images
+    // Gallery images - using real project images
     const galleryImages = [
         {
-            src: "/future-image-1.svg",
-            alt: "Reconstruction project visualization",
+            src: "/Central Lawn (20230613).webp",
+            alt: "Central Lawn area",
         },
         {
-            src: "/future-image-2.svg",
-            alt: "New facility design concept",
+            src: "/Entrance (20230613).webp",
+            alt: "Entrance area",
         },
         {
-            src: "/future-image-3.svg",
-            alt: "Architectural plans and renderings",
+            src: "/Flower Arbor (20230613).webp",
+            alt: "Flower Arbor",
         },
         {
-            src: "/future-image-4.svg",
-            alt: "Garden and outdoor spaces",
+            src: "/IMG_9752.webp",
+            alt: "Project image",
         },
         {
-            src: "/future-image-5.svg",
-            alt: "Interior design concepts",
+            src: "/isov.webp",
+            alt: "Isometric view",
         },
         {
-            src: "/future-image-6.svg",
-            alt: "Community spaces and facilities",
+            src: "/planv.webp",
+            alt: "Plan view",
+        },
+        {
+            src: "/prep 5.webp",
+            alt: "Preparation work",
+        },
+        {
+            src: "/Private Terrace (20230613).webp",
+            alt: "Private Terrace",
         },
     ];
 
@@ -112,40 +94,16 @@ const Future = () => {
                     ]}
                 />
 
-                {/* Download and Donate CTAs */}
+                {/* Donate and Get Involved CTAs */}
                 <section className="py-12 md:py-16 bg-secondary/30">
                     <div className="container mx-auto px-4">
-                        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 justify-center">
-                            {leaflet?.file?.url ? (
-                                <Button size="lg" variant="default" asChild>
-                                    <a
-                                        href={
-                                            getImageUrlFromString(
-                                                leaflet.file.url
-                                            ) || leaflet.file.url
-                                        }
-                                        download={
-                                            leaflet.file.originalFilename ||
-                                            leaflet.title
-                                        }
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <Download className="mr-2 h-4 w-4" />
-                                        Download our information leaflet
-                                    </a>
-                                </Button>
-                            ) : (
-                                <Button size="lg" variant="default" disabled>
-                                    <Download className="mr-2 h-4 w-4" />
-                                    Download our information leaflet
-                                </Button>
-                            )}
-                            <Button size="lg" variant="outline" asChild>
-                                <a href="/support/donate">
-                                    Click here to donate
-                                    <ExternalLink className="ml-2 h-4 w-4" />
-                                </a>
+                        <div className="max-w-4xl mx-auto flex flex-wrap gap-4 justify-center">
+                            <DonateNowButton size="lg" />
+                            <Button variant="outline" size="lg" className="gap-2" asChild>
+                                <Link to="/get-involved/volunteer">
+                                    <Mail className="h-5 w-5" aria-hidden="true" />
+                                    Get Involved
+                                </Link>
                             </Button>
                         </div>
                         <p className="text-center text-muted-foreground mt-4">
@@ -298,9 +256,6 @@ const Future = () => {
 
                 {/* Project Timeline */}
                 <ProjectTimeline phases={timelinePhases} />
-
-                {/* Fundraising Progress */}
-                <FundraisingProgress currentAmount={0} goalAmount={100000000} />
 
                 {/* Image Gallery */}
                 <ImageGallery

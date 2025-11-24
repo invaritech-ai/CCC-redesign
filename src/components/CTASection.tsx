@@ -17,7 +17,7 @@ export const CTASection = () => {
           <div className="flex flex-wrap gap-4 justify-center">
             <DonateNowButton size="lg" />
             <Button variant="outline" size="lg" className="gap-2" asChild>
-              <Link to="/community">
+              <Link to="/get-involved/volunteer">
                 <Mail className="h-5 w-5" aria-hidden="true" />
                 Get Involved
               </Link>

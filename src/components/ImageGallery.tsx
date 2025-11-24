@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +13,45 @@ interface ImageGalleryProps {
 
 export const ImageGallery = ({ images, title }: ImageGalleryProps) => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
+
+  const goToPrevious = () => {
+    if (selectedImage === null) return;
+    const newIndex = selectedImage === 0 ? images.length - 1 : selectedImage - 1;
+    setSelectedImage(newIndex);
+  };
+
+  const goToNext = () => {
+    if (selectedImage === null) return;
+    const newIndex = selectedImage === images.length - 1 ? 0 : selectedImage + 1;
+    setSelectedImage(newIndex);
+  };
+
+  // Handle keyboard navigation
+  useEffect(() => {
+    if (selectedImage === null) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        setSelectedImage((current) => {
+          if (current === null) return null;
+          return current === 0 ? images.length - 1 : current - 1;
+        });
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        setSelectedImage((current) => {
+          if (current === null) return null;
+          return current === images.length - 1 ? 0 : current + 1;
+        });
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        setSelectedImage(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedImage, images.length]);
 
   if (!images || images.length === 0) return null;
 
@@ -50,6 +89,7 @@ export const ImageGallery = ({ images, title }: ImageGalleryProps) => {
         <DialogContent className="max-w-5xl w-full p-0 bg-black/95 border-none [&>button]:hidden">
           {selectedImage !== null && (
             <div className="relative">
+              {/* Close Button */}
               <button
                 onClick={() => setSelectedImage(null)}
                 className="absolute top-4 right-4 z-10 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 transition-colors focus:outline-none focus:ring-2 focus:ring-white"
@@ -57,11 +97,44 @@ export const ImageGallery = ({ images, title }: ImageGalleryProps) => {
               >
                 <X className="h-6 w-6" />
               </button>
+
+              {/* Previous Button */}
+              {images.length > 1 && (
+                <button
+                  onClick={goToPrevious}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/50 p-3 text-white hover:bg-black/70 transition-colors focus:outline-none focus:ring-2 focus:ring-white"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+              )}
+
+              {/* Next Button */}
+              {images.length > 1 && (
+                <button
+                  onClick={goToNext}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/50 p-3 text-white hover:bg-black/70 transition-colors focus:outline-none focus:ring-2 focus:ring-white"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              )}
+
+              {/* Image */}
               <img
                 src={images[selectedImage].src}
                 alt={images[selectedImage].alt}
                 className="w-full h-auto max-h-[90vh] object-contain"
               />
+
+              {/* Image Counter */}
+              {images.length > 1 && (
+                <div className="absolute top-4 left-4 z-10 rounded-full bg-black/50 px-3 py-1.5 text-white text-sm">
+                  {selectedImage + 1} / {images.length}
+                </div>
+              )}
+
+              {/* Caption */}
               {images[selectedImage].alt && (
                 <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-4 text-center">
                   <p className="text-sm md:text-base">{images[selectedImage].alt}</p>
