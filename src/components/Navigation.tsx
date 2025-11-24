@@ -88,7 +88,7 @@ export const Navigation = () => {
   }, [location.pathname]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-card">
+    <header className="sticky top-0 z-[999] w-full border-b bg-card">
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center justify-between">
           <Logo size="md" showText={true} asLink={true} />
@@ -117,7 +117,7 @@ export const Navigation = () => {
                   <Menu className="h-5 w-5" aria-hidden="true" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] overflow-y-auto">
+              <SheetContent side="right" className="!w-[300px] sm:!max-w-[300px] overflow-y-auto bg-card text-card-foreground [&>button]:text-card-foreground">
                 <nav className="flex flex-col gap-4 mt-8">
                   {NAV_ITEMS.map((item) => (
                     <MobileNavItem key={item.label} item={item} />
@@ -215,7 +215,7 @@ const MobileNavItem = ({ item }: { item: NavItem }) => {
     return (
       <Link 
         to={item.href || "#"} 
-        className="text-base font-medium text-foreground hover:text-primary transition-colors block py-2"
+        className="text-base font-medium text-card-foreground hover:text-primary transition-colors block py-2"
       >
         {item.label}
       </Link>
@@ -226,11 +226,11 @@ const MobileNavItem = ({ item }: { item: NavItem }) => {
     <div className="flex flex-col">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between text-base font-medium text-foreground hover:text-primary transition-colors py-2 w-full text-left"
+        className="flex items-center justify-between text-base font-medium text-card-foreground hover:text-primary transition-colors py-2 w-full text-left"
       >
         {item.label}
         <ChevronDown 
-          className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} 
+          className={cn("h-4 w-4 transition-transform text-primary", isOpen && "rotate-180")} 
         />
       </button>
       
