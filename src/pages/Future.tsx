@@ -36,35 +36,35 @@ const Future = () => {
     // Gallery images - using real project images
     const galleryImages = [
         {
-            src: "/Central Lawn (20230613).webp",
+            src: "/central-lawn.webp",
             alt: "Central Lawn area",
         },
         {
-            src: "/Entrance (20230613).webp",
+            src: "/entrance.webp",
             alt: "Entrance area",
         },
         {
-            src: "/Flower Arbor (20230613).webp",
+            src: "/flower-arbor.webp",
             alt: "Flower Arbor",
         },
         {
-            src: "/IMG_9752.webp",
+            src: "/project-site.webp",
             alt: "Project image",
         },
         {
-            src: "/isov.webp",
+            src: "/isometric-view.webp",
             alt: "Isometric view",
         },
         {
-            src: "/planv.webp",
+            src: "/plan-view.webp",
             alt: "Plan view",
         },
         {
-            src: "/prep 5.webp",
+            src: "/prep-work.webp",
             alt: "Preparation work",
         },
         {
-            src: "/Private Terrace (20230613).webp",
+            src: "/private-terrace.webp",
             alt: "Private Terrace",
         },
     ];
@@ -109,11 +109,24 @@ const Future = () => {
                         "Enable CCC to continue serving a similar number of residents, with flexibility as care needs change.",
                     ]}
                     paragraphs={[
-                        "The new 45-bed facility will comprise mostly single rooms (39 single and 3 double rooms) with en suite shower rooms, allowing CCC Residents to live with dignity and in privacy. Corridors and room doors will be wide enough to permit a bed to pass through. There will be 2 lifts, one of which will accommodate a hospital bed.",
-                        "There will be an Education Room and a Rehabilitation Room, with an outdoor hydrotherapy pool. There will be a pantry and communal areas on each floor. The Living and Dining Rooms will open onto outdoor spaces, providing opportunity for Residents, their families and visitors to spend quality time together at the Home.",
-                        "The 3-storey building will be future-proofed, with foundations supporting an additional floor, if in the future this is permitted.",
-                        "On the first and second floors, some rooms will be in secure areas, to accommodate Residents with memory issues who tend to wander. All ground floor rooms will have direct access into the garden.",
-                        "The design is being guided by the needs of elders in Hong Kong, the experience of CCC's long-serving staff, and the requirements of regulators. The new design will make full use of the grounds and will be a mix of communal areas, residential rooms and garden space, which the architect has made a key feature of the design.",
+                        <span>
+                            Our new home will be a place of <strong className="font-semibold text-primary">comfort and dignity</strong>. We are building a <strong className="font-semibold text-primary">modern 45-bed facility</strong>. Most rooms will be single en-suite rooms. There will be <strong className="font-semibold text-primary">39 single rooms and 3 double rooms</strong>. Every resident will have <strong className="font-semibold text-primary">privacy and independence</strong>.
+                        </span>,
+                        <span>
+                            The home will have <strong className="font-semibold text-primary">wide, open corridors</strong>. It will have <strong className="font-semibold text-primary">thoughtful accessibility features</strong>. Lifts will be ready for hospital beds. This ensures easy movement throughout the home.
+                        </span>,
+                        <span>
+                            Life at CCC will be <strong className="font-semibold text-primary">active and connected</strong>. Residents will have a dedicated <strong className="font-semibold text-primary">Education Room</strong>. There will be a <strong className="font-semibold text-primary">Rehabilitation Room</strong>. A refreshing <strong className="font-semibold text-primary">outdoor hydrotherapy pool</strong> will also be available. Each floor will have cozy pantries and shared spaces. Our Living and Dining areas will open onto <strong className="font-semibold text-primary">green outdoor gardens</strong>. These are perfect for spending time with family and friends.
+                        </span>,
+                        <span>
+                            We are <strong className="font-semibold text-primary">building for the future</strong>. The building will have three stories. Its foundations are designed to support an <strong className="font-semibold text-primary">extra floor</strong>. This means we can adapt to future needs.
+                        </span>,
+                        <span>
+                            <strong className="font-semibold text-primary">Care and safety</strong> are very important. Special <strong className="font-semibold text-primary">secure areas</strong> will be on the upper floors. These will provide a safe place for residents with memory care needs. Ground-floor rooms will have <strong className="font-semibold text-primary">direct access to our peaceful gardens</strong>.
+                        </span>,
+                        <span>
+                            Our long-serving staff helped design this home. We also considered the needs of Hong Kong's elders. This building is a <strong className="font-semibold text-primary">community</strong>. It is <strong className="font-semibold text-primary">connected to nature</strong>. Our architect has created a design where green spaces, light, and living areas work together. The garden will be a main part of daily life.
+                        </span>,
                     ]}
                     quotes={[
                         {

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Users, Calendar, HeartHandshake } from "lucide-react";
 
 interface WhereResidentsAreNowSectionProps {
   title: string;
@@ -8,14 +8,25 @@ interface WhereResidentsAreNowSectionProps {
   communityItems: string[];
 }
 
+const communityIcons = [Users, Calendar, HeartHandshake];
+
 export const WhereResidentsAreNowSection = ({
   title,
   paragraphs,
   communityItems,
 }: WhereResidentsAreNowSectionProps) => {
   return (
-    <section className="py-12 md:py-20">
-      <div className="container mx-auto px-4">
+    <section
+      className="relative py-12 md:py-20"
+      style={{
+        backgroundImage: `url(/Central Lawn (20230613).webp)`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div className="absolute inset-0 bg-background/90" />
+      <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
             {title}
@@ -30,25 +41,29 @@ export const WhereResidentsAreNowSection = ({
               </p>
             ))}
             {communityItems.length > 0 && (
-              <div className="mt-8">
-                <p className="text-base md:text-lg font-semibold text-foreground mb-4">
-                  To maintain our community:
-                </p>
-                <ul className="space-y-3 list-none">
-                  {communityItems.map((item, index) => (
-                    <li
+              <div className="mt-8 grid md:grid-cols-3 gap-6">
+                {communityItems.map((item, index) => {
+                  const Icon = communityIcons[index % communityIcons.length];
+                  return (
+                    <div
                       key={index}
-                      className="flex items-start gap-3 text-base md:text-lg text-foreground leading-relaxed"
+                      className="bg-card/80 backdrop-blur-sm p-6 rounded-lg shadow-md border border-border/50 text-center hover:shadow-lg transition-shadow"
                     >
-                      <span className="text-primary font-bold mt-1">•</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
+                      <div className="flex justify-center mb-4">
+                        <div className="p-3 bg-primary/10 rounded-full">
+                          <Icon className="h-8 w-8 text-primary" />
+                        </div>
+                      </div>
+                      <p className="text-base md:text-lg text-foreground leading-relaxed">
+                        {item}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
             )}
-            <div className="mt-8">
-              <p className="text-base md:text-lg text-foreground leading-relaxed">
+            <div className="mt-8 bg-card/80 backdrop-blur-sm p-6 rounded-lg shadow-md">
+              <p className="text-base md:text-lg text-foreground leading-relaxed text-center">
                 You can read more about our current services on our{" "}
                 <Link
                   to="/care-community/community-members-programme"
