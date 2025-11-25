@@ -1022,7 +1022,7 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                     // Process remaining text as normal content below
                 } else {
                     // Still collecting card content
-                    cardText += "\n" + plainText;
+                    cardText += "\n" + filteredTextAfterTimelineGrid;
                     return; // Skip normal rendering
                 }
             } else if (cardItems.length > 0) {

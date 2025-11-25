@@ -19,27 +19,75 @@ export default defineConfig(({ mode }) => ({
     // Optimize chunk splitting
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Split React and React DOM into separate chunk
-          "react-vendor": ["react", "react-dom", "react-router-dom"],
-          // Split UI component library (Radix UI)
-          "ui-vendor": [
-            "@radix-ui/react-accordion",
-            "@radix-ui/react-alert-dialog",
-            "@radix-ui/react-dialog",
-            "@radix-ui/react-dropdown-menu",
-            "@radix-ui/react-popover",
-            "@radix-ui/react-select",
-            "@radix-ui/react-tabs",
-            "@radix-ui/react-toast",
-            "@radix-ui/react-tooltip",
-          ],
-          // Split form libraries
-          "form-vendor": ["react-hook-form", "@hookform/resolvers", "zod"],
-          // Split chart library
-          "chart-vendor": ["recharts"],
-          // Split query library
-          "query-vendor": ["@tanstack/react-query"],
+        manualChunks(id) {
+          // Vendor chunk splitting
+          if (id.includes("node_modules")) {
+            // Sanity libraries
+            if (id.includes("@sanity/client") || id.includes("@sanity/image-url")) {
+              return "sanity-vendor";
+            }
+
+            // Radix UI components - all UI primitives
+            if (id.includes("@radix-ui")) {
+              return "ui-vendor";
+            }
+
+            // Form libraries
+            if (
+              id.includes("react-hook-form") ||
+              id.includes("@hookform/resolvers") ||
+              id.includes("/zod/")
+            ) {
+              return "form-vendor";
+            }
+
+            // Query library
+            if (id.includes("@tanstack/react-query")) {
+              return "query-vendor";
+            }
+
+            // Utility libraries
+            if (
+              id.includes("/date-fns/") ||
+              id.includes("/lucide-react/") ||
+              id.includes("/react-icons/")
+            ) {
+              return "utils-vendor";
+            }
+
+            // Carousel library
+            if (id.includes("embla-carousel")) {
+              return "carousel-vendor";
+            }
+
+            // Chart library
+            if (id.includes("/recharts/")) {
+              return "chart-vendor";
+            }
+
+            // Other large vendor libraries
+            if (
+              id.includes("/sonner/") ||
+              id.includes("/cmdk/") ||
+              id.includes("/vaul/") ||
+              id.includes("react-day-picker") ||
+              id.includes("react-resizable-panels")
+            ) {
+              return "misc-vendor";
+            }
+
+            // React core libraries - match exact package paths
+            if (
+              id.match(/node_modules\/react(\/|$)/) ||
+              id.match(/node_modules\/react-dom(\/|$)/) ||
+              id.match(/node_modules\/react-router-dom(\/|$)/)
+            ) {
+              return "react-vendor";
+            }
+
+            // Default vendor chunk for other node_modules
+            return "vendor";
+          }
         },
       },
     },
