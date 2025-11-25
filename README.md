@@ -106,7 +106,7 @@ The project uses Sanity as a headless CMS for managing content. Content types in
 -   `/` - Homepage
 -   `/about` - About the organization
 -   `/care-community/community-members-programme` - Community Members Programme information
--   `/events` - Events listing and details
+-   `/care-community/activities-and-events` - Activities and Events listing and details
 -   `/updates` - News and updates
 -   `/reports` - Annual reports and publications
 -   `/volunteer` - Volunteer information and signup

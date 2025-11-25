@@ -42,8 +42,8 @@ const Events = () => {
         const fetchData = async () => {
             const [eventsData, content, form] = await Promise.all([
                 getAllEvents(),
-                getPageContent("events"),
-                getFormByPage("events"),
+                getPageContent("care-community/activities-and-events"),
+                getFormByPage("care-community/activities-and-events"),
             ]);
             setEvents(eventsData);
             setPageContent(content);
@@ -65,7 +65,7 @@ const Events = () => {
         const description = pageContent.subheading || 
             "Upcoming events and activities for our community members.";
         
-        const canonicalUrl = `https://chinacoastcommunity.org/events`;
+        const canonicalUrl = `https://chinacoastcommunity.org/care-community/activities-and-events`;
 
         // Update title
         document.title = pageTitle;
@@ -306,7 +306,7 @@ const Events = () => {
                                                             </p>
                                                         )}
                                                         <Link
-                                                            to={`/events/${event.slug?.current}`}
+                                                            to={`/care-community/activities-and-events/${event.slug?.current}`}
                                                             className="inline-flex items-center text-primary hover:underline text-base font-semibold py-2 mt-3"
                                                             aria-label={`Learn more about ${event.title}`}
                                                         >

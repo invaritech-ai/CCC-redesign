@@ -2,35 +2,29 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { PageContent } from "@/components/PageContent";
 import { DynamicForm } from "@/components/DynamicForm";
-import { VoicesFromCommunitySection } from "@/components/VoicesFromCommunitySection";
+import { PortableText } from "@/components/PortableText";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useEffect, useState } from "react";
-import { getPageContent, getFormByPage } from "@/lib/sanity.queries";
-import type { SanityPageContent, SanityFormBuilder } from "@/lib/sanity.types";
+import {
+    getPageContent,
+    getFormByPage,
+    getAllFAQs,
+} from "@/lib/sanity.queries";
+import type {
+    SanityPageContent,
+    SanityFormBuilder,
+    SanityFAQ,
+} from "@/lib/sanity.types";
 
-interface CMSPageProps {
-    slug: string;
-}
-
-// Helper function to update meta tags
-const updateMetaTag = (name: string, content: string, isProperty = false) => {
-    const attribute = isProperty ? "property" : "name";
-    let element = document.querySelector(
-        `meta[${attribute}="${name}"]`
-    ) as HTMLMetaElement;
-
-    if (!element) {
-        element = document.createElement("meta");
-        element.setAttribute(attribute, name);
-        document.head.appendChild(element);
-    }
-
-    element.content = content;
-};
-
-const CMSPage = ({ slug }: CMSPageProps) => {
-    const [pageContent, setPageContent] = useState<SanityPageContent | null>(
-        null
-    );
+const FAQ = () => {
+    const [pageContent, setPageContent] =
+        useState<SanityPageContent | null>(null);
+    const [faqs, setFaqs] = useState<SanityFAQ[]>([]);
     const [formConfig, setFormConfig] = useState<SanityFormBuilder | null>(
         null
     );
@@ -40,59 +34,57 @@ const CMSPage = ({ slug }: CMSPageProps) => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const [content, form] = await Promise.all([
-                    getPageContent(slug),
-                    getFormByPage(slug),
+                const [content, faqsData, form] = await Promise.all([
+                    getPageContent("care-community/faqs"),
+                    getAllFAQs(),
+                    getFormByPage("care-community/faqs"),
                 ]);
 
                 setPageContent(content);
+                setFaqs(faqsData);
                 setFormConfig(form);
-
-                // Debug logging in development
-                if (process.env.NODE_ENV === "development") {
-                    console.log("[CMSPage] Slug:", slug);
-                    console.log("[CMSPage] Page content found:", !!content);
-                    console.log("[CMSPage] Form config found:", !!form);
-                    if (form) {
-                        console.log("[CMSPage] Form name:", form.formName);
-                        console.log(
-                            "[CMSPage] Form fields:",
-                            form.fields?.length || 0
-                        );
-                    }
-                }
             } catch (error) {
-                console.error("[CMSPage] Error fetching page data:", error);
+                console.error("[FAQ] Error fetching page data:", error);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchData();
-    }, [slug]);
+    }, []);
 
-    // Update SEO meta tags when pageContent is loaded
+    // Update SEO meta tags
     useEffect(() => {
-        if (!pageContent) return;
-
         const baseTitle = "China Coast Community";
-        const pageTitle = pageContent.heading
+        const pageTitle = pageContent?.heading
             ? `${pageContent.heading} | ${baseTitle}`
-            : `${
-                  slug.charAt(0).toUpperCase() +
-                  slug.slice(1).replace(/-/g, " ")
-              } | ${baseTitle}`;
+            : `FAQs | ${baseTitle}`;
 
         const description =
-            pageContent.subheading ||
-            "China Coast Community - Caring for Hong Kong's English-Speaking Elderly";
+            pageContent?.subheading ||
+            "Frequently Asked Questions - China Coast Community";
 
-        const canonicalUrl = `https://chinacoastcommunity.org/${slug}`;
+        const canonicalUrl = `https://chinacoastcommunity.org/care-community/faqs`;
 
         // Update title
         document.title = pageTitle;
 
         // Update meta description
+        const updateMetaTag = (name: string, content: string, isProperty = false) => {
+            const attribute = isProperty ? "property" : "name";
+            let element = document.querySelector(
+                `meta[${attribute}="${name}"]`
+            ) as HTMLMetaElement;
+
+            if (!element) {
+                element = document.createElement("meta");
+                element.setAttribute(attribute, name);
+                document.head.appendChild(element);
+            }
+
+            element.content = content;
+        };
+
         updateMetaTag("description", description);
 
         // Update Open Graph tags
@@ -135,7 +127,7 @@ const CMSPage = ({ slug }: CMSPageProps) => {
                 canonicalLink.href = "https://chinacoastcommunity.org/";
             }
         };
-    }, [pageContent, slug]);
+    }, [pageContent]);
 
     if (loading) {
         return (
@@ -154,6 +146,7 @@ const CMSPage = ({ slug }: CMSPageProps) => {
             <Navigation />
 
             <main id="main-content" className="flex-1">
+                {/* Render page content from CMS if available */}
                 {pageContent ? (
                     <PageContent
                         heading={pageContent.heading}
@@ -168,27 +161,44 @@ const CMSPage = ({ slug }: CMSPageProps) => {
                         <div className="container mx-auto px-4 w-full">
                             <div className="max-w-4xl md:mx-auto md:text-center">
                                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
-                                    {slug
-                                        .split("-")
-                                        .map(
-                                            (word) =>
-                                                word.charAt(0).toUpperCase() +
-                                                word.slice(1)
-                                        )
-                                        .join(" ")}
+                                    FAQs
                                 </h1>
                                 <p className="text-lg md:text-xl max-w-3xl leading-relaxed opacity-90 md:mx-auto">
-                                    Content coming soon.
+                                    Frequently Asked Questions
                                 </p>
                             </div>
                         </div>
                     </section>
                 )}
 
-                {slug === "care-community/life-at-ccc" && (
-                    <VoicesFromCommunitySection />
+                {/* Render FAQs from CMS if available */}
+                {faqs.length > 0 && (
+                    <section className="py-12 md:py-20">
+                        <div className="container mx-auto px-4">
+                            <div className="max-w-4xl mx-auto">
+                                <Accordion type="single" collapsible className="w-full">
+                                    {faqs.map((faq) => (
+                                        <AccordionItem
+                                            key={faq._id}
+                                            value={faq._id}
+                                        >
+                                            <AccordionTrigger className="text-left">
+                                                {faq.question}
+                                            </AccordionTrigger>
+                                            <AccordionContent>
+                                                <div className="pt-2">
+                                                    <PortableText blocks={faq.answer} />
+                                                </div>
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    ))}
+                                </Accordion>
+                            </div>
+                        </div>
+                    </section>
                 )}
 
+                {/* Render form from CMS if available */}
                 {formConfig && <DynamicForm formConfig={formConfig} />}
             </main>
 
@@ -197,4 +207,5 @@ const CMSPage = ({ slug }: CMSPageProps) => {
     );
 };
 
-export default CMSPage;
+export default FAQ;
+

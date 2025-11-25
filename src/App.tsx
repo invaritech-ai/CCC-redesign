@@ -29,6 +29,7 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const CMSPage = lazy(() => import("./pages/CMSPage"));
 const BoardGovernance = lazy(() => import("./pages/BoardGovernance"));
+const FAQ = lazy(() => import("./pages/FAQ"));
 
 const queryClient = new QueryClient();
 
@@ -119,10 +120,7 @@ const App = () => (
                                 <CMSPage slug="care-community/care-and-attention-home" />
                             }
                         />
-                        <Route
-                            path="/care-community/faqs"
-                            element={<CMSPage slug="faqs" />}
-                        />
+                        <Route path="/care-community/faqs" element={<FAQ />} />
                         <Route
                             path="/news/noticeboard"
                             element={<CMSPage slug="noticeboard" />}
