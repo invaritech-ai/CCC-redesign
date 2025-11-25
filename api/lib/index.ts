@@ -1,2 +1,2 @@
-export { sanityServerClient, isSanityConfiguredServer } from "./sanity.server";
+export { sanityServerClient, isSanityConfiguredServer } from "./sanity.server.js";
 
