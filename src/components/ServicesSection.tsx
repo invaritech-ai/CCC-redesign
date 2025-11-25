@@ -7,7 +7,7 @@ export const ServicesSection = () => {
       icon: Heart,
       title: "Care & Attention Home",
       description: "24-hour professional nursing care in a warm, home-like environment. Our licensed facility ensures residents receive dignified care as their needs change.",
-      link: "/waitlist",
+      link: "/care-community/care-and-attention-home",
       category: "Care Services",
     },
     {

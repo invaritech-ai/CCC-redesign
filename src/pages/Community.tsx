@@ -29,8 +29,8 @@ const Community = () => {
     const fetchData = async () => {
       try {
         const [content, form] = await Promise.all([
-          getPageContent("community"),
-          getFormByPage("community"),
+          getPageContent("care-community/community-members-programme"),
+          getFormByPage("care-community/community-members-programme"),
         ]);
         
         setPageContent(content);
@@ -56,7 +56,7 @@ const Community = () => {
     const description = pageContent.subheading || 
       "Connect with CCC members, participate in activities, and learn about residency opportunities at our new building.";
     
-    const canonicalUrl = `https://chinacoastcommunity.org/community`;
+    const canonicalUrl = `https://chinacoastcommunity.org/care-community/community-members-programme`;
 
     // Update title
     document.title = pageTitle;

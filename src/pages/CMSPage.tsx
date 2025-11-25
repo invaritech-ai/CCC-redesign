@@ -47,6 +47,20 @@ const CMSPage = ({ slug }: CMSPageProps) => {
 
                 setPageContent(content);
                 setFormConfig(form);
+
+                // Debug logging in development
+                if (process.env.NODE_ENV === "development") {
+                    console.log("[CMSPage] Slug:", slug);
+                    console.log("[CMSPage] Page content found:", !!content);
+                    console.log("[CMSPage] Form config found:", !!form);
+                    if (form) {
+                        console.log("[CMSPage] Form name:", form.formName);
+                        console.log(
+                            "[CMSPage] Form fields:",
+                            form.fields?.length || 0
+                        );
+                    }
+                }
             } catch (error) {
                 console.error("[CMSPage] Error fetching page data:", error);
             } finally {
@@ -175,7 +189,16 @@ const CMSPage = ({ slug }: CMSPageProps) => {
                     <VoicesFromCommunitySection />
                 )}
 
-                {formConfig && <DynamicForm formConfig={formConfig} />}
+                {formConfig ? (
+                    <DynamicForm formConfig={formConfig} />
+                ) : (
+                    // Debug: Log when form is not found
+                    process.env.NODE_ENV === "development" && (
+                        <div className="py-8 text-center text-sm text-muted-foreground">
+                            Form not found for slug: {slug}
+                        </div>
+                    )
+                )}
             </main>
 
             <Footer />

@@ -15,7 +15,6 @@ const About = lazy(() => import("./pages/About"));
 const Future = lazy(() => import("./pages/Future"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Community = lazy(() => import("./pages/Community"));
-const Waitlist = lazy(() => import("./pages/Waitlist"));
 const Volunteer = lazy(() => import("./pages/Volunteer"));
 const SupportDonate = lazy(() => import("./pages/SupportDonate"));
 const SupportConfirmation = lazy(() => import("./pages/SupportConfirmation"));
@@ -63,7 +62,6 @@ const App = () => (
                             path="/care-community/community-members-programme"
                             element={<Community />}
                         />
-                        <Route path="/waitlist" element={<Waitlist />} />
                         <Route
                             path="/get-involved/volunteer"
                             element={<Volunteer />}

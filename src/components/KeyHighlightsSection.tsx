@@ -1,4 +1,4 @@
-import { Target, Users, ClipboardList, HeartHandshake } from "lucide-react";
+import { Target, Users, HeartHandshake } from "lucide-react";
 import { HighlightCard } from "./HighlightCard";
 
 export const KeyHighlightsSection = () => {
@@ -18,14 +18,6 @@ export const KeyHighlightsSection = () => {
             icon: Users,
             link: "/care-community/community-members-programme",
             category: "Community",
-        },
-        {
-            title: "Join Waitlist",
-            description:
-                "Express interest in our Care & Attention Home. We'll contact you when spaces become available.",
-            icon: ClipboardList,
-            link: "/waitlist",
-            category: "Care Home",
         },
         {
             title: "Volunteer",
@@ -50,7 +42,7 @@ export const KeyHighlightsSection = () => {
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {highlights.map((highlight, index) => (
                         <HighlightCard
                             key={index}
