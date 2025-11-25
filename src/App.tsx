@@ -111,11 +111,15 @@ const App = () => (
                         />
                         <Route
                             path="/care-community/life-at-ccc"
-                            element={<CMSPage slug="care-community/life-at-ccc" />}
+                            element={
+                                <CMSPage slug="care-community/life-at-ccc" />
+                            }
                         />
                         <Route
                             path="/care-community/care-and-attention-home"
-                            element={<CMSPage slug="care-and-attention-home" />}
+                            element={
+                                <CMSPage slug="care-community/care-and-attention-home" />
+                            }
                         />
                         <Route
                             path="/care-community/faqs"

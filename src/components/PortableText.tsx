@@ -7,6 +7,8 @@ import type {
 import { getImageUrlFromString } from "@/lib/sanityImage";
 import { Timeline } from "@/components/Timeline";
 import { Grid } from "@/components/Grid";
+import { InfoCards } from "@/components/InfoCards";
+import type { InfoCardItem } from "@/components/InfoCard";
 
 interface PortableTextProps {
     blocks: SanityPortableTextBlock[];
@@ -167,6 +169,212 @@ const filterGridTags = (
     }
 
     return filtered;
+};
+
+// Helper function to filter card tags from children (similar to filterTimelineTags/filterGridTags)
+const filterCardTags = (
+    children: SanityBlock["children"],
+    cardStartIndex: number,
+    cardEndIndex: number
+): SanityBlock["children"] => {
+    if (!children) return children;
+
+    let currentPos = 0;
+    const filtered: SanityBlock["children"] = [];
+
+    for (const child of children) {
+        const childText = child.text || "";
+        const childStart = currentPos;
+        const childEnd = currentPos + childText.length;
+
+        // Check if this child contains card tags
+        if (childEnd <= cardStartIndex) {
+            // Child is completely before card, keep it
+            filtered.push(child);
+        } else if (childStart >= cardEndIndex) {
+            // Child is completely after card, keep it
+            filtered.push(child);
+        } else if (childStart < cardStartIndex && childEnd > cardEndIndex) {
+            // Child spans across card tags - split it
+            const beforeText = childText.substring(
+                0,
+                cardStartIndex - childStart
+            );
+            const afterText = childText.substring(cardEndIndex - childStart);
+
+            if (beforeText) {
+                filtered.push({ ...child, text: beforeText });
+            }
+            if (afterText) {
+                filtered.push({ ...child, text: afterText });
+            }
+        } else if (childStart < cardStartIndex && childEnd > cardStartIndex) {
+            // Child ends in card start - keep only before part
+            const beforeText = childText.substring(
+                0,
+                cardStartIndex - childStart
+            );
+            if (beforeText) {
+                filtered.push({ ...child, text: beforeText });
+            }
+        } else if (childStart < cardEndIndex && childEnd > cardEndIndex) {
+            // Child starts in card end - keep only after part
+            const afterText = childText.substring(cardEndIndex - childStart);
+            if (afterText) {
+                filtered.push({ ...child, text: afterText });
+            }
+        }
+        // If child is completely within card tags, skip it
+
+        currentPos = childEnd;
+    }
+
+    return filtered;
+};
+
+// Helper function to parse card content
+const parseCardContent = (text: string): InfoCardItem | null => {
+    // Extract content between <card> and </card> tags
+    const cardMatch = text.match(/<card>([\s\S]*?)<\/card>/i);
+    if (!cardMatch) return null;
+
+    const cardContent = cardMatch[1].trim();
+    if (!cardContent) return null;
+
+    const lines = cardContent.split("\n");
+    const processedLines: { line: string; trimmed: string; isIndented: boolean; originalIndex: number }[] = [];
+
+    // Process all lines and identify structure
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const trimmed = line.trim();
+        if (trimmed) {
+            // Check if line starts with spaces or tabs (indented)
+            const isIndented = /^[\s\t]+/.test(line);
+            processedLines.push({
+                line: line,
+                trimmed: trimmed,
+                isIndented: isIndented,
+                originalIndex: i
+            });
+        }
+    }
+
+    if (processedLines.length === 0) return null;
+
+    // Check if any line is indented
+    const hasIndentation = processedLines.some(item => item.isIndented);
+
+    // First non-empty line is always the title
+    const title = processedLines[0].trimmed;
+    let subtitle: string | undefined;
+    let closingStatement: string | undefined;
+    const bulletPoints: string[] = [];
+
+    if (hasIndentation) {
+        // EXISTING LOGIC: Rely on indentation
+        
+        // Find subtitle: first non-indented line after title
+        let subtitleIndex = -1;
+        for (let i = 1; i < processedLines.length; i++) {
+            if (!processedLines[i].isIndented) {
+                subtitle = processedLines[i].trimmed;
+                subtitleIndex = i;
+                break;
+            }
+        }
+
+        // Collect all indented lines as bullet points (skip title and subtitle)
+        const startIndex = subtitleIndex >= 0 ? subtitleIndex + 1 : 1;
+        
+        for (let i = startIndex; i < processedLines.length; i++) {
+            const item = processedLines[i];
+            // Only collect indented lines (these are bullet points)
+            if (item.isIndented) {
+                bulletPoints.push(item.trimmed);
+            }
+        }
+
+        // Find closing statement: last non-indented line that comes after bullets
+        if (processedLines.length > 1) {
+            // Find the index of the last bullet point
+            let lastBulletIndex = -1;
+            for (let i = processedLines.length - 1; i >= 0; i--) {
+                if (processedLines[i].isIndented) {
+                    lastBulletIndex = i;
+                    break;
+                }
+            }
+            
+            // If we have bullets, look for closing statement after the last bullet
+            // Otherwise, look for any non-title/subtitle line
+            const searchStartIndex = lastBulletIndex >= 0 ? lastBulletIndex + 1 : (subtitleIndex >= 0 ? subtitleIndex + 1 : 1);
+            
+            for (let i = processedLines.length - 1; i >= searchStartIndex; i--) {
+                const item = processedLines[i];
+                if (!item.isIndented) {
+                    closingStatement = item.trimmed;
+                    break;
+                }
+            }
+        }
+    } else {
+        // FALLBACK LOGIC: No indentation found, use position
+        // Structure: Title -> [Subtitle] -> [Bullets] -> [Closing]
+        
+        const remainingLines = processedLines.slice(1); // Skip title
+        
+        if (remainingLines.length > 0) {
+            // Check for subtitle (Line 1)
+            // Heuristic: If it's the only line, it's a subtitle (or bullet? let's say subtitle)
+            // If there are multiple lines, Line 1 is subtitle
+            subtitle = remainingLines[0].trimmed;
+            
+            // If there are more lines, check for closing statement
+            if (remainingLines.length > 1) {
+                // Heuristic: Last line is closing statement if we have at least 3 lines total (Title + Subtitle + Closing)
+                // If we have Title + Subtitle + 1 Bullet, is the bullet a closing statement?
+                // Let's assume if > 2 remaining lines (Subtitle + 1 Bullet + Closing), last is closing
+                // If 2 remaining lines (Subtitle + 1 Line), treat 1 Line as bullet? Or closing?
+                // Based on examples: "Our goal is simple..." (Closing) vs "English-speaking..." (Bullet)
+                // Closings are usually sentences. Bullets are phrases.
+                // But hard to detect.
+                // Let's stick to the pattern: Title -> Subtitle -> Bullets -> Closing
+                
+                // If we have at least 2 lines in between Subtitle and End, take the last as closing
+                // If we only have 1 line after Subtitle, treat it as a bullet (safe bet)
+                
+                if (remainingLines.length >= 3) {
+                    closingStatement = remainingLines[remainingLines.length - 1].trimmed;
+                    // Bullets are everything in between
+                    for (let i = 1; i < remainingLines.length - 1; i++) {
+                        bulletPoints.push(remainingLines[i].trimmed);
+                    }
+                } else {
+                    // Only 1 or 2 lines after title.
+                    // Case: Title, Subtitle, Bullet 1. (Length 2) -> Subtitle, Bullet 1
+                    // Case: Title, Subtitle, Closing. (Length 2) -> Subtitle, Closing?
+                    // Let's treat as bullets if they are in the middle.
+                    
+                    // Actually, if we have Title, Line 1, Line 2.
+                    // Line 1 = Subtitle.
+                    // Line 2 = Bullet?
+                    // If we assume the user ALWAYS provides a subtitle if they provide bullets...
+                    
+                    for (let i = 1; i < remainingLines.length; i++) {
+                        bulletPoints.push(remainingLines[i].trimmed);
+                    }
+                }
+            }
+        }
+    }
+
+    return {
+        title,
+        subtitle,
+        bulletPoints,
+        closingStatement,
+    };
 };
 
 // Helper function to parse grid content
@@ -382,6 +590,12 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
     let insideGrid = false;
     let gridStartIndex = -1;
 
+    // Track card state - collect cards across blocks
+    let cardItems: InfoCardItem[] = [];
+    let cardText = "";
+    let insideCard = false;
+    let cardStartIndex = -1;
+
     const flushList = () => {
         if (listItems.length > 0) {
             const ListTag = currentListType === "number" ? "ol" : "ul";
@@ -435,6 +649,19 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
         }
     };
 
+    const processCards = () => {
+        if (cardItems.length > 0) {
+            flushList();
+            elements.push(
+                <InfoCards key={`cards-${cardStartIndex}`} items={cardItems} />
+            );
+            cardItems = [];
+            cardText = "";
+            insideCard = false;
+            cardStartIndex = -1;
+        }
+    };
+
     blocks.forEach((block, index) => {
         // Handle image blocks
         if (block._type === "image") {
@@ -468,10 +695,11 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
             // Extract plain text for timeline and grid detection
             const plainText = extractTextFromBlock(textBlock.children);
 
-            // Track if we need to filter timeline/grid tags from children
+            // Track if we need to filter timeline/grid/card tags from children
             let filteredChildren = textBlock.children;
             let hasTimelineInBlock = false;
             let hasGridInBlock = false;
+            let hasCardInBlock = false;
 
             // Check if timeline starts in this block
             if (plainText.includes("<timeline>")) {
@@ -654,6 +882,106 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                 }
             }
 
+            // Check if card starts in this block
+            if (plainText.includes("<card>")) {
+                insideCard = true;
+                cardStartIndex = cardStartIndex === -1 ? index : cardStartIndex;
+                const startIndex = plainText.indexOf("<card>");
+
+                // Check if card also ends in this block
+                if (plainText.includes("</card>")) {
+                    const endIndex = plainText.indexOf("</card>");
+                    // Extract content between tags
+                    cardText = plainText.substring(startIndex, endIndex + 7); // 7 = length of "</card>"
+                    const cardItem = parseCardContent(cardText);
+                    if (cardItem) {
+                        cardItems.push(cardItem);
+                    }
+
+                    // Filter card tags from children before rendering
+                    hasCardInBlock = true;
+                    filteredChildren = filterCardTags(
+                        textBlock.children,
+                        startIndex,
+                        endIndex + 7
+                    );
+
+                    // Reset card state since this card is complete
+                    cardText = "";
+                    insideCard = false;
+
+                    // Continue processing remaining text after </card> if any
+                    const remainingText = plainText
+                        .substring(endIndex + 7)
+                        .trim();
+                    if (
+                        !remainingText &&
+                        (!filteredChildren || filteredChildren.length === 0)
+                    ) {
+                        return; // Skip this block if no remaining content
+                    }
+                    // Process remaining text as normal content below
+                } else {
+                    // Card starts but doesn't end in this block
+                    cardText = plainText.substring(startIndex);
+
+                    // Filter card start tag from children
+                    hasCardInBlock = true;
+                    filteredChildren = filterCardTags(
+                        textBlock.children,
+                        startIndex,
+                        plainText.length
+                    );
+
+                    if (!filteredChildren || filteredChildren.length === 0) {
+                        return; // Skip normal rendering, wait for closing tag
+                    }
+                    // Process remaining text before card as normal content below
+                }
+            } else if (insideCard) {
+                // We're inside a card, check if it ends in this block
+                if (plainText.includes("</card>")) {
+                    const endIndex = plainText.indexOf("</card>");
+                    cardText += "\n" + plainText.substring(0, endIndex + 7);
+                    const cardItem = parseCardContent(cardText);
+                    if (cardItem) {
+                        cardItems.push(cardItem);
+                    }
+
+                    // Filter card end tag from children before rendering
+                    hasCardInBlock = true;
+                    filteredChildren = filterCardTags(
+                        textBlock.children,
+                        0,
+                        endIndex + 7
+                    );
+
+                    // Reset card state since this card is complete
+                    cardText = "";
+                    insideCard = false;
+
+                    // Continue processing remaining text after </card> if any
+                    const remainingText = plainText
+                        .substring(endIndex + 7)
+                        .trim();
+                    if (
+                        !remainingText &&
+                        (!filteredChildren || filteredChildren.length === 0)
+                    ) {
+                        return; // Skip this block if no remaining content
+                    }
+                    // Process remaining text as normal content below
+                } else {
+                    // Still collecting card content
+                    cardText += "\n" + plainText;
+                    return; // Skip normal rendering
+                }
+            } else if (cardItems.length > 0) {
+                // We have collected cards but encountered non-card content
+                // Process the cards before continuing with normal content
+                processCards();
+            }
+
             // Skip empty blocks (blocks with only empty text)
             const hasContent = filteredChildren?.some(
                 (child) => child.text && child.text.trim() !== ""
@@ -769,6 +1097,19 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
     // Process any remaining grid content
     if (insideGrid) {
         processGrid();
+    }
+
+    // Process any remaining card content
+    if (insideCard) {
+        const cardItem = parseCardContent(cardText);
+        if (cardItem) {
+            cardItems.push(cardItem);
+        }
+    }
+
+    // Process any collected cards
+    if (cardItems.length > 0) {
+        processCards();
     }
 
     return <div className={`space-y-2 ${className}`}>{elements}</div>;
