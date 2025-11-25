@@ -2,13 +2,14 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getUpdateBySlug } from "@/lib/sanity.queries";
-import { Calendar, User } from "lucide-react";
+import { getUpdateBySlug, getCaseStudyBySlug } from "@/lib/sanity.queries";
+import { Calendar, User, Building2 } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { getImageUrl, getImageUrlFromString } from "@/lib/sanityImage";
 import type {
     SanityUpdate,
+    SanityCaseStudy,
     SanityPortableTextBlock,
     SanityImageBlock,
 } from "@/lib/sanity.types";
@@ -110,17 +111,30 @@ const PortableText = ({ blocks }: { blocks: SanityPortableTextBlock[] }) => {
 const UpdateDetail = () => {
     const { slug } = useParams<{ slug: string }>();
     const [update, setUpdate] = useState<SanityUpdate | null>(null);
+    const [caseStudy, setCaseStudy] = useState<SanityCaseStudy | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isCaseStudy, setIsCaseStudy] = useState(false);
 
     useEffect(() => {
-        const fetchUpdate = async () => {
+        const fetchContent = async () => {
             if (slug) {
-                const data = await getUpdateBySlug(slug);
-                setUpdate(data);
+                // Try fetching as update first
+                const updateData = await getUpdateBySlug(slug);
+                if (updateData) {
+                    setUpdate(updateData);
+                    setIsCaseStudy(false);
+                } else {
+                    // If not found as update, try as case study
+                    const caseStudyData = await getCaseStudyBySlug(slug);
+                    if (caseStudyData) {
+                        setCaseStudy(caseStudyData);
+                        setIsCaseStudy(true);
+                    }
+                }
             }
             setLoading(false);
         };
-        fetchUpdate();
+        fetchContent();
     }, [slug]);
 
     if (loading) {
@@ -135,7 +149,17 @@ const UpdateDetail = () => {
         );
     }
 
-    if (!update) {
+    const content = isCaseStudy ? caseStudy : update;
+    const contentTitle = isCaseStudy ? caseStudy?.title : update?.title;
+    const contentImage = isCaseStudy 
+        ? (caseStudy?.images && caseStudy.images.length > 0 ? caseStudy.images[0].image : undefined)
+        : update?.image;
+    const contentDate = isCaseStudy 
+        ? (caseStudy?.date ? new Date(caseStudy.date).toISOString() : undefined)
+        : update?.publishedAt;
+    const contentFeatured = isCaseStudy ? caseStudy?.featured : update?.featured;
+
+    if (!content) {
         return (
             <div className="min-h-screen flex flex-col">
                 <Navigation />
@@ -144,10 +168,10 @@ const UpdateDetail = () => {
                         <div className="container mx-auto px-4 w-full">
                             <div className="max-w-4xl md:mx-auto md:text-center">
                                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
-                                    Update Not Found
+                                    {isCaseStudy ? "Case Study" : "Update"} Not Found
                                 </h1>
                                 <p className="text-lg md:text-xl max-w-3xl leading-relaxed opacity-90 md:mx-auto">
-                                    The update you're looking for doesn't exist.
+                                    The {isCaseStudy ? "case study" : "update"} you're looking for doesn't exist.
                                 </p>
                             </div>
                         </div>
@@ -165,10 +189,10 @@ const UpdateDetail = () => {
             <main id="main-content" className="flex-1">
                 <section 
                     className={`relative bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center ${
-                        update.image ? 'bg-cover bg-center' : ''
+                        contentImage ? 'bg-cover bg-center' : ''
                     }`}
-                    style={update.image ? {
-                        backgroundImage: `url(${getImageUrl(update.image, {
+                    style={contentImage ? {
+                        backgroundImage: `url(${getImageUrl(contentImage, {
                             width: 1920,
                             height: 1080,
                             format: "webp",
@@ -176,35 +200,44 @@ const UpdateDetail = () => {
                     } : undefined}
                 >
                     {/* Dark overlay */}
-                    {update.image && (
+                    {contentImage && (
                         <div className="absolute inset-0 bg-black/60"></div>
                     )}
                     
                     {/* Content */}
                     <div className="container mx-auto px-4 w-full relative z-10">
                         <div className="max-w-4xl md:mx-auto md:text-center">
-                            {update.featured && (
-                                <Badge className="mb-6 bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 md:mx-auto">
-                                    Featured
-                                </Badge>
-                            )}
+                            <div className="flex flex-wrap justify-center gap-2 mb-6">
+                                {contentFeatured && (
+                                    <Badge className="bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30">
+                                        Featured
+                                    </Badge>
+                                )}
+                                {isCaseStudy && (
+                                    <Badge className="bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30">
+                                        Case Study
+                                    </Badge>
+                                )}
+                            </div>
                             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
-                                {update.title}
+                                {contentTitle}
                             </h1>
                             <div className="flex flex-wrap justify-center gap-4 text-lg md:text-xl opacity-90">
-                                <div className="flex items-center gap-2">
-                                    <Calendar
-                                        className="h-5 w-5"
-                                        aria-hidden="true"
-                                    />
-                                    <span>
-                                        {format(
-                                            new Date(update.publishedAt),
-                                            "PPP"
-                                        )}
-                                    </span>
-                                </div>
-                                {update.author && (
+                                {contentDate && (
+                                    <div className="flex items-center gap-2">
+                                        <Calendar
+                                            className="h-5 w-5"
+                                            aria-hidden="true"
+                                        />
+                                        <span>
+                                            {format(
+                                                new Date(contentDate),
+                                                "PPP"
+                                            )}
+                                        </span>
+                                    </div>
+                                )}
+                                {!isCaseStudy && update?.author && (
                                     <div className="flex items-center gap-2">
                                         <User
                                             className="h-5 w-5"
@@ -213,7 +246,16 @@ const UpdateDetail = () => {
                                         <span>{update.author}</span>
                                     </div>
                                 )}
-                                {update.type && (
+                                {isCaseStudy && caseStudy?.client && (
+                                    <div className="flex items-center gap-2">
+                                        <Building2
+                                            className="h-5 w-5"
+                                            aria-hidden="true"
+                                        />
+                                        <span>{caseStudy.client}</span>
+                                    </div>
+                                )}
+                                {!isCaseStudy && update?.type && (
                                     <Badge
                                         variant="outline"
                                         className="bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 capitalize"
@@ -229,30 +271,67 @@ const UpdateDetail = () => {
                 <section className="py-16">
                     <div className="container mx-auto px-4">
                         <div className="max-w-4xl mx-auto">
-
-                            {update.excerpt && (
-                                <p className="text-xl text-muted-foreground mb-8 leading-relaxed italic">
-                                    {update.excerpt}
-                                </p>
-                            )}
-
-                            {update.body && (
-                                <PortableText blocks={update.body} />
-                            )}
-
-                            {update.tags && update.tags.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mt-8">
-                                    {update.tags.map(
-                                        (tag: string, index: number) => (
-                                            <Badge
-                                                key={index}
-                                                variant="outline"
-                                            >
-                                                {tag}
-                                            </Badge>
-                                        )
+                            {isCaseStudy ? (
+                                <>
+                                    {caseStudy?.description && (
+                                        <PortableText blocks={caseStudy.description} />
                                     )}
-                                </div>
+
+                                    {caseStudy?.images && caseStudy.images.length > 0 && (
+                                        <div className="mt-8 space-y-6">
+                                            {caseStudy.images.map((imgItem, index) => {
+                                                if (!imgItem.image) return null;
+                                                const imageUrl = getImageUrl(imgItem.image, {
+                                                    width: 1200,
+                                                    height: 800,
+                                                    format: "webp",
+                                                });
+                                                return imageUrl ? (
+                                                    <img
+                                                        key={index}
+                                                        src={imageUrl}
+                                                        alt={`${caseStudy.title} - Image ${index + 1}`}
+                                                        className="w-full rounded-lg"
+                                                    />
+                                                ) : null;
+                                            })}
+                                        </div>
+                                    )}
+
+                                    {caseStudy?.outcomes && (
+                                        <div className="mt-8">
+                                            <h2 className="text-2xl font-bold mb-4">Outcomes</h2>
+                                            <PortableText blocks={caseStudy.outcomes} />
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <>
+                                    {update?.excerpt && (
+                                        <p className="text-xl text-muted-foreground mb-8 leading-relaxed italic">
+                                            {update.excerpt}
+                                        </p>
+                                    )}
+
+                                    {update?.body && (
+                                        <PortableText blocks={update.body} />
+                                    )}
+
+                                    {update?.tags && update.tags.length > 0 && (
+                                        <div className="flex flex-wrap gap-2 mt-8">
+                                            {update.tags.map(
+                                                (tag: string, index: number) => (
+                                                    <Badge
+                                                        key={index}
+                                                        variant="outline"
+                                                    >
+                                                        {tag}
+                                                    </Badge>
+                                                )
+                                            )}
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>

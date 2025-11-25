@@ -87,7 +87,6 @@ export const Grid = ({ items }: GridProps) => {
     if (!items || items.length === 0) return null;
 
     const gridColsClass = getGridColsClass(items.length);
-    const isFiveItems = items.length === 5;
 
     return (
         <section className="py-12 md:py-20">
@@ -95,16 +94,12 @@ export const Grid = ({ items }: GridProps) => {
                 <div className={`grid ${gridColsClass} gap-6 max-w-6xl mx-auto`}>
                     {items.map((item, index) => {
                         const IconComponent = resolveIcon(item.icon);
-                        const isLastItem = index === items.length - 1;
-                        
-                        // For 5 items, make the last item span 2 columns on lg screens to avoid awkward single-item row
-                        const spanClass = isFiveItems && isLastItem ? "lg:col-span-2 lg:max-w-2xl lg:mx-auto" : "";
                         const bgColor = getCardBackgroundColor(index);
 
                         return (
                             <Card 
                                 key={index} 
-                                className={`${spanClass} ${bgColor} transition-all duration-300 hover:shadow-md hover:-translate-y-1`}
+                                className={`${bgColor} transition-all duration-300 hover:shadow-md hover:-translate-y-1`}
                             >
                                 <CardContent className="pt-6">
                                     <div className="flex gap-4">

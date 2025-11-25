@@ -4,7 +4,7 @@ import { PageContent } from "@/components/PageContent";
 import { DynamicForm } from "@/components/DynamicForm";
 import { useEffect, useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
-import { getAllUpdates, getPageContent, getFormByPage } from "@/lib/sanity.queries";
+import { getAllUpdates, getAllCaseStudies, getPageContent, getFormByPage } from "@/lib/sanity.queries";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { Calendar, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
 import { getImageUrl } from "@/lib/sanityImage";
-import { UPDATE_TYPES, type SanityUpdate, type SanityFormBuilder, type SanityPageContent } from "@/lib/sanity.types";
+import { UPDATE_TYPES, type SanityUpdate, type SanityCaseStudy, type SanityFormBuilder, type SanityPageContent } from "@/lib/sanity.types";
 import { SearchAndFilter } from "@/components/SearchAndFilter";
 
 // Helper function to update meta tags
@@ -35,9 +35,13 @@ interface UpdatesProps {
     pageSlug?: string;
 }
 
+// Unified type for display that combines updates and case studies
+type UnifiedItem = (SanityUpdate & { contentType: 'update' }) | (SanityCaseStudy & { contentType: 'caseStudy'; publishedAt: string; excerpt?: string; image?: any });
+
 const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => {
     const location = useLocation();
     const [updates, setUpdates] = useState<SanityUpdate[]>([]);
+    const [caseStudies, setCaseStudies] = useState<SanityCaseStudy[]>([]);
     const [pageContent, setPageContent] = useState<SanityPageContent | null>(null);
     const [formConfig, setFormConfig] = useState<SanityFormBuilder | null>(null);
     const [loading, setLoading] = useState(true);
@@ -47,20 +51,33 @@ const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => 
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [displayCount, setDisplayCount] = useState(12);
 
+    // Check if we're on the stories page
+    const isStoriesPage = defaultType === "story" || pageSlug === "news/stories";
+
     useEffect(() => {
         const fetchData = async () => {
-            const [updatesData, content, form] = await Promise.all([
+            const promises = [
                 getAllUpdates(),
                 getPageContent(pageSlug),
                 getFormByPage(pageSlug),
-            ]);
-            setUpdates(updatesData);
-            setPageContent(content);
-            setFormConfig(form);
+            ];
+            
+            // Fetch case studies if we're on the stories page
+            if (isStoriesPage) {
+                promises.push(getAllCaseStudies());
+            }
+
+            const results = await Promise.all(promises);
+            setUpdates(results[0] as SanityUpdate[]);
+            setPageContent(results[1] as SanityPageContent | null);
+            setFormConfig(results[2] as SanityFormBuilder | null);
+            if (isStoriesPage && results[3]) {
+                setCaseStudies(results[3] as SanityCaseStudy[]);
+            }
             setLoading(false);
         };
         fetchData();
-    }, [pageSlug]);
+    }, [pageSlug, isStoriesPage]);
 
     // Update SEO meta tags when pageContent is loaded
     useEffect(() => {
@@ -109,46 +126,110 @@ const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => 
                 canonicalLink.href = "https://chinacoastcommunity.org/";
             }
         };
-    }, [pageContent, title]);
+    }, [pageContent, title, location.pathname]);
 
-    // Get unique types, categories, and tags from updates
-    // We use predefined types for the filter now, but still calculate categories/tags dynamically
+    // Normalize case studies to match update format for unified display
+    const normalizedCaseStudies = useMemo(() => {
+        return caseStudies.map((caseStudy): UnifiedItem => {
+            // Extract first image from images array
+            const firstImage = caseStudy.images && caseStudy.images.length > 0 
+                ? caseStudy.images[0].image 
+                : undefined;
+            
+            // Extract excerpt from description (first block of text)
+            let excerpt: string | undefined;
+            if (caseStudy.description && Array.isArray(caseStudy.description) && caseStudy.description.length > 0) {
+                const firstBlock = caseStudy.description[0];
+                if (firstBlock._type === "block" && firstBlock.children) {
+                    excerpt = firstBlock.children
+                        .map((child: any) => child.text || "")
+                        .join("")
+                        .substring(0, 150); // Limit excerpt length
+                }
+            }
+
+            // Convert date to publishedAt format
+            const publishedAt = caseStudy.date 
+                ? new Date(caseStudy.date).toISOString()
+                : new Date().toISOString();
+
+            return {
+                ...caseStudy,
+                contentType: 'caseStudy' as const,
+                publishedAt,
+                excerpt,
+                image: firstImage,
+            };
+        });
+    }, [caseStudies]);
+
+    // Combine updates and case studies into unified array
+    const unifiedItems = useMemo(() => {
+        const updateItems: UnifiedItem[] = updates.map(update => ({
+            ...update,
+            contentType: 'update' as const,
+        }));
+        
+        if (isStoriesPage) {
+            return [...updateItems, ...normalizedCaseStudies].sort((a, b) => {
+                const dateA = new Date(a.publishedAt).getTime();
+                const dateB = new Date(b.publishedAt).getTime();
+                return dateB - dateA; // Most recent first
+            });
+        }
+        
+        return updateItems;
+    }, [updates, normalizedCaseStudies, isStoriesPage]);
+
+    // Get unique types, categories, and tags from unified items
     const availableCategories = useMemo(() => {
-        const categories = updates
-            .flatMap((update) => update.categories || [])
+        const categories = unifiedItems
+            .flatMap((item) => item.categories || [])
             .filter((cat): cat is string => cat !== undefined && cat !== null);
         return Array.from(new Set(categories)).sort();
-    }, [updates]);
+    }, [unifiedItems]);
 
     const availableTags = useMemo(() => {
-        const tags = updates
-            .flatMap((update) => update.tags || [])
+        const tags = unifiedItems
+            .flatMap((item) => item.tags || [])
             .filter((tag): tag is string => tag !== undefined && tag !== null);
         return Array.from(new Set(tags)).sort();
-    }, [updates]);
+    }, [unifiedItems]);
 
-    // Filter updates based on search, type, categories, and tags
-    const filteredUpdates = useMemo(() => {
-        return updates.filter((update) => {
+    // Filter unified items based on search, type, categories, and tags
+    const filteredItems = useMemo(() => {
+        return unifiedItems.filter((item) => {
             // Default Type Pre-filter (if prop is provided)
             if (defaultType) {
                 const types = Array.isArray(defaultType) ? defaultType : [defaultType];
-                // Case-insensitive check
-                if (!update.type || !types.includes(update.type.toLowerCase())) {
-                    return false;
+                // For case studies, include them if we're on stories page
+                if (item.contentType === 'caseStudy') {
+                    // Case studies are always included on stories page
+                    if (!isStoriesPage) return false;
+                } else {
+                    // For updates, check type match
+                    if (!item.type || !types.includes(item.type.toLowerCase())) {
+                        return false;
+                    }
                 }
             }
 
             // User selected Type filter (only if no defaultType is set)
-            if (!defaultType && selectedType !== "all" && update.type !== selectedType) {
-                return false;
+            if (!defaultType && selectedType !== "all") {
+                if (item.contentType === 'caseStudy') {
+                    // Case studies don't have a type field, skip type filter for them
+                    // But if user explicitly filters, we might want to exclude them
+                    // For now, include case studies when type filter is set (they're still stories)
+                } else if (item.type !== selectedType) {
+                    return false;
+                }
             }
 
             // Categories filter (must match at least one selected category)
             if (selectedCategories.length > 0) {
-                const updateCategories = update.categories || [];
+                const itemCategories = item.categories || [];
                 const hasMatchingCategory = selectedCategories.some((cat) =>
-                    updateCategories.includes(cat)
+                    itemCategories.includes(cat)
                 );
                 if (!hasMatchingCategory) {
                     return false;
@@ -157,8 +238,8 @@ const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => 
 
             // Tags filter (must match at least one selected tag)
             if (selectedTags.length > 0) {
-                const updateTags = update.tags || [];
-                const hasMatchingTag = selectedTags.some((tag) => updateTags.includes(tag));
+                const itemTags = item.tags || [];
+                const hasMatchingTag = selectedTags.some((tag) => itemTags.includes(tag));
                 if (!hasMatchingTag) {
                     return false;
                 }
@@ -167,22 +248,27 @@ const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => 
             // Search filter
             if (searchQuery) {
                 const query = searchQuery.toLowerCase();
-                const matchesTitle = update.title?.toLowerCase().includes(query);
-                const matchesExcerpt = update.excerpt?.toLowerCase().includes(query);
-                const matchesTags = update.tags?.some((tag) =>
+                const matchesTitle = item.title?.toLowerCase().includes(query);
+                const matchesExcerpt = item.excerpt?.toLowerCase().includes(query);
+                const matchesTags = item.tags?.some((tag) =>
                     tag.toLowerCase().includes(query)
                 );
+                // For case studies, also search in client field
+                if (item.contentType === 'caseStudy') {
+                    const matchesClient = item.client?.toLowerCase().includes(query);
+                    return matchesTitle || matchesExcerpt || matchesTags || matchesClient;
+                }
                 return matchesTitle || matchesExcerpt || matchesTags;
             }
 
             return true;
         });
-    }, [updates, searchQuery, selectedType, selectedCategories, selectedTags, defaultType]);
+    }, [unifiedItems, searchQuery, selectedType, selectedCategories, selectedTags, defaultType, isStoriesPage]);
 
-    // Get displayed updates (paginated)
-    const displayedUpdates = useMemo(() => {
-        return filteredUpdates.slice(0, displayCount);
-    }, [filteredUpdates, displayCount]);
+    // Get displayed items (paginated)
+    const displayedItems = useMemo(() => {
+        return filteredItems.slice(0, displayCount);
+    }, [filteredItems, displayCount]);
 
     const handleLoadMore = () => {
         setDisplayCount((prev) => prev + 12);
@@ -267,7 +353,7 @@ const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => 
                                     Loading updates...
                                 </p>
                             </div>
-                        ) : updates.length > 0 ? (
+                        ) : unifiedItems.length > 0 ? (
                             <>
                                 <SearchAndFilter
                                     searchValue={searchQuery}
@@ -285,8 +371,8 @@ const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => 
                                         ] : []
                                     }
                                     onClearFilters={handleClearFilters}
-                                    displayedCount={displayedUpdates.length}
-                                    totalCount={filteredUpdates.length}
+                                    displayedCount={displayedItems.length}
+                                    totalCount={filteredItems.length}
                                 />
 
 
@@ -343,40 +429,50 @@ const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => 
                                     </div>
                                 )}
 
-                                {displayedUpdates.length > 0 ? (
+                                {displayedItems.length > 0 ? (
                                     <>
                                         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-2 max-w-7xl mx-auto">
-                                            {displayedUpdates.map((update) => (
+                                            {displayedItems.map((item) => (
                                                 <Card
-                                                    key={update._id}
+                                                    key={item._id}
                                                     className="overflow-hidden hover:shadow-lg transition-shadow"
                                                 >
-                                                    {update.image && (
+                                                    {item.image && (
                                                         <img
                                                             src={
-                                                                getImageUrl(update.image, {
+                                                                getImageUrl(item.image, {
                                                                     width: 800,
                                                                     height: 400,
                                                                     format: "webp",
                                                                 }) || ""
                                                             }
-                                                            alt={update.title}
+                                                            alt={item.title}
                                                             className="w-full h-32 md:h-24 object-cover"
                                                             width="800"
                                                             height="400"
                                                         />
                                                     )}
                                                     <div className="p-4 md:p-3">
-                                                        {update.featured && (
-                                                            <Badge
-                                                                variant="default"
-                                                                className="mb-1.5 md:mb-1 text-xs"
-                                                            >
-                                                                Featured
-                                                            </Badge>
-                                                        )}
+                                                        <div className="flex flex-wrap gap-1 mb-1.5 md:mb-1">
+                                                            {item.featured && (
+                                                                <Badge
+                                                                    variant="default"
+                                                                    className="text-xs"
+                                                                >
+                                                                    Featured
+                                                                </Badge>
+                                                            )}
+                                                            {item.contentType === 'caseStudy' && (
+                                                                <Badge
+                                                                    variant="outline"
+                                                                    className="text-xs"
+                                                                >
+                                                                    Case Study
+                                                                </Badge>
+                                                            )}
+                                                        </div>
                                                         <h2 className="text-lg font-semibold mb-1.5 md:mb-1 leading-tight line-clamp-2">
-                                                            {update.title}
+                                                            {item.title}
                                                         </h2>
                                                         <div className="flex items-center gap-1.5 mb-1.5 md:mb-1 text-xs text-muted-foreground">
                                                             <Calendar
@@ -386,21 +482,26 @@ const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => 
                                                             <span>
                                                                 {format(
                                                                     new Date(
-                                                                        update.publishedAt
+                                                                        item.publishedAt
                                                                     ),
                                                                     "PPP"
                                                                 )}
                                                             </span>
                                                         </div>
-                                                        {update.excerpt && (
+                                                        {item.contentType === 'caseStudy' && item.client && (
+                                                            <p className="text-xs text-muted-foreground mb-1.5 md:mb-1">
+                                                                Client: {item.client}
+                                                            </p>
+                                                        )}
+                                                        {item.excerpt && (
                                                             <p className="text-sm text-muted-foreground mb-1.5 md:mb-1 line-clamp-2">
-                                                                {update.excerpt}
+                                                                {item.excerpt}
                                                             </p>
                                                         )}
                                                         <Link
-                                                            to={`/news/${update.slug?.current}`}
+                                                            to={`/news/stories/${item.slug?.current}`}
                                                             className="inline-flex items-center text-primary hover:underline text-base font-semibold py-2 mt-3"
-                                                            aria-label={`Read more about ${update.title}`}
+                                                            aria-label={`Read more about ${item.title}`}
                                                         >
                                                             Read more{" "}
                                                             <ArrowRight
@@ -413,7 +514,7 @@ const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => 
                                             ))}
                                         </div>
 
-                                        {displayedUpdates.length < filteredUpdates.length && (
+                                        {displayedItems.length < filteredItems.length && (
                                             <div className="text-center mt-8">
                                                 <Button
                                                     onClick={handleLoadMore}
@@ -456,7 +557,7 @@ const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => 
                         ) : (
                             <div className="max-w-4xl mx-auto text-center py-12">
                                 <p className="text-lg text-muted-foreground">
-                                    No updates available at this time. Check
+                                    No {title?.toLowerCase() || "updates"} available at this time. Check
                                     back soon!
                                 </p>
                             </div>

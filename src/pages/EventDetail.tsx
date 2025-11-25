@@ -2,24 +2,33 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getEventBySlug } from "@/lib/sanity.queries";
+import { getEventBySlug, getFormByPage } from "@/lib/sanity.queries";
 import { Calendar, MapPin, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getImageUrl } from "@/lib/sanityImage";
-import type { SanityEvent } from "@/lib/sanity.types";
+import { DynamicForm } from "@/components/DynamicForm";
+import type { SanityEvent, SanityFormBuilder } from "@/lib/sanity.types";
 
 const EventDetail = () => {
     const { slug } = useParams<{ slug: string }>();
     const [event, setEvent] = useState<SanityEvent | null>(null);
+    const [formConfig, setFormConfig] = useState<SanityFormBuilder | null>(
+        null
+    );
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchEvent = async () => {
             if (slug) {
-                const data = await getEventBySlug(slug);
-                setEvent(data);
+                const fullPath = `care-community/activities-and-events/${slug}`;
+                const [eventData, formData] = await Promise.all([
+                    getEventBySlug(slug),
+                    getFormByPage(fullPath),
+                ]);
+                setEvent(eventData);
+                setFormConfig(formData);
             }
             setLoading(false);
         };
@@ -153,6 +162,8 @@ const EventDetail = () => {
                         </div>
                     </div>
                 </section>
+
+                {formConfig && <DynamicForm formConfig={formConfig} />}
             </main>
 
             <Footer />

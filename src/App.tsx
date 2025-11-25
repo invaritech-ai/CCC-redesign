@@ -30,6 +30,9 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const CMSPage = lazy(() => import("./pages/CMSPage"));
 const BoardGovernance = lazy(() => import("./pages/BoardGovernance"));
 const FAQ = lazy(() => import("./pages/FAQ"));
+const MediaAndPress = lazy(() => import("./pages/MediaAndPress"));
+const GalleryDetail = lazy(() => import("./pages/GalleryDetail"));
+const PressReleaseDetail = lazy(() => import("./pages/PressReleaseDetail"));
 
 const queryClient = new QueryClient();
 
@@ -143,23 +146,32 @@ const App = () => (
                         <Route
                             path="/news/stories"
                             element={
-                                <Updates defaultType="story" title="Stories" />
+                                <Updates 
+                                    defaultType="story" 
+                                    title="Stories"
+                                    pageSlug="news/stories"
+                                />
                             }
                         />
                         <Route
                             path="/news/blog"
                             element={
-                                <Updates defaultType="article" title="Blog" />
+                                <Updates 
+                                    defaultType="article" 
+                                    title="Blog"
+                                    pageSlug="news/blog"
+                                />
                             }
                         />
                         <Route
                             path="/news/media-and-press"
-                            element={<CMSPage slug="media-and-press" />}
+                            element={<MediaAndPress />}
                         />
 
                         {/* Legacy Redirects (Optional - handled by 404 or manual redirect if needed, but for now just new structure) */}
 
                         {/* Dynamic Routes */}
+                        <Route path="/news/stories/:slug" element={<UpdateDetail />} />
                         <Route path="/news/:slug" element={<UpdateDetail />} />
                         <Route
                             path="/care-community/activities-and-events/:slug"
@@ -173,6 +185,14 @@ const App = () => (
                         <Route
                             path="/reports/:slug"
                             element={<ReportDetail />}
+                        />
+                        <Route
+                            path="/news/media-and-press/galleries/:slug"
+                            element={<GalleryDetail />}
+                        />
+                        <Route
+                            path="/news/media-and-press/press-releases/:slug"
+                            element={<PressReleaseDetail />}
                         />
 
                         {/* 404 Route */}
