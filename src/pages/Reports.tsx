@@ -39,8 +39,8 @@ const Reports = () => {
         const fetchData = async () => {
             const [reportsData, content, form] = await Promise.all([
                 getAllReports(),
-                getPageContent("reports"),
-                getFormByPage("reports"),
+                getPageContent("who-we-are/publications/annual-reports"),
+                getFormByPage("who-we-are/publications/annual-reports"),
             ]);
             setReports(reportsData);
             setPageContent(content);
@@ -62,7 +62,7 @@ const Reports = () => {
         const description = pageContent.subheading || 
             "Transparency and impact reports from China Coast Community.";
         
-        const canonicalUrl = `https://chinacoastcommunity.org/reports`;
+        const canonicalUrl = `https://chinacoastcommunity.org/who-we-are/publications/annual-reports`;
 
         // Update title
         document.title = pageTitle;
@@ -249,7 +249,7 @@ const Reports = () => {
                                                         <div className="flex flex-col sm:flex-row gap-3 mt-3">
                                                             {report.slug?.current && (
                                                                 <Link
-                                                                    to={`/reports/${report.slug.current}`}
+                                                                    to={`/who-we-are/publications/annual-reports/${report.slug.current}`}
                                                                     className="inline-flex items-center text-primary hover:underline text-base font-semibold py-2"
                                                                 >
                                                                     View details{" "}

@@ -88,6 +88,7 @@ const App = () => (
                                 <Updates
                                     defaultType="news"
                                     title="Latest News"
+                                    pageSlug="news"
                                 />
                             }
                         />
@@ -135,6 +136,7 @@ const App = () => (
                                 <Updates
                                     defaultType={["announcement", "initiative"]}
                                     title="Noticeboard"
+                                    pageSlug="news/noticeboard"
                                 />
                             }
                         />

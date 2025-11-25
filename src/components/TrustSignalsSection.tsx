@@ -152,7 +152,7 @@ export const TrustSignalsSection = () => {
                             metrics to see how your support makes a difference.
                         </p>
                         <Button variant="outline" asChild>
-                            <Link to="/reports">
+                            <Link to="/who-we-are/publications/annual-reports">
                                 View Reports & Financials
                                 <ExternalLink className="ml-2 h-4 w-4" />
                             </Link>

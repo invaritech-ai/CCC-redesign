@@ -24,7 +24,7 @@ export const Footer = () => {
               <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
                 Privacy Policy
               </Link>
-              <Link to="/reports" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link to="/who-we-are/publications/annual-reports" className="text-muted-foreground hover:text-primary transition-colors">
                 Annual Reports
               </Link>
               <Link to="/who-we-are/about" className="text-muted-foreground hover:text-primary transition-colors">

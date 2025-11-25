@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { PageContent } from "@/components/PageContent";
 import { DynamicForm } from "@/components/DynamicForm";
 import { useEffect, useState, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import { getAllUpdates, getPageContent, getFormByPage } from "@/lib/sanity.queries";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,9 +32,11 @@ const updateMetaTag = (name: string, content: string, isProperty = false) => {
 interface UpdatesProps {
     defaultType?: string | string[];
     title?: string;
+    pageSlug?: string;
 }
 
-const Updates = ({ defaultType, title }: UpdatesProps) => {
+const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => {
+    const location = useLocation();
     const [updates, setUpdates] = useState<SanityUpdate[]>([]);
     const [pageContent, setPageContent] = useState<SanityPageContent | null>(null);
     const [formConfig, setFormConfig] = useState<SanityFormBuilder | null>(null);
@@ -48,8 +51,8 @@ const Updates = ({ defaultType, title }: UpdatesProps) => {
         const fetchData = async () => {
             const [updatesData, content, form] = await Promise.all([
                 getAllUpdates(),
-                getPageContent("updates"),
-                getFormByPage("updates"),
+                getPageContent(pageSlug),
+                getFormByPage(pageSlug),
             ]);
             setUpdates(updatesData);
             setPageContent(content);
@@ -57,7 +60,7 @@ const Updates = ({ defaultType, title }: UpdatesProps) => {
             setLoading(false);
         };
         fetchData();
-    }, []);
+    }, [pageSlug]);
 
     // Update SEO meta tags when pageContent is loaded
     useEffect(() => {
@@ -71,7 +74,8 @@ const Updates = ({ defaultType, title }: UpdatesProps) => {
         const description = pageContent.subheading || 
             "Latest news, announcements, and updates from China Coast Community.";
         
-        const canonicalUrl = `https://chinacoastcommunity.org/updates`;
+        // Use the actual route path for canonical URL
+        const canonicalUrl = `https://chinacoastcommunity.org${location.pathname}`;
 
         // Update title
         document.title = pageTitle;
@@ -394,7 +398,7 @@ const Updates = ({ defaultType, title }: UpdatesProps) => {
                                                             </p>
                                                         )}
                                                         <Link
-                                                            to={`/updates/${update.slug?.current}`}
+                                                            to={`/news/${update.slug?.current}`}
                                                             className="inline-flex items-center text-primary hover:underline text-base font-semibold py-2 mt-3"
                                                             aria-label={`Read more about ${update.title}`}
                                                         >

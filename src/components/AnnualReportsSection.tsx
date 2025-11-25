@@ -22,7 +22,7 @@ export const AnnualReportsSection = ({
   title,
   latestReport,
   loading = false,
-  reportsPageLink = "/reports",
+  reportsPageLink = "/who-we-are/publications/annual-reports",
 }: AnnualReportsSectionProps) => {
   return (
     <section className="py-12 md:py-20">
@@ -54,7 +54,7 @@ export const AnnualReportsSection = ({
                       </h3>
                       {latestReport.slug?.current && (
                         <Link
-                          to={`/reports/${latestReport.slug.current}`}
+                          to={`/who-we-are/publications/annual-reports/${latestReport.slug.current}`}
                           className="inline-flex items-center text-base text-primary hover:underline min-h-[44px]"
                         >
                           View report{" "}
