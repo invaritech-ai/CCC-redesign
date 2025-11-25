@@ -242,7 +242,12 @@ const parseCardContent = (text: string): InfoCardItem | null => {
     if (!cardContent) return null;
 
     const lines = cardContent.split("\n");
-    const processedLines: { line: string; trimmed: string; isIndented: boolean; originalIndex: number }[] = [];
+    const processedLines: {
+        line: string;
+        trimmed: string;
+        isIndented: boolean;
+        originalIndex: number;
+    }[] = [];
 
     // Process all lines and identify structure
     for (let i = 0; i < lines.length; i++) {
@@ -255,7 +260,7 @@ const parseCardContent = (text: string): InfoCardItem | null => {
                 line: line,
                 trimmed: trimmed,
                 isIndented: isIndented,
-                originalIndex: i
+                originalIndex: i,
             });
         }
     }
@@ -263,7 +268,7 @@ const parseCardContent = (text: string): InfoCardItem | null => {
     if (processedLines.length === 0) return null;
 
     // Check if any line is indented
-    const hasIndentation = processedLines.some(item => item.isIndented);
+    const hasIndentation = processedLines.some((item) => item.isIndented);
 
     // First non-empty line is always the title
     const title = processedLines[0].trimmed;
@@ -273,7 +278,7 @@ const parseCardContent = (text: string): InfoCardItem | null => {
 
     if (hasIndentation) {
         // EXISTING LOGIC: Rely on indentation
-        
+
         // Find subtitle: first non-indented line after title
         let subtitleIndex = -1;
         for (let i = 1; i < processedLines.length; i++) {
@@ -286,7 +291,7 @@ const parseCardContent = (text: string): InfoCardItem | null => {
 
         // Collect all indented lines as bullet points (skip title and subtitle)
         const startIndex = subtitleIndex >= 0 ? subtitleIndex + 1 : 1;
-        
+
         for (let i = startIndex; i < processedLines.length; i++) {
             const item = processedLines[i];
             // Only collect indented lines (these are bullet points)
@@ -305,12 +310,21 @@ const parseCardContent = (text: string): InfoCardItem | null => {
                     break;
                 }
             }
-            
+
             // If we have bullets, look for closing statement after the last bullet
             // Otherwise, look for any non-title/subtitle line
-            const searchStartIndex = lastBulletIndex >= 0 ? lastBulletIndex + 1 : (subtitleIndex >= 0 ? subtitleIndex + 1 : 1);
-            
-            for (let i = processedLines.length - 1; i >= searchStartIndex; i--) {
+            const searchStartIndex =
+                lastBulletIndex >= 0
+                    ? lastBulletIndex + 1
+                    : subtitleIndex >= 0
+                    ? subtitleIndex + 1
+                    : 1;
+
+            for (
+                let i = processedLines.length - 1;
+                i >= searchStartIndex;
+                i--
+            ) {
                 const item = processedLines[i];
                 if (!item.isIndented) {
                     closingStatement = item.trimmed;
@@ -321,15 +335,15 @@ const parseCardContent = (text: string): InfoCardItem | null => {
     } else {
         // FALLBACK LOGIC: No indentation found, use position
         // Structure: Title -> [Subtitle] -> [Bullets] -> [Closing]
-        
+
         const remainingLines = processedLines.slice(1); // Skip title
-        
+
         if (remainingLines.length > 0) {
             // Check for subtitle (Line 1)
             // Heuristic: If it's the only line, it's a subtitle (or bullet? let's say subtitle)
             // If there are multiple lines, Line 1 is subtitle
             subtitle = remainingLines[0].trimmed;
-            
+
             // If there are more lines, check for closing statement
             if (remainingLines.length > 1) {
                 // Heuristic: Last line is closing statement if we have at least 3 lines total (Title + Subtitle + Closing)
@@ -340,12 +354,13 @@ const parseCardContent = (text: string): InfoCardItem | null => {
                 // Closings are usually sentences. Bullets are phrases.
                 // But hard to detect.
                 // Let's stick to the pattern: Title -> Subtitle -> Bullets -> Closing
-                
+
                 // If we have at least 2 lines in between Subtitle and End, take the last as closing
                 // If we only have 1 line after Subtitle, treat it as a bullet (safe bet)
-                
+
                 if (remainingLines.length >= 3) {
-                    closingStatement = remainingLines[remainingLines.length - 1].trimmed;
+                    closingStatement =
+                        remainingLines[remainingLines.length - 1].trimmed;
                     // Bullets are everything in between
                     for (let i = 1; i < remainingLines.length - 1; i++) {
                         bulletPoints.push(remainingLines[i].trimmed);
@@ -355,12 +370,12 @@ const parseCardContent = (text: string): InfoCardItem | null => {
                     // Case: Title, Subtitle, Bullet 1. (Length 2) -> Subtitle, Bullet 1
                     // Case: Title, Subtitle, Closing. (Length 2) -> Subtitle, Closing?
                     // Let's treat as bullets if they are in the middle.
-                    
+
                     // Actually, if we have Title, Line 1, Line 2.
                     // Line 1 = Subtitle.
                     // Line 2 = Bullet?
                     // If we assume the user ALWAYS provides a subtitle if they provide bullets...
-                    
+
                     for (let i = 1; i < remainingLines.length; i++) {
                         bulletPoints.push(remainingLines[i].trimmed);
                     }
@@ -789,32 +804,39 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
             }
 
             // Check if grid starts in this block
-            if (plainText.includes("<grid>")) {
+            // After timeline filtering, we need to recalculate grid positions in filtered text
+            const filteredTextAfterTimeline = hasTimelineInBlock
+                ? extractTextFromBlock(filteredChildren)
+                : plainText;
+
+            if (filteredTextAfterTimeline.includes("<grid>")) {
                 insideGrid = true;
                 gridStartIndex = gridStartIndex === -1 ? index : gridStartIndex;
-                const startIndex = plainText.indexOf("<grid>");
+                // Use positions from filtered text if timeline was filtered, otherwise use original
+                const startIndex = filteredTextAfterTimeline.indexOf("<grid>");
 
                 // Check if grid also ends in this block
-                if (plainText.includes("</grid>")) {
-                    const endIndex = plainText.indexOf("</grid>");
-                    // Extract content between tags
-                    gridText = plainText.substring(startIndex, endIndex + 7); // 7 = length of "</grid>"
+                if (filteredTextAfterTimeline.includes("</grid>")) {
+                    const endIndex =
+                        filteredTextAfterTimeline.indexOf("</grid>");
+                    // Extract content between tags from filtered text
+                    gridText = filteredTextAfterTimeline.substring(
+                        startIndex,
+                        endIndex + 7
+                    ); // 7 = length of "</grid>"
                     processGrid();
 
-                    // Filter grid tags from children before rendering
-                    // Use textBlock.children (original) instead of filteredChildren
-                    // because indices are calculated from plainText which is based on original
-                    // This fixes the bug where grid filtering used filteredChildren (already modified by timeline)
-                    // but indices were from plainText (based on original)
+                    // Filter grid tags from already-filtered children (not original)
+                    // Use filteredChildren so that timeline tags are already removed
                     hasGridInBlock = true;
                     filteredChildren = filterGridTags(
-                        textBlock.children,
+                        filteredChildren,
                         startIndex,
                         endIndex + 7
                     );
 
                     // Continue processing remaining text after </grid> if any
-                    const remainingText = plainText
+                    const remainingText = filteredTextAfterTimeline
                         .substring(endIndex + 7)
                         .trim();
                     if (
@@ -826,18 +848,14 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                     // Process remaining text as normal content below
                 } else {
                     // Grid starts but doesn't end in this block
-                    gridText = plainText.substring(startIndex);
+                    gridText = filteredTextAfterTimeline.substring(startIndex);
 
-                    // Filter grid start tag from children
-                    // Use textBlock.children (original) instead of filteredChildren
-                    // because indices are calculated from plainText which is based on original
-                    // This fixes the bug where grid filtering used filteredChildren (already modified by timeline)
-                    // but indices were from plainText (based on original)
+                    // Filter grid start tag from already-filtered children
                     hasGridInBlock = true;
                     filteredChildren = filterGridTags(
-                        textBlock.children,
+                        filteredChildren,
                         startIndex,
-                        plainText.length
+                        filteredTextAfterTimeline.length
                     );
 
                     if (!filteredChildren || filteredChildren.length === 0) {
@@ -847,25 +865,29 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                 }
             } else if (insideGrid) {
                 // We're inside a grid, check if it ends in this block
-                if (plainText.includes("</grid>")) {
-                    const endIndex = plainText.indexOf("</grid>");
-                    gridText += "\n" + plainText.substring(0, endIndex + 7);
+                // After timeline filtering, we need to recalculate grid positions in filtered text
+                const filteredTextAfterTimeline = hasTimelineInBlock
+                    ? extractTextFromBlock(filteredChildren)
+                    : plainText;
+
+                if (filteredTextAfterTimeline.includes("</grid>")) {
+                    const endIndex =
+                        filteredTextAfterTimeline.indexOf("</grid>");
+                    gridText +=
+                        "\n" +
+                        filteredTextAfterTimeline.substring(0, endIndex + 7);
                     processGrid();
 
-                    // Filter grid end tag from children before rendering
-                    // Use textBlock.children (original) instead of filteredChildren
-                    // because indices are calculated from plainText which is based on original
-                    // This fixes the bug where grid filtering used filteredChildren (already modified by timeline)
-                    // but indices were from plainText (based on original)
+                    // Filter grid end tag from already-filtered children
                     hasGridInBlock = true;
                     filteredChildren = filterGridTags(
-                        textBlock.children,
+                        filteredChildren,
                         0,
                         endIndex + 7
                     );
 
                     // Continue processing remaining text after </grid> if any
-                    const remainingText = plainText
+                    const remainingText = filteredTextAfterTimeline
                         .substring(endIndex + 7)
                         .trim();
                     if (
@@ -877,31 +899,45 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                     // Process remaining text as normal content below
                 } else {
                     // Still collecting grid content
-                    gridText += "\n" + plainText;
+                    // Use filtered text if timeline was filtered, otherwise use original
+                    gridText += "\n" + filteredTextAfterTimeline;
                     return; // Skip normal rendering
                 }
             }
 
             // Check if card starts in this block
-            if (plainText.includes("<card>")) {
+            // After timeline/grid filtering, we need to recalculate card positions in filtered text
+            const filteredTextAfterTimelineGrid =
+                hasTimelineInBlock || hasGridInBlock
+                    ? extractTextFromBlock(filteredChildren)
+                    : plainText;
+
+            if (filteredTextAfterTimelineGrid.includes("<card>")) {
                 insideCard = true;
                 cardStartIndex = cardStartIndex === -1 ? index : cardStartIndex;
-                const startIndex = plainText.indexOf("<card>");
+                // Use positions from filtered text if timeline/grid were filtered, otherwise use original
+                const startIndex =
+                    filteredTextAfterTimelineGrid.indexOf("<card>");
 
                 // Check if card also ends in this block
-                if (plainText.includes("</card>")) {
-                    const endIndex = plainText.indexOf("</card>");
-                    // Extract content between tags
-                    cardText = plainText.substring(startIndex, endIndex + 7); // 7 = length of "</card>"
+                if (filteredTextAfterTimelineGrid.includes("</card>")) {
+                    const endIndex =
+                        filteredTextAfterTimelineGrid.indexOf("</card>");
+                    // Extract content between tags from filtered text
+                    cardText = filteredTextAfterTimelineGrid.substring(
+                        startIndex,
+                        endIndex + 7
+                    ); // 7 = length of "</card>"
                     const cardItem = parseCardContent(cardText);
                     if (cardItem) {
                         cardItems.push(cardItem);
                     }
 
-                    // Filter card tags from children before rendering
+                    // Filter card tags from already-filtered children (not original)
+                    // Use filteredChildren so that timeline/grid tags are already removed
                     hasCardInBlock = true;
                     filteredChildren = filterCardTags(
-                        textBlock.children,
+                        filteredChildren,
                         startIndex,
                         endIndex + 7
                     );
@@ -911,7 +947,7 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                     insideCard = false;
 
                     // Continue processing remaining text after </card> if any
-                    const remainingText = plainText
+                    const remainingText = filteredTextAfterTimelineGrid
                         .substring(endIndex + 7)
                         .trim();
                     if (
@@ -923,14 +959,15 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                     // Process remaining text as normal content below
                 } else {
                     // Card starts but doesn't end in this block
-                    cardText = plainText.substring(startIndex);
+                    cardText =
+                        filteredTextAfterTimelineGrid.substring(startIndex);
 
-                    // Filter card start tag from children
+                    // Filter card start tag from already-filtered children
                     hasCardInBlock = true;
                     filteredChildren = filterCardTags(
-                        textBlock.children,
+                        filteredChildren,
                         startIndex,
-                        plainText.length
+                        filteredTextAfterTimelineGrid.length
                     );
 
                     if (!filteredChildren || filteredChildren.length === 0) {
@@ -940,18 +977,30 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                 }
             } else if (insideCard) {
                 // We're inside a card, check if it ends in this block
-                if (plainText.includes("</card>")) {
-                    const endIndex = plainText.indexOf("</card>");
-                    cardText += "\n" + plainText.substring(0, endIndex + 7);
+                // After timeline/grid filtering, we need to recalculate card positions in filtered text
+                const filteredTextAfterTimelineGrid =
+                    hasTimelineInBlock || hasGridInBlock
+                        ? extractTextFromBlock(filteredChildren)
+                        : plainText;
+
+                if (filteredTextAfterTimelineGrid.includes("</card>")) {
+                    const endIndex =
+                        filteredTextAfterTimelineGrid.indexOf("</card>");
+                    cardText +=
+                        "\n" +
+                        filteredTextAfterTimelineGrid.substring(
+                            0,
+                            endIndex + 7
+                        );
                     const cardItem = parseCardContent(cardText);
                     if (cardItem) {
                         cardItems.push(cardItem);
                     }
 
-                    // Filter card end tag from children before rendering
+                    // Filter card end tag from already-filtered children
                     hasCardInBlock = true;
                     filteredChildren = filterCardTags(
-                        textBlock.children,
+                        filteredChildren,
                         0,
                         endIndex + 7
                     );
@@ -961,7 +1010,7 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                     insideCard = false;
 
                     // Continue processing remaining text after </card> if any
-                    const remainingText = plainText
+                    const remainingText = filteredTextAfterTimelineGrid
                         .substring(endIndex + 7)
                         .trim();
                     if (

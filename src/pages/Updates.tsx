@@ -499,7 +499,11 @@ const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => 
                                                             </p>
                                                         )}
                                                         <Link
-                                                            to={`/news/stories/${item.slug?.current}`}
+                                                            to={
+                                                                item.contentType === 'caseStudy' || isStoriesPage
+                                                                    ? `/news/stories/${item.slug?.current}`
+                                                                    : `/news/${item.slug?.current}`
+                                                            }
                                                             className="inline-flex items-center text-primary hover:underline text-base font-semibold py-2 mt-3"
                                                             aria-label={`Read more about ${item.title}`}
                                                         >
