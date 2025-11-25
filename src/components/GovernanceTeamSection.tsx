@@ -110,7 +110,8 @@ export const GovernanceTeamSection = ({
           <div className="text-center mt-8">
             <Button variant="outline" size="lg" className="gap-2" asChild>
               <Link to="/who-we-are/board-governance">
-                Read more about our governance and committees
+                <span className="md:hidden">Governance & Committees</span>
+                <span className="hidden md:inline">Read more about our governance and committees</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>

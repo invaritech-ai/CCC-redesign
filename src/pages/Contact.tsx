@@ -30,7 +30,7 @@ const Contact = () => {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center">
-          <div className="container mx-auto px-4 w-full">
+          <div className="container mx-auto px-4">
             <div className="max-w-4xl md:mx-auto md:text-center">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
                 Get in Touch
@@ -46,7 +46,7 @@ const Contact = () => {
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
               {/* Contact Form */}
-              <div>
+              <div className="min-w-0">
                 {formConfig ? (
                   <DynamicForm formConfig={formConfig} inline />
                 ) : (
@@ -58,7 +58,7 @@ const Contact = () => {
               </div>
 
               {/* Contact Information */}
-              <div className="space-y-6">
+              <div className="space-y-6 min-w-0">
                 <div>
                   <h2 className="text-3xl font-bold mb-6">Contact Information</h2>
                   <p className="text-muted-foreground mb-8">
@@ -73,9 +73,9 @@ const Contact = () => {
                       <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
                         <MapPin className="h-6 w-6 text-primary" aria-hidden="true" />
                       </div>
-                      <div>
+                      <div className="min-w-0 flex-1">
                         <h3 className="font-semibold mb-1">Office Address</h3>
-                        <p className="text-muted-foreground">
+                        <p className="text-muted-foreground break-words">
                           123 Victoria Road<br />
                           Central, Hong Kong
                         </p>
@@ -90,9 +90,9 @@ const Contact = () => {
                       <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
                         <Phone className="h-6 w-6 text-primary" aria-hidden="true" />
                       </div>
-                      <div>
+                      <div className="min-w-0 flex-1">
                         <h3 className="font-semibold mb-1">Phone</h3>
-                        <p className="text-muted-foreground">
+                        <p className="text-muted-foreground break-words">
                           +852 1234 5678<br />
                           +852 9876 5432 (Mobile)
                         </p>
@@ -107,9 +107,9 @@ const Contact = () => {
                       <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
                         <Mail className="h-6 w-6 text-primary" aria-hidden="true" />
                       </div>
-                      <div>
+                      <div className="min-w-0 flex-1">
                         <h3 className="font-semibold mb-1">Email</h3>
-                        <p className="text-muted-foreground">
+                        <p className="text-muted-foreground break-words">
                           info@chinacoastcommunity.org.hk<br />
                           volunteer@chinacoastcommunity.org.hk
                         </p>
@@ -124,9 +124,9 @@ const Contact = () => {
                       <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
                         <Clock className="h-6 w-6 text-primary" aria-hidden="true" />
                       </div>
-                      <div>
+                      <div className="min-w-0 flex-1">
                         <h3 className="font-semibold mb-1">Office Hours</h3>
-                        <p className="text-muted-foreground">
+                        <p className="text-muted-foreground break-words">
                           Monday - Friday: 9:00 AM - 5:00 PM<br />
                           Saturday: 10:00 AM - 2:00 PM<br />
                           Sunday: Closed

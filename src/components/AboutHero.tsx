@@ -9,7 +9,7 @@ interface AboutHeroProps {
 export const AboutHero = ({ title, description, badgeText }: AboutHeroProps) => {
   return (
     <section className="bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center">
-      <div className="container mx-auto px-4 w-full">
+      <div className="container mx-auto px-4">
         <div className="max-w-4xl md:mx-auto md:text-center">
           {badgeText && (
             <Badge className="mb-6 bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 md:mx-auto">
