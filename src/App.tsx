@@ -82,7 +82,15 @@ const App = () => (
                         />
                         {/* Shorter route alias for reports listing */}
                         <Route path="/reports" element={<Reports />} />
-                        <Route path="/news" element={<Updates />} />
+                        <Route
+                            path="/news"
+                            element={
+                                <Updates
+                                    defaultType="news"
+                                    title="Latest News"
+                                />
+                            }
+                        />
                         <Route
                             path="/care-community/activities-and-events"
                             element={<Events />}
@@ -123,11 +131,24 @@ const App = () => (
                         <Route path="/care-community/faqs" element={<FAQ />} />
                         <Route
                             path="/news/noticeboard"
-                            element={<CMSPage slug="noticeboard" />}
+                            element={
+                                <Updates
+                                    defaultType={["announcement", "initiative"]}
+                                    title="Noticeboard"
+                                />
+                            }
                         />
                         <Route
                             path="/news/stories"
-                            element={<CMSPage slug="stories" />}
+                            element={
+                                <Updates defaultType="story" title="Stories" />
+                            }
+                        />
+                        <Route
+                            path="/news/blog"
+                            element={
+                                <Updates defaultType="article" title="Blog" />
+                            }
                         />
                         <Route
                             path="/news/media-and-press"

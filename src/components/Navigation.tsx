@@ -62,6 +62,7 @@ const NAV_ITEMS: NavItem[] = [
       { label: "Latest News", href: "/news" },
       { label: "Noticeboard", href: "/news/noticeboard" },
       { label: "Stories", href: "/news/stories" },
+      { label: "Blog", href: "/news/blog" },
       { label: "Media & Press", href: "/news/media-and-press" }
     ]
   },

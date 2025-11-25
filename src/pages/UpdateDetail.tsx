@@ -216,7 +216,7 @@ const UpdateDetail = () => {
                                 {update.type && (
                                     <Badge
                                         variant="outline"
-                                        className="bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30"
+                                        className="bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 capitalize"
                                     >
                                         {update.type}
                                     </Badge>

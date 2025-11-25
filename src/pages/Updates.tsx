@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import { Calendar, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
 import { getImageUrl } from "@/lib/sanityImage";
-import type { SanityUpdate, SanityFormBuilder, SanityPageContent } from "@/lib/sanity.types";
+import { UPDATE_TYPES, type SanityUpdate, type SanityFormBuilder, type SanityPageContent } from "@/lib/sanity.types";
 import { SearchAndFilter } from "@/components/SearchAndFilter";
 
 // Helper function to update meta tags
@@ -28,7 +28,12 @@ const updateMetaTag = (name: string, content: string, isProperty = false) => {
   element.content = content;
 };
 
-const Updates = () => {
+interface UpdatesProps {
+    defaultType?: string | string[];
+    title?: string;
+}
+
+const Updates = ({ defaultType, title }: UpdatesProps) => {
     const [updates, setUpdates] = useState<SanityUpdate[]>([]);
     const [pageContent, setPageContent] = useState<SanityPageContent | null>(null);
     const [formConfig, setFormConfig] = useState<SanityFormBuilder | null>(null);
@@ -59,9 +64,9 @@ const Updates = () => {
         if (!pageContent) return;
 
         const baseTitle = "China Coast Community";
-        const pageTitle = pageContent.heading 
-            ? `${pageContent.heading} | ${baseTitle}`
-            : `Updates | ${baseTitle}`;
+        // Use provided title prop or fallback to CMS heading or default
+        const displayTitle = title || pageContent.heading || "Updates";
+        const pageTitle = `${displayTitle} | ${baseTitle}`;
         
         const description = pageContent.subheading || 
             "Latest news, announcements, and updates from China Coast Community.";
@@ -100,16 +105,10 @@ const Updates = () => {
                 canonicalLink.href = "https://chinacoastcommunity.org/";
             }
         };
-    }, [pageContent]);
+    }, [pageContent, title]);
 
     // Get unique types, categories, and tags from updates
-    const availableTypes = useMemo(() => {
-        const types = updates
-            .map((update) => update.type)
-            .filter((type): type is string => type !== undefined && type !== null);
-        return Array.from(new Set(types)).sort();
-    }, [updates]);
-
+    // We use predefined types for the filter now, but still calculate categories/tags dynamically
     const availableCategories = useMemo(() => {
         const categories = updates
             .flatMap((update) => update.categories || [])
@@ -127,8 +126,17 @@ const Updates = () => {
     // Filter updates based on search, type, categories, and tags
     const filteredUpdates = useMemo(() => {
         return updates.filter((update) => {
-            // Type filter
-            if (selectedType !== "all" && update.type !== selectedType) {
+            // Default Type Pre-filter (if prop is provided)
+            if (defaultType) {
+                const types = Array.isArray(defaultType) ? defaultType : [defaultType];
+                // Case-insensitive check
+                if (!update.type || !types.includes(update.type.toLowerCase())) {
+                    return false;
+                }
+            }
+
+            // User selected Type filter (only if no defaultType is set)
+            if (!defaultType && selectedType !== "all" && update.type !== selectedType) {
                 return false;
             }
 
@@ -165,7 +173,7 @@ const Updates = () => {
 
             return true;
         });
-    }, [updates, searchQuery, selectedType, selectedCategories, selectedTags]);
+    }, [updates, searchQuery, selectedType, selectedCategories, selectedTags, defaultType]);
 
     // Get displayed updates (paginated)
     const displayedUpdates = useMemo(() => {
@@ -187,10 +195,10 @@ const Updates = () => {
     // Reset pagination when filters change
     useEffect(() => {
         setDisplayCount(12);
-    }, [searchQuery, selectedType, selectedCategories, selectedTags]);
+    }, [searchQuery, selectedType, selectedCategories, selectedTags, defaultType]);
 
-    const typeFilterOptions = availableTypes.map((type) => ({
-        label: type,
+    const typeFilterOptions = UPDATE_TYPES.map((type) => ({
+        label: type.charAt(0).toUpperCase() + type.slice(1),
         value: type,
     }));
 
@@ -226,7 +234,7 @@ const Updates = () => {
             <main id="main-content" className="flex-1">
                 {pageContent ? (
                     <PageContent
-                        heading={pageContent.heading}
+                        heading={title || pageContent.heading}
                         subheading={pageContent.subheading}
                         content={pageContent.content}
                         badgeText={pageContent.badgeText}
@@ -236,7 +244,7 @@ const Updates = () => {
                         <div className="container mx-auto px-4 w-full">
                             <div className="max-w-4xl md:mx-auto md:text-center">
                                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
-                                    Updates
+                                    {title || "Updates"}
                                 </h1>
                                 <p className="text-lg md:text-xl max-w-3xl leading-relaxed opacity-90 md:mx-auto">
                                     Latest news, announcements, and updates from China
@@ -260,19 +268,24 @@ const Updates = () => {
                                 <SearchAndFilter
                                     searchValue={searchQuery}
                                     onSearchChange={setSearchQuery}
-                                    filters={[
-                                        {
-                                            label: "Type",
-                                            key: "type",
-                                            options: typeFilterOptions,
-                                            value: selectedType,
-                                            onChange: setSelectedType,
-                                        },
-                                    ]}
+                                    filters={
+                                        // Only show Type filter if no defaultType is provided
+                                        !defaultType ? [
+                                            {
+                                                label: "Type",
+                                                key: "type",
+                                                options: typeFilterOptions,
+                                                value: selectedType,
+                                                onChange: setSelectedType,
+                                            },
+                                        ] : []
+                                    }
                                     onClearFilters={handleClearFilters}
                                     displayedCount={displayedUpdates.length}
                                     totalCount={filteredUpdates.length}
                                 />
+
+
 
                                 {/* Multi-select filters for categories and tags */}
                                 {(availableCategories.length > 0 || availableTags.length > 0) && (
@@ -409,10 +422,30 @@ const Updates = () => {
                                         )}
                                     </>
                                 ) : (
-                                    <div className="max-w-4xl mx-auto text-center py-12">
-                                        <p className="text-lg text-muted-foreground">
-                                            No updates found matching your filters.
+                                    <div className="max-w-4xl mx-auto text-center py-12 space-y-4">
+                                        <p className="text-xl font-semibold text-foreground">
+                                            No {title?.toLowerCase() || "updates"} found
                                         </p>
+                                        {(searchQuery || selectedCategories.length > 0 || selectedTags.length > 0 || (!defaultType && selectedType !== "all")) ? (
+                                            <>
+                                                <p className="text-lg text-muted-foreground">
+                                                    We couldn't find any results matching your current search or filters.
+                                                </p>
+                                                <div className="pt-4">
+                                                    <Button
+                                                        onClick={handleClearFilters}
+                                                        variant="outline"
+                                                        className="min-w-[150px]"
+                                                    >
+                                                        Clear All Filters
+                                                    </Button>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <p className="text-lg text-muted-foreground">
+                                                Check back soon for new {title?.toLowerCase() || "updates"}!
+                                            </p>
+                                        )}
                                     </div>
                                 )}
                             </>

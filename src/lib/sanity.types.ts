@@ -56,12 +56,15 @@ export interface SanityImageBlock {
 
 export type SanityPortableTextBlock = SanityBlock | SanityImageBlock;
 
+export const UPDATE_TYPES = ['news', 'announcement', 'story', 'article', 'initiative'] as const;
+export type UpdateType = typeof UPDATE_TYPES[number];
+
 // Update / Story
 export interface SanityUpdate {
     _id: string;
     title: string;
     slug?: SanitySlug;
-    type?: string;
+    type?: UpdateType | string; // Allow string fallback
     publishedAt: string;
     author?: string;
     excerpt?: string;
