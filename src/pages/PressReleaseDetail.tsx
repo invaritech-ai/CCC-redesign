@@ -65,7 +65,7 @@ const PressReleaseDetail = () => {
                 ? contentText.substring(0, 160) + "..."
                 : contentText || "Press release from China Coast Community.";
 
-        const canonicalUrl = `https://chinacoastcommunity.org/news/media-and-press/press-releases/${slug}`;
+        const canonicalUrl = `https://www.chinacoastcommunity.org.hk/news/media-and-press/press-releases/${slug}`;
 
         // Update title
         document.title = pageTitle;
@@ -108,9 +108,9 @@ const PressReleaseDetail = () => {
                 "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment.",
                 true
             );
-            updateMetaTag("og:url", "https://chinacoastcommunity.org/", true);
+            updateMetaTag("og:url", "https://www.chinacoastcommunity.org.hk/", true);
             if (canonicalLink) {
-                canonicalLink.href = "https://chinacoastcommunity.org/";
+                canonicalLink.href = "https://www.chinacoastcommunity.org.hk/";
             }
         };
     }, [pressRelease, slug]);

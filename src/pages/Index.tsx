@@ -53,8 +53,8 @@ const Index = () => {
         "name": "China Coast Community",
         "description": "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment to create a safe, modern community where every senior is valued.",
         "foundingDate": "1978",
-        "url": "https://chinacoastcommunity.org",
-        "logo": "https://chinacoastcommunity.org/ccc-logo.svg",
+        "url": "https://www.chinacoastcommunity.org.hk",
+        "logo": "https://www.chinacoastcommunity.org.hk/ccc-logo.svg",
         "address": {
             "@type": "PostalAddress",
             "addressCountry": "HK",

@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://chinacoastcommunity.org/sitemap.xml
+Sitemap: https://www.chinacoastcommunity.org.hk/sitemap.xml

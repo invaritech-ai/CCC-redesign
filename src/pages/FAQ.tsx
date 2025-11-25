@@ -64,7 +64,7 @@ const FAQ = () => {
             pageContent?.subheading ||
             "Frequently Asked Questions - China Coast Community";
 
-        const canonicalUrl = `https://chinacoastcommunity.org/care-community/faqs`;
+        const canonicalUrl = `https://www.chinacoastcommunity.org.hk/care-community/faqs`;
 
         // Update title
         document.title = pageTitle;
@@ -122,9 +122,9 @@ const FAQ = () => {
                 "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment.",
                 true
             );
-            updateMetaTag("og:url", "https://chinacoastcommunity.org/", true);
+            updateMetaTag("og:url", "https://www.chinacoastcommunity.org.hk/", true);
             if (canonicalLink) {
-                canonicalLink.href = "https://chinacoastcommunity.org/";
+                canonicalLink.href = "https://www.chinacoastcommunity.org.hk/";
             }
         };
     }, [pageContent]);

@@ -92,7 +92,7 @@ const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => 
             "Latest news, announcements, and updates from China Coast Community.";
         
         // Use the actual route path for canonical URL
-        const canonicalUrl = `https://chinacoastcommunity.org${location.pathname}`;
+        const canonicalUrl = `https://www.chinacoastcommunity.org.hk${location.pathname}`;
 
         // Update title
         document.title = pageTitle;
@@ -121,9 +121,9 @@ const Updates = ({ defaultType, title, pageSlug = "updates" }: UpdatesProps) => 
             updateMetaTag("description", "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment to create a safe, modern community where every senior is valued.");
             updateMetaTag("og:title", "China Coast Community - Caring for Hong Kong's English-Speaking Elderly", true);
             updateMetaTag("og:description", "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment.", true);
-            updateMetaTag("og:url", "https://chinacoastcommunity.org/", true);
+            updateMetaTag("og:url", "https://www.chinacoastcommunity.org.hk/", true);
             if (canonicalLink) {
-                canonicalLink.href = "https://chinacoastcommunity.org/";
+                canonicalLink.href = "https://www.chinacoastcommunity.org.hk/";
             }
         };
     }, [pageContent, title, location.pathname]);

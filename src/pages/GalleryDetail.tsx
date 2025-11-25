@@ -52,7 +52,7 @@ const GalleryDetail = () => {
             gallery.description ||
             `View photos from ${gallery.title || "this gallery"}.`;
 
-        const canonicalUrl = `https://chinacoastcommunity.org/news/media-and-press/galleries/${slug}`;
+        const canonicalUrl = `https://www.chinacoastcommunity.org.hk/news/media-and-press/galleries/${slug}`;
 
         // Update title
         document.title = pageTitle;
@@ -95,9 +95,9 @@ const GalleryDetail = () => {
                 "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment.",
                 true
             );
-            updateMetaTag("og:url", "https://chinacoastcommunity.org/", true);
+            updateMetaTag("og:url", "https://www.chinacoastcommunity.org.hk/", true);
             if (canonicalLink) {
-                canonicalLink.href = "https://chinacoastcommunity.org/";
+                canonicalLink.href = "https://www.chinacoastcommunity.org.hk/";
             }
         };
     }, [gallery, slug]);

@@ -56,7 +56,7 @@ const Volunteer = () => {
     const description = pageContent.subheading || 
       "Opportunities for time donors and volunteers.";
     
-    const canonicalUrl = `https://chinacoastcommunity.org/volunteer`;
+    const canonicalUrl = `https://www.chinacoastcommunity.org.hk/volunteer`;
 
     // Update title
     document.title = pageTitle;
@@ -85,9 +85,9 @@ const Volunteer = () => {
       updateMetaTag("description", "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment to create a safe, modern community where every senior is valued.");
       updateMetaTag("og:title", "China Coast Community - Caring for Hong Kong's English-Speaking Elderly", true);
       updateMetaTag("og:description", "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment.", true);
-      updateMetaTag("og:url", "https://chinacoastcommunity.org/", true);
+      updateMetaTag("og:url", "https://www.chinacoastcommunity.org.hk/", true);
       if (canonicalLink) {
-        canonicalLink.href = "https://chinacoastcommunity.org/";
+        canonicalLink.href = "https://www.chinacoastcommunity.org.hk/";
       }
     };
   }, [pageContent]);

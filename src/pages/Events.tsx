@@ -65,7 +65,7 @@ const Events = () => {
         const description = pageContent.subheading || 
             "Upcoming events and activities for our community members.";
         
-        const canonicalUrl = `https://chinacoastcommunity.org/care-community/activities-and-events`;
+        const canonicalUrl = `https://www.chinacoastcommunity.org.hk/care-community/activities-and-events`;
 
         // Update title
         document.title = pageTitle;
@@ -94,9 +94,9 @@ const Events = () => {
             updateMetaTag("description", "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment to create a safe, modern community where every senior is valued.");
             updateMetaTag("og:title", "China Coast Community - Caring for Hong Kong's English-Speaking Elderly", true);
             updateMetaTag("og:description", "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment.", true);
-            updateMetaTag("og:url", "https://chinacoastcommunity.org/", true);
+            updateMetaTag("og:url", "https://www.chinacoastcommunity.org.hk/", true);
             if (canonicalLink) {
-                canonicalLink.href = "https://chinacoastcommunity.org/";
+                canonicalLink.href = "https://www.chinacoastcommunity.org.hk/";
             }
         };
     }, [pageContent]);

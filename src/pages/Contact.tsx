@@ -110,8 +110,8 @@ const Contact = () => {
                       <div>
                         <h3 className="font-semibold mb-1">Email</h3>
                         <p className="text-muted-foreground">
-                          info@chinacoastcommunity.org<br />
-                          volunteer@chinacoastcommunity.org
+                          info@chinacoastcommunity.org.hk<br />
+                          volunteer@chinacoastcommunity.org.hk
                         </p>
                       </div>
                     </div>

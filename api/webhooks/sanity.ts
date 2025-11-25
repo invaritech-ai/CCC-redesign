@@ -67,14 +67,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         // Vercel's webhook integration in the dashboard
         const getBaseUrl = (): string => {
             if (process.env.VERCEL_ENV === "production") {
-                return "https://chinacoastcommunity.org";
+                return "https://www.chinacoastcommunity.org.hk";
             }
             if (process.env.VERCEL_URL) {
                 return process.env.VERCEL_URL.startsWith("http")
                     ? process.env.VERCEL_URL
                     : `https://${process.env.VERCEL_URL}`;
             }
-            return "https://chinacoastcommunity.org";
+            return "https://www.chinacoastcommunity.org.hk";
         };
         const sitemapUrl = `${getBaseUrl()}/api/sitemap.xml`;
 

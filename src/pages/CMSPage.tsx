@@ -87,7 +87,7 @@ const CMSPage = ({ slug }: CMSPageProps) => {
             pageContent.subheading ||
             "China Coast Community - Caring for Hong Kong's English-Speaking Elderly";
 
-        const canonicalUrl = `https://chinacoastcommunity.org/${slug}`;
+        const canonicalUrl = `https://www.chinacoastcommunity.org.hk/${slug}`;
 
         // Update title
         document.title = pageTitle;
@@ -130,9 +130,9 @@ const CMSPage = ({ slug }: CMSPageProps) => {
                 "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment.",
                 true
             );
-            updateMetaTag("og:url", "https://chinacoastcommunity.org/", true);
+            updateMetaTag("og:url", "https://www.chinacoastcommunity.org.hk/", true);
             if (canonicalLink) {
-                canonicalLink.href = "https://chinacoastcommunity.org/";
+                canonicalLink.href = "https://www.chinacoastcommunity.org.hk/";
             }
         };
     }, [pageContent, slug]);

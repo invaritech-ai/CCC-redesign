@@ -77,7 +77,7 @@ const Reports = () => {
             pageContent.subheading ||
             "Transparency and impact reports from China Coast Community.";
 
-        const canonicalUrl = `https://chinacoastcommunity.org/who-we-are/publications/annual-reports`;
+        const canonicalUrl = `https://www.chinacoastcommunity.org.hk/who-we-are/publications/annual-reports`;
 
         // Update title
         document.title = pageTitle;
@@ -120,9 +120,9 @@ const Reports = () => {
                 "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment.",
                 true
             );
-            updateMetaTag("og:url", "https://chinacoastcommunity.org/", true);
+            updateMetaTag("og:url", "https://www.chinacoastcommunity.org.hk/", true);
             if (canonicalLink) {
-                canonicalLink.href = "https://chinacoastcommunity.org/";
+                canonicalLink.href = "https://www.chinacoastcommunity.org.hk/";
             }
         };
     }, [pageContent]);

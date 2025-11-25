@@ -2,11 +2,11 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { sanityServerClient, isSanityConfiguredServer } from "./lib/index.js";
 
 // Get base URL from environment or use default
-// VERCEL_URL is provided by Vercel and includes protocol (e.g., "chinacoastcommunity.org")
+// VERCEL_URL is provided by Vercel and includes protocol (e.g., "chinacoastcommunity.org.hk")
 // For production, always use the canonical domain
 const getBaseUrl = (): string => {
     if (process.env.VERCEL_ENV === "production") {
-        return "https://chinacoastcommunity.org";
+        return "https://www.chinacoastcommunity.org.hk";
     }
     // For preview/deployment URLs, use VERCEL_URL if available
     if (process.env.VERCEL_URL) {
@@ -14,7 +14,7 @@ const getBaseUrl = (): string => {
             ? process.env.VERCEL_URL
             : `https://${process.env.VERCEL_URL}`;
     }
-    return "https://chinacoastcommunity.org";
+    return "https://www.chinacoastcommunity.org.hk";
 };
 
 const BASE_URL = getBaseUrl();
