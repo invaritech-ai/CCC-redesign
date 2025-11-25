@@ -111,7 +111,7 @@ const App = () => (
                         />
                         <Route
                             path="/care-community/life-at-ccc"
-                            element={<CMSPage slug="life-at-ccc" />}
+                            element={<CMSPage slug="care-community/life-at-ccc" />}
                         />
                         <Route
                             path="/care-community/care-and-attention-home"

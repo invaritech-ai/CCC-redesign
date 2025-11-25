@@ -303,6 +303,33 @@ export const getInitiatives = async () => {
 };
 
 /**
+ * Fetch stories by category (updates with category "stories")
+ */
+export const getStoriesByCategory = async (limit: number = 6) => {
+    if (!isSanityConfigured()) return [];
+
+    const query = `*[_type == "update" && "stories" in categories] | order(publishedAt desc) [0...$limit] {
+    _id,
+    title,
+    slug,
+    type,
+    publishedAt,
+    author,
+    excerpt,
+    tags,
+    categories,
+    "image": image.asset,
+    featured
+  }`;
+
+    try {
+        return await sanityClient.fetch(query, { limit });
+    } catch (error) {
+        return [];
+    }
+};
+
+/**
  * Fetch update by slug
  */
 export const getUpdateBySlug = async (slug: string) => {

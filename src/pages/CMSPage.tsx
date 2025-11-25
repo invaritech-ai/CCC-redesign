@@ -2,6 +2,7 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { PageContent } from "@/components/PageContent";
 import { DynamicForm } from "@/components/DynamicForm";
+import { VoicesFromCommunitySection } from "@/components/VoicesFromCommunitySection";
 import { useEffect, useState } from "react";
 import { getPageContent, getFormByPage } from "@/lib/sanity.queries";
 import type { SanityPageContent, SanityFormBuilder } from "@/lib/sanity.types";
@@ -168,6 +169,10 @@ const CMSPage = ({ slug }: CMSPageProps) => {
                             </div>
                         </div>
                     </section>
+                )}
+
+                {slug === "care-community/life-at-ccc" && (
+                    <VoicesFromCommunitySection />
                 )}
 
                 {formConfig && <DynamicForm formConfig={formConfig} />}
