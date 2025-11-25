@@ -867,3 +867,117 @@ export const getFormByPage = async (pageSlug: string) => {
         return null;
     }
 };
+
+/**
+ * Fetch all content for sitemap generation
+ * Returns all content types with slugs and update dates
+ */
+export const getAllContentForSitemap = async () => {
+    if (!isSanityConfigured()) {
+        return {
+            updates: [],
+            events: [],
+            reports: [],
+            galleries: [],
+            pressReleases: [],
+            caseStudies: [],
+            pageContent: [],
+        };
+    }
+
+    try {
+        const [
+            updates,
+            events,
+            reports,
+            galleries,
+            pressReleases,
+            caseStudies,
+            pageContent,
+        ] = await Promise.all([
+            // Updates
+            sanityClient.fetch(
+                `*[_type == "update"] {
+                _id,
+                "slug": slug.current,
+                type,
+                publishedAt,
+                _updatedAt
+            }`
+            ),
+            // Events
+            sanityClient.fetch(
+                `*[_type == "event"] {
+                _id,
+                "slug": slug.current,
+                date,
+                _updatedAt
+            }`
+            ),
+            // Reports
+            sanityClient.fetch(
+                `*[_type == "report"] {
+                _id,
+                "slug": slug.current,
+                year,
+                _updatedAt
+            }`
+            ),
+            // Galleries
+            sanityClient.fetch(
+                `*[_type == "gallery"] {
+                _id,
+                "slug": slug.current,
+                _updatedAt
+            }`
+            ),
+            // Press Releases
+            sanityClient.fetch(
+                `*[_type == "pressRelease"] {
+                _id,
+                "slug": slug.current,
+                date,
+                _updatedAt
+            }`
+            ),
+            // Case Studies
+            sanityClient.fetch(
+                `*[_type == "caseStudy"] {
+                _id,
+                "slug": slug.current,
+                date,
+                _updatedAt
+            }`
+            ),
+            // Page Content
+            sanityClient.fetch(
+                `*[_type == "pageContent"] {
+                _id,
+                pageSlug,
+                _updatedAt
+            }`
+            ),
+        ]);
+
+        return {
+            updates: updates || [],
+            events: events || [],
+            reports: reports || [],
+            galleries: galleries || [],
+            pressReleases: pressReleases || [],
+            caseStudies: caseStudies || [],
+            pageContent: pageContent || [],
+        };
+    } catch (error) {
+        console.error("[Sitemap] Error fetching content:", error);
+        return {
+            updates: [],
+            events: [],
+            reports: [],
+            galleries: [],
+            pressReleases: [],
+            caseStudies: [],
+            pageContent: [],
+        };
+    }
+};
