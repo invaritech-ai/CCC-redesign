@@ -1,5 +1,8 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { sanityServerClient, isSanityConfiguredServer } from "@/lib/sanity.server";
+import {
+    sanityServerClient,
+    isSanityConfiguredServer,
+} from "../src/lib/sanity.server";
 
 // Get base URL from environment or use default
 // VERCEL_URL is provided by Vercel and includes protocol (e.g., "chinacoastcommunity.org")
@@ -22,7 +25,14 @@ const BASE_URL = getBaseUrl();
 interface SitemapEntry {
     loc: string;
     lastmod?: string;
-    changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
+    changefreq?:
+        | "always"
+        | "hourly"
+        | "daily"
+        | "weekly"
+        | "monthly"
+        | "yearly"
+        | "never";
     priority?: number;
 }
 
@@ -81,27 +91,63 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         // Static routes
         const staticRoutes: SitemapEntry[] = [
             { loc: `${BASE_URL}/`, changefreq: "daily", priority: 1.0 },
-            { loc: `${BASE_URL}/who-we-are/about`, changefreq: "monthly", priority: 0.8 },
-            { loc: `${BASE_URL}/redevelopment`, changefreq: "monthly", priority: 0.8 },
-            { loc: `${BASE_URL}/contact`, changefreq: "monthly", priority: 0.7 },
+            {
+                loc: `${BASE_URL}/who-we-are/about`,
+                changefreq: "monthly",
+                priority: 0.8,
+            },
+            {
+                loc: `${BASE_URL}/redevelopment`,
+                changefreq: "monthly",
+                priority: 0.8,
+            },
+            {
+                loc: `${BASE_URL}/contact`,
+                changefreq: "monthly",
+                priority: 0.7,
+            },
             {
                 loc: `${BASE_URL}/care-community/community-members-programme`,
                 changefreq: "monthly",
                 priority: 0.8,
             },
-            { loc: `${BASE_URL}/get-involved/volunteer`, changefreq: "monthly", priority: 0.8 },
+            {
+                loc: `${BASE_URL}/get-involved/volunteer`,
+                changefreq: "monthly",
+                priority: 0.8,
+            },
             { loc: `${BASE_URL}/donate`, changefreq: "monthly", priority: 0.9 },
             {
                 loc: `${BASE_URL}/who-we-are/publications/annual-reports`,
                 changefreq: "monthly",
                 priority: 0.7,
             },
-            { loc: `${BASE_URL}/reports`, changefreq: "monthly", priority: 0.7 },
+            {
+                loc: `${BASE_URL}/reports`,
+                changefreq: "monthly",
+                priority: 0.7,
+            },
             { loc: `${BASE_URL}/news`, changefreq: "daily", priority: 0.8 },
-            { loc: `${BASE_URL}/news/noticeboard`, changefreq: "daily", priority: 0.7 },
-            { loc: `${BASE_URL}/news/stories`, changefreq: "daily", priority: 0.7 },
-            { loc: `${BASE_URL}/news/blog`, changefreq: "daily", priority: 0.7 },
-            { loc: `${BASE_URL}/news/media-and-press`, changefreq: "weekly", priority: 0.7 },
+            {
+                loc: `${BASE_URL}/news/noticeboard`,
+                changefreq: "daily",
+                priority: 0.7,
+            },
+            {
+                loc: `${BASE_URL}/news/stories`,
+                changefreq: "daily",
+                priority: 0.7,
+            },
+            {
+                loc: `${BASE_URL}/news/blog`,
+                changefreq: "daily",
+                priority: 0.7,
+            },
+            {
+                loc: `${BASE_URL}/news/media-and-press`,
+                changefreq: "weekly",
+                priority: 0.7,
+            },
             {
                 loc: `${BASE_URL}/care-community/activities-and-events`,
                 changefreq: "weekly",
@@ -109,17 +155,41 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             },
             { loc: `${BASE_URL}/privacy`, changefreq: "yearly", priority: 0.3 },
             // CMS Pages
-            { loc: `${BASE_URL}/who-we-are/history`, changefreq: "monthly", priority: 0.7 },
-            { loc: `${BASE_URL}/who-we-are/mission-values`, changefreq: "monthly", priority: 0.7 },
-            { loc: `${BASE_URL}/who-we-are/board-governance`, changefreq: "monthly", priority: 0.7 },
-            { loc: `${BASE_URL}/who-we-are/team`, changefreq: "monthly", priority: 0.7 },
-            { loc: `${BASE_URL}/care-community/life-at-ccc`, changefreq: "monthly", priority: 0.7 },
+            {
+                loc: `${BASE_URL}/who-we-are/history`,
+                changefreq: "monthly",
+                priority: 0.7,
+            },
+            {
+                loc: `${BASE_URL}/who-we-are/mission-values`,
+                changefreq: "monthly",
+                priority: 0.7,
+            },
+            {
+                loc: `${BASE_URL}/who-we-are/board-governance`,
+                changefreq: "monthly",
+                priority: 0.7,
+            },
+            {
+                loc: `${BASE_URL}/who-we-are/team`,
+                changefreq: "monthly",
+                priority: 0.7,
+            },
+            {
+                loc: `${BASE_URL}/care-community/life-at-ccc`,
+                changefreq: "monthly",
+                priority: 0.7,
+            },
             {
                 loc: `${BASE_URL}/care-community/care-and-attention-home`,
                 changefreq: "monthly",
                 priority: 0.7,
             },
-            { loc: `${BASE_URL}/care-community/faqs`, changefreq: "monthly", priority: 0.7 },
+            {
+                loc: `${BASE_URL}/care-community/faqs`,
+                changefreq: "monthly",
+                priority: 0.7,
+            },
         ];
 
         entries.push(...staticRoutes);
@@ -206,7 +276,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         if (update.slug) {
                             entries.push({
                                 loc: `${BASE_URL}${getUpdatePath(update)}`,
-                                lastmod: formatDate(update._updatedAt || update.publishedAt),
+                                lastmod: formatDate(
+                                    update._updatedAt || update.publishedAt
+                                ),
                                 changefreq: "weekly",
                                 priority: 0.6,
                             });
@@ -220,7 +292,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         if (caseStudy.slug) {
                             entries.push({
                                 loc: `${BASE_URL}/news/stories/${caseStudy.slug}`,
-                                lastmod: formatDate(caseStudy._updatedAt || caseStudy.date),
+                                lastmod: formatDate(
+                                    caseStudy._updatedAt || caseStudy.date
+                                ),
                                 changefreq: "monthly",
                                 priority: 0.6,
                             });
@@ -234,7 +308,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         if (event.slug) {
                             entries.push({
                                 loc: `${BASE_URL}/care-community/activities-and-events/${event.slug}`,
-                                lastmod: formatDate(event._updatedAt || event.date),
+                                lastmod: formatDate(
+                                    event._updatedAt || event.date
+                                ),
                                 changefreq: "weekly",
                                 priority: 0.7,
                             });
@@ -283,7 +359,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         if (pressRelease.slug) {
                             entries.push({
                                 loc: `${BASE_URL}/news/media-and-press/press-releases/${pressRelease.slug}`,
-                                lastmod: formatDate(pressRelease._updatedAt || pressRelease.date),
+                                lastmod: formatDate(
+                                    pressRelease._updatedAt || pressRelease.date
+                                ),
                                 changefreq: "monthly",
                                 priority: 0.6,
                             });
@@ -305,7 +383,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     });
                 }
             } catch (error) {
-                console.error("[Sitemap] Error fetching Sanity content:", error);
+                console.error(
+                    "[Sitemap] Error fetching Sanity content:",
+                    error
+                );
                 // Continue with static routes only if Sanity fails
             }
         }
@@ -315,7 +396,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         // Set headers
         res.setHeader("Content-Type", "application/xml; charset=utf-8");
-        res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
+        res.setHeader(
+            "Cache-Control",
+            "public, s-maxage=3600, stale-while-revalidate=86400"
+        );
 
         return res.status(200).send(xml);
     } catch (error) {
@@ -323,4 +407,3 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(500).json({ error: "Failed to generate sitemap" });
     }
 }
-
