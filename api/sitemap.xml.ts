@@ -1,8 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import {
-    sanityServerClient,
-    isSanityConfiguredServer,
-} from "./lib/sanity.server";
+import { sanityServerClient, isSanityConfiguredServer } from "./lib";
 
 // Get base URL from environment or use default
 // VERCEL_URL is provided by Vercel and includes protocol (e.g., "chinacoastcommunity.org")
