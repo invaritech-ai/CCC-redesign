@@ -32,3 +32,6 @@ export const sanityServerClient = createClient({
 export const isSanityConfiguredServer = () => {
     return !!projectId;
 };
+
+
+

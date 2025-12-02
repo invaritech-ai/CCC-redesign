@@ -8,7 +8,7 @@ import { X } from "lucide-react";
  * Cookie Information Banner Component
  * 
  * Displays an informational banner about Sanity CDN cookies.
- * Optimized for users 55+ with large text, high contrast, and mobile-responsive design.
+ * Optimised for users 55+ with large text, high contrast, and mobile-responsive design.
  * 
  * Features:
  * - Bottom-fixed banner (not modal)

@@ -51,7 +51,7 @@ const Privacy = () => {
                 <p className="text-lg text-foreground mb-4">
                   The cookies used (specifically the <strong>sanitySession</strong> cookie)
                   are necessary for content delivery and do not store any personal
-                  information. They are used solely for technical purposes to optimize
+                  information. They are used solely for technical purposes to optimise
                   how content is served to your device.
                 </p>
                 <p className="text-lg text-foreground">
@@ -66,7 +66,7 @@ const Privacy = () => {
                 <p className="text-lg text-muted-foreground">
                   We are committed to protecting your privacy. The cookies we use are
                   technical in nature and do not track your personal information or
-                  browsing behavior across other websites.
+                  browsing behaviour across other websites.
                 </p>
               </div>
             </div>

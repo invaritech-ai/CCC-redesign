@@ -183,7 +183,7 @@ const Contact = () => {
         {/* Map Section */}
         <section className="py-16">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-8 text-center">Visit Our Center</h2>
+            <h2 className="text-3xl font-bold mb-8 text-center">Visit Our Centre</h2>
             <div className="max-w-5xl mx-auto">
               <div className="bg-muted rounded-lg overflow-hidden" style={{ height: '400px' }}>
                 <div className="w-full h-full flex items-center justify-center text-muted-foreground">
