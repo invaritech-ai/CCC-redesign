@@ -1,7 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { PortableText } from "./PortableText";
-import { getImageUrl } from "@/lib/sanityImage";
-import { User } from "lucide-react";
 import type { SanityTeamMember } from "@/lib/sanity.types";
 
 interface CommitteeSectionProps {
@@ -13,29 +11,6 @@ interface CommitteeSectionProps {
     cleanRoleTitles?: boolean;
     sectionType?: "management-committee" | "project-management-committee";
 }
-
-// Helper function to get initials from name
-const getInitials = (name: string): string => {
-    const parts = name.trim().split(/\s+/);
-    if (parts.length === 1) {
-        return parts[0].charAt(0).toUpperCase();
-    }
-    return (
-        parts[0].charAt(0) + parts[parts.length - 1].charAt(0)
-    ).toUpperCase();
-};
-
-// Helper function to generate a consistent color based on name
-const getColorFromName = (name: string): string => {
-    const colors = [
-        "bg-primary/20 text-primary",
-        "bg-success/20 text-success",
-        "bg-secondary text-secondary-foreground",
-        "bg-muted text-muted-foreground",
-    ];
-    const index = name.charCodeAt(0) % colors.length;
-    return colors[index];
-};
 
 // Helper function to clean role titles
 const cleanRoleTitle = (role: string, sectionType?: string): string => {
@@ -105,41 +80,6 @@ export const CommitteeSection = ({
                                     key={member._id}
                                     className="overflow-hidden"
                                 >
-                                    <div className="aspect-square w-full overflow-hidden bg-secondary flex items-center justify-center">
-                                        {member.photo ? (
-                                            <img
-                                                src={
-                                                    getImageUrl(member.photo, {
-                                                        width: 400,
-                                                        height: 400,
-                                                        format: "webp",
-                                                    }) || ""
-                                                }
-                                                alt={member.name}
-                                                className="w-full h-full object-cover"
-                                                width="400"
-                                                height="400"
-                                            />
-                                        ) : (
-                                            <div
-                                                className={`w-full h-full flex items-center justify-center ${getColorFromName(
-                                                    member.name
-                                                )}`}
-                                            >
-                                                <div className="text-center">
-                                                    <div className="text-4xl md:text-5xl font-bold mb-2">
-                                                        {getInitials(
-                                                            member.name
-                                                        )}
-                                                    </div>
-                                                    <User
-                                                        className="h-12 w-12 mx-auto opacity-50"
-                                                        aria-hidden="true"
-                                                    />
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
                                     <CardContent className="pt-6">
                                         <h3 className="text-xl font-semibold mb-2 text-foreground">
                                             {member.name}
