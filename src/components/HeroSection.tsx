@@ -1,4 +1,10 @@
-import { CheckCircle2, Award, Users, ArrowRight, Building2 } from "lucide-react";
+import {
+    CheckCircle2,
+    Award,
+    Users,
+    ArrowRight,
+    Building2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
@@ -14,11 +20,15 @@ export const HeroSection = () => {
                     {/* Left Content */}
                     <div className="space-y-8">
                         <div className="inline-flex items-center gap-3 px-4 py-2.5 sm:px-5 sm:py-3 bg-muted-foreground/90 text-background rounded-lg border-2 border-background/20 shadow-md">
-                            <Building2 className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" aria-hidden="true" />
+                            <Building2
+                                className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0"
+                                aria-hidden="true"
+                            />
                             <div className="flex items-center gap-2">
                                 <div className="h-2.5 w-2.5 rounded-full bg-secondary animate-pulse" />
                                 <span className="text-sm sm:text-base font-semibold">
-                                    Currently Closed for Redevelopment
+                                    Our residential care home is currently under
+                                    redevelopment
                                 </span>
                             </div>
                         </div>
@@ -38,19 +48,28 @@ export const HeroSection = () => {
 
                         <div className="flex flex-wrap gap-4 text-sm">
                             <div className="flex items-center gap-2">
-                                <CheckCircle2 className="h-5 w-5 text-success" aria-hidden="true" />
+                                <CheckCircle2
+                                    className="h-5 w-5 text-success"
+                                    aria-hidden="true"
+                                />
                                 <span className="text-foreground font-medium">
                                     Section 88 Charity
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Award className="h-5 w-5 text-success" aria-hidden="true" />
+                                <Award
+                                    className="h-5 w-5 text-success"
+                                    aria-hidden="true"
+                                />
                                 <span className="text-foreground font-medium">
                                     45+ Years Serving HK
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Users className="h-5 w-5 text-success" aria-hidden="true" />
+                                <Users
+                                    className="h-5 w-5 text-success"
+                                    aria-hidden="true"
+                                />
                                 <span className="text-foreground font-medium">
                                     80+ Community Members
                                 </span>
@@ -67,7 +86,10 @@ export const HeroSection = () => {
                             >
                                 <Link to="/redevelopment">
                                     Learn more about Redevelopment
-                                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                                    <ArrowRight
+                                        className="h-4 w-4"
+                                        aria-hidden="true"
+                                    />
                                 </Link>
                             </Button>
                         </div>
@@ -77,12 +99,15 @@ export const HeroSection = () => {
                     <div className="relative">
                         <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
                             <picture>
-                                <source srcSet={heroImageWebP} type="image/webp" />
+                                <source
+                                    srcSet={heroImageWebP}
+                                    type="image/webp"
+                                />
                                 <img
                                     src={heroImageJPG}
                                     alt="Caring elderly community - two people walking together in a peaceful garden"
                                     className="w-full h-full object-cover"
-                                    fetchpriority="high"
+                                    fetchPriority="high"
                                     width="800"
                                     height="600"
                                 />
