@@ -237,7 +237,7 @@ const Future = () => {
                     teamActivities={[
                         "Keeps in touch with former residents and Community Members.",
                         "Organises social, recreational and seasonal events.",
-                        "Helps reduce isolation by keeping connections alive within the CCC community.",
+                        "Helps reduce isolation by keeping in connections within the CCC community.",
                     ]}
                     closingParagraph="Our motto, 'Proud to care', continues to guide every decision we make, including how we manage this transition period."
                 />
