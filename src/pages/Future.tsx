@@ -85,7 +85,7 @@ const Future = () => {
                 <WhyRedevelopingSection
                     title="Why is CCC redeveloping?"
                     paragraphs={[
-                        "The building at 63 Cumberland Road, which housed CCC for many years, reached a point where significant upgrading was required to meet current safety and building standards and to prepare for future care needs. After careful review, the Board decided that a full redevelopment would best secure the long-term future of CCC as a home for English-speaking elders in Hong Kong.",
+                        "The building at 63 Cumberland Road, which housed CCC for many years, reached a point where significant upgrading was required to meet latest safety and building standards and to prepare for future care needs. After careful review, the Board decided that a full redevelopment would best secure the long-term future of CCC as a home for English-speaking elders in Hong Kong.",
                     ]}
                     benefits={[
                         "Provide a modern, safe residential care home designed to current regulations.",
@@ -105,27 +105,95 @@ const Future = () => {
                     intentions={[
                         "Provide comfortable bedrooms with improved privacy and accessibility.",
                         "Include dedicated spaces for activities, dining, physiotherapy and quiet rest.",
-                        "Meet up-to-date fire, health and safety standards.",
-                        "Enable CCC to continue serving a similar number of residents, with flexibility as care needs change.",
+                        "Meet latest fire, health and safety standards.",
+                        "Enable CCC to provide care to residents with various degree of care requirements.",
                     ]}
                     paragraphs={[
                         <span>
-                            Our new home will be a place of <strong className="font-semibold text-primary">comfort and dignity</strong>. We are building a <strong className="font-semibold text-primary">modern 45-bed facility</strong>. Most rooms will be single en-suite rooms. There will be <strong className="font-semibold text-primary">39 single rooms and 3 double rooms</strong>. Every resident will have <strong className="font-semibold text-primary">privacy and independence</strong>.
+                            Our new home will be a place of{" "}
+                            <strong className="font-semibold text-primary">
+                                comfort and dignity
+                            </strong>
+                            . We are building a{" "}
+                            <strong className="font-semibold text-primary">
+                                modern 45-bed facility
+                            </strong>
+                            . Most rooms will be single en-suite rooms. There
+                            will be{" "}
+                            <strong className="font-semibold text-primary">
+                                39 single rooms and 3 double rooms
+                            </strong>
+                            . Every resident will have{" "}
+                            <strong className="font-semibold text-primary">
+                                privacy and independence
+                            </strong>
+                            .
                         </span>,
                         <span>
-                            The home will have <strong className="font-semibold text-primary">wide, open corridors</strong>. It will have <strong className="font-semibold text-primary">thoughtful accessibility features</strong>. Lifts will be ready for hospital beds. This ensures easy movement throughout the home.
+                            The home will have{" "}
+                            <strong className="font-semibold text-primary">
+                                wide, open corridors
+                            </strong>
+                            . It will have{" "}
+                            <strong className="font-semibold text-primary">
+                                thoughtful accessibility features
+                            </strong>
+                            . Lifts will be accomodated for hospital beds to
+                            ensure easy movement throughout the home.
                         </span>,
                         <span>
-                            Life at CCC will be <strong className="font-semibold text-primary">active and connected</strong>. Residents will have a dedicated <strong className="font-semibold text-primary">Education Room</strong>. There will be a <strong className="font-semibold text-primary">Rehabilitation Room</strong>. A refreshing <strong className="font-semibold text-primary">outdoor hydrotherapy pool</strong> will also be available. Each floor will have cozy pantries and shared spaces. Our Living and Dining areas will open onto <strong className="font-semibold text-primary">green outdoor gardens</strong>. These are perfect for spending time with family and friends.
+                            Positive ageing will be encouraged at CCC and
+                            residents will be{" "}
+                            <strong className="font-semibold text-primary">
+                                active and connected
+                            </strong>
+                            . Residents will have a dedicated{" "}
+                            <strong className="font-semibold text-primary">
+                                Education Room
+                            </strong>
+                            . There will be a{" "}
+                            <strong className="font-semibold text-primary">
+                                Rehabilitation Room
+                            </strong>
+                            . Each floor will have cozy pantries and shared
+                            spaces. Our living and dining areas will have open
+                            view onto our{" "}
+                            <strong className="font-semibold text-primary">
+                                green outdoor gardens
+                            </strong>{" "}
+                            and family and friends are always welcome, spending
+                            time with our residents in this relaxing
+                            environment.
                         </span>,
                         <span>
-                            We are <strong className="font-semibold text-primary">building for the future</strong>. The building will have three stories. Its foundations are designed to support an <strong className="font-semibold text-primary">extra floor</strong>. This means we can adapt to future needs.
+                            <strong className="font-semibold text-primary">
+                                Care and safety
+                            </strong>{" "}
+                            are very important. Special{" "}
+                            <strong className="font-semibold text-primary">
+                                secure sections
+                            </strong>{" "}
+                            which will provide a safe place for residents with
+                            memory care needs. Ground-floor rooms will have{" "}
+                            <strong className="font-semibold text-primary">
+                                easy access to our peaceful gardens
+                            </strong>
+                            .
                         </span>,
                         <span>
-                            <strong className="font-semibold text-primary">Care and safety</strong> are very important. Special <strong className="font-semibold text-primary">secure areas</strong> will be on the upper floors. These will provide a safe place for residents with memory care needs. Ground-floor rooms will have <strong className="font-semibold text-primary">direct access to our peaceful gardens</strong>.
-                        </span>,
-                        <span>
-                            Our long-serving staff helped design this home. We also considered the needs of Hong Kong's elders. This building is a <strong className="font-semibold text-primary">community</strong>. It is <strong className="font-semibold text-primary">connected to nature</strong>. Our architect has created a design where green spaces, light, and living areas work together. The garden will be a main part of daily life.
+                            Our long-serving staff helped design this home. We
+                            also considered the needs of Hong Kong's elders.
+                            This building is a{" "}
+                            <strong className="font-semibold text-primary">
+                                community
+                            </strong>
+                            . It is{" "}
+                            <strong className="font-semibold text-primary">
+                                connected to nature
+                            </strong>
+                            . Our architect has created a design where green
+                            spaces, light, and living areas work together. The
+                            garden will be a main part of daily life.
                         </span>,
                     ]}
                     quotes={[
@@ -146,7 +214,8 @@ const Future = () => {
                     <div className="container mx-auto px-4">
                         <div className="max-w-4xl mx-auto text-center mt-6">
                             <p className="text-base md:text-lg text-muted-foreground">
-                                We will update this page as key milestones are reached.
+                                We will update this page as key milestones are
+                                reached.
                             </p>
                         </div>
                     </div>
