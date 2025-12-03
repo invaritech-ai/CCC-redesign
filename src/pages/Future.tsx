@@ -181,28 +181,22 @@ const Future = () => {
                             .
                         </span>,
                         <span>
-                            Our long-serving staff helped design this home. We
-                            also considered the needs of Hong Kong's elders.
-                            This building is a{" "}
-                            <strong className="font-semibold text-primary">
-                                community
-                            </strong>
-                            . It is{" "}
+                            The building has been designed to be{" "}
                             <strong className="font-semibold text-primary">
                                 connected to nature
-                            </strong>
-                            . Our architect has created a design where green
-                            spaces, light, and living areas work together. The
-                            garden will be a main part of daily life.
+                            </strong>{" "}
+                            . This concept was inspired by our existing garden.
+                            The garden will continue to be a focus of our daily
+                            life and will include{" "}
+                            <strong className="font-semibold text-primary">
+                                a new aromatic sensory garden
+                            </strong>{" "}
+                            .
                         </span>,
                     ]}
                     quotes={[
                         {
-                            text: "The site has such a nice environment, there is such calmness there in the context of Hong Kong, so I try to capture that calmness, that quietness, this landscape, the garden space – the greenery is very precious. I want to integrate all that into the building,",
-                            author: "Billy Tam, Lead Architect",
-                        },
-                        {
-                            text: "For some of the residents who are on the first or second floor, even if they have limited mobility and can't go down into the garden itself, the design means that they will feel they are in the garden,",
+                            text: "The site has such a nice environment, there is such calmness there in the context of Hong Kong, so I try to capture that calmness, that quietness, this landscape, the garden space – the greenery is very precious. I want to integrate all that into the building. For some of the residents who are on the first or second floor, even if they have limited mobility and can't go down into the garden itself, the design means that they will feel they are in the garden,",
                             author: "Billy Tam, Lead Architect",
                         },
                     ]}
@@ -225,11 +219,11 @@ const Future = () => {
                 <WhereResidentsAreNowSection
                     title="Where are CCC's residents now?"
                     paragraphs={[
-                        "During redevelopment, CCC is not operating a residential care home at 63 Cumberland Road. Our former residents have moved to alternative accommodation, and CCC has stayed in close contact with them and their families.",
+                        "During redevelopment, CCC is not operating a residential care home at 63 Cumberland Road. Our former residents have been relocated to alternative accommodation, and CCC remain in close contact with them and their families.",
                     ]}
                     communityItems={[
                         "We launched a Community Membership scheme to support former residents and other English-speaking elders.",
-                        "We organise regular outings and social events, such as Bingos at Zetland Hall and seasonal gatherings.",
+                        "We organise regular outings, workshops, social events, and seasonal gatherings.",
                         "We provide ongoing outreach to help elders remain connected and supported.",
                     ]}
                 />
