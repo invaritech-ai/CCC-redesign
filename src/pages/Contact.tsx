@@ -1,7 +1,7 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { DynamicForm } from "@/components/DynamicForm";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -74,10 +74,10 @@ const Contact = () => {
                         <MapPin className="h-6 w-6 text-primary" aria-hidden="true" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h3 className="font-semibold mb-1">Office Address</h3>
+                        <h3 className="font-semibold mb-1">Postal Address</h3>
                         <p className="text-muted-foreground break-words">
-                          123 Victoria Road<br />
-                          Central, Hong Kong
+                          63 Cumberland Road<br />
+                          Kowloon Tong, Kowloon, Hong Kong
                         </p>
                       </div>
                     </div>
@@ -93,8 +93,7 @@ const Contact = () => {
                       <div className="min-w-0 flex-1">
                         <h3 className="font-semibold mb-1">Phone</h3>
                         <p className="text-muted-foreground break-words">
-                          +852 1234 5678<br />
-                          +852 9876 5432 (Mobile)
+                          +852 2337 7266
                         </p>
                       </div>
                     </div>
@@ -110,26 +109,7 @@ const Contact = () => {
                       <div className="min-w-0 flex-1">
                         <h3 className="font-semibold mb-1">Email</h3>
                         <p className="text-muted-foreground break-words">
-                          info@chinacoastcommunity.org.hk<br />
-                          volunteer@chinacoastcommunity.org.hk
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex gap-4 items-start">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
-                        <Clock className="h-6 w-6 text-primary" aria-hidden="true" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="font-semibold mb-1">Office Hours</h3>
-                        <p className="text-muted-foreground break-words">
-                          Monday - Friday: 9:00 AM - 5:00 PM<br />
-                          Saturday: 10:00 AM - 2:00 PM<br />
-                          Sunday: Closed
+                          ccchome@netvigator.com
                         </p>
                       </div>
                     </div>
@@ -162,41 +142,33 @@ const Contact = () => {
           </div>
         </section>
 
-        {/* Emergency Contact */}
-        <section className="py-16 bg-secondary">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-2xl font-bold mb-4">Emergency Contact</h2>
-              <p className="text-lg text-muted-foreground mb-6">
-                For urgent matters requiring immediate attention, please contact our emergency hotline:
-              </p>
-              <a href="tel:+85298765432" className="text-3xl font-bold text-foreground hover:text-primary transition-colors">
-                +852 9876 5432
-              </a>
-              <p className="text-sm text-muted-foreground mt-4">
-                Available 24/7 for members and their families
-              </p>
-            </div>
-          </div>
-        </section>
-
         {/* Map Section */}
         <section className="py-16">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-8 text-center">Visit Our Centre</h2>
-            <div className="max-w-5xl mx-auto">
+            <h2 className="text-3xl font-bold mb-8 text-center">
+              Location of our Care Home (currently under redevelopment)
+            </h2>
+            <div className="max-w-5xl mx-auto space-y-4">
               <div className="bg-muted rounded-lg overflow-hidden" style={{ height: '400px' }}>
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                  <div className="text-center">
-                    <MapPin className="h-16 w-16 mx-auto mb-4 opacity-50" aria-hidden="true" />
-                    <p>Interactive map would be displayed here</p>
-                    <p className="text-sm mt-2">123 Victoria Road, Central, Hong Kong</p>
-                  </div>
-                </div>
+                <iframe
+                  title="63 Cumberland Road, Kowloon Tong, Kowloon, Hong Kong"
+                  src="https://www.google.com/maps?q=63+Cumberland+Road,+Kowloon+Tong,+Kowloon,+Hong+Kong&output=embed"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  allowFullScreen
+                />
               </div>
-              <div className="mt-6 text-center">
-                <Button variant="outline" size="lg">
-                  Get Directions
+              <div className="text-center">
+                <Button variant="outline" size="lg" asChild>
+                  <a
+                    href="https://maps.google.com/?q=63+Cumberland+Road,+Kowloon+Tong,+Kowloon,+Hong+Kong"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Get Directions
+                  </a>
                 </Button>
               </div>
             </div>

@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -363,9 +362,6 @@ export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) =>
                       />
                     </FormControl>
                   )}
-                  {field.placeholder && field.fieldType !== "boolean" && field.fieldType !== "upload" && (
-                    <FormDescription>{field.placeholder}</FormDescription>
-                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -394,4 +390,3 @@ export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) =>
     </section>
   );
 };
-
