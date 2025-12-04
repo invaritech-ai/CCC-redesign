@@ -152,7 +152,7 @@ const Contact = () => {
               <div className="bg-muted rounded-lg overflow-hidden" style={{ height: '400px' }}>
                 <iframe
                   title="63 Cumberland Road, Kowloon Tong, Kowloon, Hong Kong"
-                  src="https://www.google.com/maps?q=63+Cumberland+Road,+Kowloon+Tong,+Kowloon,+Hong+Kong&output=embed"
+                  src="https://www.google.com/maps?q=China+Coast+Community+Ltd&ll=22.333109,114.17707&z=17&output=embed"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
@@ -163,7 +163,7 @@ const Contact = () => {
               <div className="text-center">
                 <Button variant="outline" size="lg" asChild>
                   <a
-                    href="https://maps.google.com/?q=63+Cumberland+Road,+Kowloon+Tong,+Kowloon,+Hong+Kong"
+                    href="https://www.google.com/maps/place/China+Coast+Community+Ltd/@22.333109,114.1744897,17z/data=!3m1!4b1!4m6!3m5!1s0x340406dc972cfaff:0x37dd9a2ed78fa79b!8m2!3d22.333109!4d114.17707!16s%2Fg%2F12hm_4k63?entry=ttu&g_ep=EgoyMDI1MTEzMC4wIKXMDSoASAFQAw%3D%3D"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
