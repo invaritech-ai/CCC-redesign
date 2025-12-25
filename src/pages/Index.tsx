@@ -14,24 +14,9 @@ const StatsSection = lazy(() =>
         default: m.StatsSection,
     }))
 );
-const FeaturedStorySection = lazy(() =>
-    import("@/components/FeaturedStorySection").then((m) => ({
-        default: m.FeaturedStorySection,
-    }))
-);
 const TestimonialsSection = lazy(() =>
     import("@/components/TestimonialsSection").then((m) => ({
         default: m.TestimonialsSection,
-    }))
-);
-const NoticeboardSection = lazy(() =>
-    import("@/components/NoticeboardSection").then((m) => ({
-        default: m.NoticeboardSection,
-    }))
-);
-const TrustSignalsSection = lazy(() =>
-    import("@/components/TrustSignalsSection").then((m) => ({
-        default: m.TrustSignalsSection,
     }))
 );
 const ServicesSection = lazy(() =>
@@ -82,27 +67,18 @@ const Index = () => {
                     {/* 3. Impact Snapshot - Metrics */}
                     <StatsSection />
 
-                    {/* 4. Featured Story - Prominent beneficiary/volunteer spotlight */}
-                    <FeaturedStorySection />
-
-                    {/* 5. Additional Testimonials */}
+                    {/* 4. Additional Testimonials */}
                     <TestimonialsSection />
 
-                    {/* 6. Upcoming Events + Recent Update */}
-                    <NoticeboardSection />
-
-                    {/* 7. Trust Signals - Partner logos, accreditations, transparency */}
-                    <TrustSignalsSection />
-
-                    {/* 8. Services - Unified design */}
+                    {/* 5. Services - Unified design */}
                     <ServicesSection />
 
-                    {/* 9. CTA Section */}
+                    {/* 6. CTA Section */}
                     <CTASection />
                 </Suspense>
             </main>
 
-            {/* 10. Footer with CTAs */}
+            {/* 7. Footer with CTAs */}
             <Suspense fallback={null}>
                 <Footer />
             </Suspense>
