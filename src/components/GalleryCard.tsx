@@ -68,3 +68,4 @@ export const GalleryCard = ({ gallery }: GalleryCardProps) => {
 
 
 
+

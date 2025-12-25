@@ -33,3 +33,4 @@ export const BoardGovernanceHero = ({ title, description, badgeText }: BoardGove
 
 
 
+

@@ -50,7 +50,6 @@ const NAV_ITEMS: NavItem[] = [
     {
         label: "Care & Community",
         children: [
-            { label: "Life at CCC", href: "/care-community/life-at-ccc" },
             {
                 label: "Care & Attention Home",
                 href: "/care-community/care-and-attention-home",
@@ -63,22 +62,11 @@ const NAV_ITEMS: NavItem[] = [
                 label: "Activities & Events",
                 href: "/care-community/activities-and-events",
             },
-            { label: "FAQs", href: "/care-community/faqs" },
         ],
     },
     {
         label: "Redevelopment",
         href: "/redevelopment",
-    },
-    {
-        label: "News & Stories",
-        children: [
-            { label: "Latest News", href: "/news" },
-            { label: "Noticeboard", href: "/news/noticeboard" },
-            { label: "Stories", href: "/news/stories" },
-            { label: "Blog", href: "/news/blog" },
-            { label: "Media & Press", href: "/news/media-and-press" },
-        ],
     },
     {
         label: "Get Involved",

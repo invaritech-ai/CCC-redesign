@@ -8,7 +8,6 @@ import { WhatIsBeingBuiltSection } from "@/components/WhatIsBeingBuiltSection";
 import { WhereResidentsAreNowSection } from "@/components/WhereResidentsAreNowSection";
 import { HowCareContinuesSection } from "@/components/HowCareContinuesSection";
 import { GovernanceTeamSection } from "@/components/GovernanceTeamSection";
-import { HowToSupportSection } from "@/components/HowToSupportSection";
 
 const Future = () => {
     // Timeline phases for the reconstruction project
@@ -101,12 +100,11 @@ const Future = () => {
                 {/* Section 3: What is being built */}
                 <WhatIsBeingBuiltSection
                     title="What the new home will offer"
-                    introParagraph="The new building is being designed as a purpose-built residential care home. While technical details may evolve as the project progresses, the intention is to:"
                     intentions={[
-                        "Provide comfortable bedrooms with improved privacy and accessibility.",
-                        "Include dedicated spaces for activities, dining, physiotherapy and quiet rest.",
-                        "Meet latest fire, health and safety standards.",
-                        "Enable CCC to provide care to residents with various degree of care requirements.",
+                        "Provide comfortable bedrooms with improved privacy and accessibility, so residents can live with dignity.",
+                        "Include dedicated spaces for activities, dining, rehabilitation and quiet rest.",
+                        "Meet latest fire, health and safety standards under RCHE regulations in Hong Kong.",
+                        "Enable CCC to provide care to residents with varying care requirements.",
                     ]}
                     paragraphs={[
                         <span>
@@ -138,8 +136,8 @@ const Future = () => {
                             <strong className="font-semibold text-primary">
                                 thoughtful accessibility features
                             </strong>
-                            . Lifts will be accomodated for hospital beds to
-                            ensure easy movement throughout the home.
+                            . Lifts will be sized to accommodate hospital beds,
+                            helping ensure easy movement throughout the home.
                         </span>,
                         <span>
                             Positive ageing will be encouraged at CCC and
@@ -197,7 +195,7 @@ const Future = () => {
                     quotes={[
                         {
                             text: "The site has such a nice environment, there is such calmness there in the context of Hong Kong, so I try to capture that calmness, that quietness, this landscape, the garden space – the greenery is very precious. I want to integrate all that into the building. For some of the residents who are on the first or second floor, even if they have limited mobility and can't go down into the garden itself, the design means that they will feel they are in the garden,",
-                            author: "Billy Tam, Lead Architect",
+                            author: "Billy Tam, Lead Architect, Thomas Chow Architects Ltd.",
                         },
                     ]}
                 />
@@ -217,9 +215,8 @@ const Future = () => {
 
                 {/* Section 5: Where residents and services are now */}
                 <WhereResidentsAreNowSection
-                    title="Where are CCC's residents now?"
                     paragraphs={[
-                        "During redevelopment, CCC is not operating a residential care home at 63 Cumberland Road. Our former residents have been relocated to alternative accommodation, and CCC remain in close contact with them and their families.",
+                        "While our home at 63 Cumberland Road is being rebuilt, CCC continues to support former residents and other English-speaking elders through our Community Membership scheme and outreach.",
                     ]}
                     communityItems={[
                         "We launched a Community Membership scheme to support former residents and other English-speaking elders.",
@@ -233,13 +230,13 @@ const Future = () => {
                     title="Continuing care during redevelopment"
                     paragraphs={[
                         "Although our building is being redeveloped, our commitment to elders has not paused.",
+                        "During redevelopment, CCC is not operating a residential care home at 63 Cumberland Road. Our former residents have been relocated to alternative accommodation, and CCC remains in close contact with them and their families.",
                     ]}
                     teamActivities={[
                         "Keeps in touch with former residents and Community Members.",
                         "Organises social, recreational and seasonal events.",
                         "Helps reduce isolation by keeping in connections within the CCC community.",
                     ]}
-                    closingParagraph="Our motto, 'Proud to care', continues to guide every decision we make, including how we manage this transition period."
                 />
 
                 {/* Section 7: Governance & professional team */}
@@ -250,20 +247,7 @@ const Future = () => {
                     projectManagerJoinedDate="July 2025"
                 />
 
-                {/* Section 8: How you can support */}
-                <HowToSupportSection
-                    title="How you can support the redevelopment"
-                    paragraphs={[
-                        "Redeveloping our home is a major undertaking for a small charity. We are deeply grateful to the individuals, families, companies and foundations who are helping to make it possible.",
-                    ]}
-                    supportOptions={[
-                        "Making a donation to help fund the redevelopment and our ongoing outreach to elders.",
-                        "Partnering with CCC through corporate or foundation giving.",
-                        "Helping to spread the word about CCC within the English-speaking Hong Kong community.",
-                    ]}
-                />
-
-                {/* Section 9: Image Gallery */}
+                {/* Section 8: Image Gallery */}
                 <ImageGallery
                     images={galleryImages}
                     title="Project Visualizations"
