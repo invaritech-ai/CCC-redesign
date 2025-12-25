@@ -8,7 +8,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import heroImageWebP from "@/assets/hero-elderly-walking.webp";
 import heroImageJPG from "@/assets/hero-elderly-walking.jpg";
 import { DonateNowButton } from "./DonateNowButton";
 
@@ -100,7 +99,7 @@ export const HeroSection = () => {
                         <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
                             <picture>
                                 <source
-                                    srcSet={heroImageWebP}
+                                    srcSet="/hero-image-no-text.webp"
                                     type="image/webp"
                                 />
                                 <img
