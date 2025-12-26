@@ -36,6 +36,7 @@ const SupportDonate = () => {
         setPageContent(content);
         setFormConfig(form);
       } catch (error) {
+        console.error("Error fetching donate page content:", error);
       } finally {
         setLoading(false);
       }
@@ -131,7 +132,11 @@ const SupportDonate = () => {
           </section>
         )}
 
-        {formConfig && <DynamicForm formConfig={formConfig} />}
+        {formConfig && (
+          <section id="donation-form">
+            <DynamicForm formConfig={formConfig} />
+          </section>
+        )}
       </main>
 
       <Footer />
@@ -140,4 +145,3 @@ const SupportDonate = () => {
 };
 
 export default SupportDonate;
-

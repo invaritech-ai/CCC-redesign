@@ -9,6 +9,11 @@ import { Timeline } from "@/components/Timeline";
 import { Grid } from "@/components/Grid";
 import { InfoCards } from "@/components/InfoCards";
 import type { InfoCardItem } from "@/components/InfoCard";
+import {
+    PayBoxCards,
+    type PayBoxItem,
+    type PayBoxLine,
+} from "@/components/PayBoxCards";
 
 interface PortableTextProps {
     blocks: SanityPortableTextBlock[];
@@ -587,6 +592,26 @@ const renderTextWithMarks = (
     });
 };
 
+const extractLinkHrefs = (
+    children: SanityBlock["children"],
+    markDefs?: SanityBlock["markDefs"]
+): string[] => {
+    if (!children || !markDefs) return [];
+
+    const hrefs = new Set<string>();
+    for (const child of children) {
+        if (!child.marks || child.marks.length === 0) continue;
+        for (const mark of child.marks) {
+            const def = markDefs.find((d) => d._key === mark);
+            if (def && def._type === "link" && def.href) {
+                hrefs.add(def.href);
+            }
+        }
+    }
+
+    return [...hrefs];
+};
+
 export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
     if (!blocks || !Array.isArray(blocks)) return null;
 
@@ -610,6 +635,13 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
     let cardText = "";
     let insideCard = false;
     let cardStartIndex = -1;
+
+    // Track paybox state - collect payboxes across blocks
+    let payboxItems: PayBoxItem[] = [];
+    let currentPayboxLines: PayBoxLine[] = [];
+    let insidePaybox = false;
+    let payboxStartIndex = -1;
+    let payboxImages: PayBoxItem["images"] = [];
 
     const flushList = () => {
         if (listItems.length > 0) {
@@ -677,6 +709,23 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
         }
     };
 
+    const processPayboxes = () => {
+        if (payboxItems.length > 0) {
+            flushList();
+            elements.push(
+                <PayBoxCards
+                    key={`payboxes-${payboxStartIndex}`}
+                    items={payboxItems}
+                />
+            );
+            payboxItems = [];
+            currentPayboxLines = [];
+            insidePaybox = false;
+            payboxStartIndex = -1;
+            payboxImages = [];
+        }
+    };
+
     blocks.forEach((block, index) => {
         // Handle image blocks
         if (block._type === "image") {
@@ -685,6 +734,19 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
             if (imageBlock.asset?.url) {
                 const imageUrl = getImageUrlFromString(imageBlock.asset.url);
                 if (imageUrl) {
+                    if (insidePaybox) {
+                        payboxImages = [
+                            ...(payboxImages || []),
+                            { src: imageUrl, alt: imageBlock.alt || "" },
+                        ];
+                        return;
+                    }
+                    if (payboxItems.length > 0) {
+                        processPayboxes();
+                    }
+                    if (cardItems.length > 0) {
+                        processCards();
+                    }
                     elements.push(
                         <img
                             key={index}
@@ -905,26 +967,84 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                 }
             }
 
-            // Check if card starts in this block
-            // After timeline/grid filtering, we need to recalculate card positions in filtered text
+            // Paybox blocks (Donate page)
             const filteredTextAfterTimelineGrid =
                 hasTimelineInBlock || hasGridInBlock
                     ? extractTextFromBlock(filteredChildren)
                     : plainText;
 
-            if (filteredTextAfterTimelineGrid.includes("<card>")) {
+            const payboxToken = filteredTextAfterTimelineGrid.trim();
+
+            if (!insidePaybox && payboxToken === "<paybox>") {
+                insidePaybox = true;
+                payboxStartIndex =
+                    payboxStartIndex === -1 ? index : payboxStartIndex;
+                currentPayboxLines = [];
+                payboxImages = [];
+                return;
+            }
+
+            if (insidePaybox && payboxToken === "</paybox>") {
+                if (currentPayboxLines.length > 0) {
+                    const [titleLine, ...restLines] = currentPayboxLines;
+                    const title = titleLine.plain.trim();
+                    if (title) {
+                        payboxItems.push({
+                            title,
+                            lines: restLines,
+                            images: payboxImages,
+                        });
+                    }
+                }
+
+                currentPayboxLines = [];
+                payboxImages = [];
+                insidePaybox = false;
+                return;
+            }
+
+            if (insidePaybox) {
+                const linePlain = extractTextFromBlock(filteredChildren).trim();
+                if (linePlain) {
+                    currentPayboxLines.push({
+                        plain: linePlain,
+                        node: renderTextWithMarks(
+                            filteredChildren,
+                            textBlock.markDefs
+                        ),
+                        hrefs: extractLinkHrefs(
+                            filteredChildren,
+                            textBlock.markDefs
+                        ),
+                    });
+                }
+                return;
+            }
+
+            if (payboxItems.length > 0) {
+                processPayboxes();
+            }
+
+            // Check if card starts in this block
+            // After timeline/grid/paybox filtering, we need to recalculate card positions in filtered text
+            const filteredTextAfterTimelineGridPaybox =
+                hasTimelineInBlock || hasGridInBlock
+                    ? extractTextFromBlock(filteredChildren)
+                    : plainText;
+
+            if (filteredTextAfterTimelineGridPaybox.includes("<card>")) {
                 insideCard = true;
                 cardStartIndex = cardStartIndex === -1 ? index : cardStartIndex;
                 // Use positions from filtered text if timeline/grid were filtered, otherwise use original
                 const startIndex =
-                    filteredTextAfterTimelineGrid.indexOf("<card>");
+                    filteredTextAfterTimelineGridPaybox.indexOf("<card>");
 
                 // Check if card also ends in this block
-                if (filteredTextAfterTimelineGrid.includes("</card>")) {
+                if (filteredTextAfterTimelineGridPaybox.includes("</card>")) {
                     const endIndex =
-                        filteredTextAfterTimelineGrid.indexOf("</card>");
+                        filteredTextAfterTimelineGridPaybox.indexOf("</card>");
                     // Extract content between tags from filtered text
-                    cardText = filteredTextAfterTimelineGrid.substring(
+                    cardText = filteredTextAfterTimelineGridPaybox.substring(
                         startIndex,
                         endIndex + 7
                     ); // 7 = length of "</card>"
@@ -947,7 +1067,7 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                     insideCard = false;
 
                     // Continue processing remaining text after </card> if any
-                    const remainingText = filteredTextAfterTimelineGrid
+                    const remainingText = filteredTextAfterTimelineGridPaybox
                         .substring(endIndex + 7)
                         .trim();
                     if (
@@ -960,14 +1080,14 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
                 } else {
                     // Card starts but doesn't end in this block
                     cardText =
-                        filteredTextAfterTimelineGrid.substring(startIndex);
+                        filteredTextAfterTimelineGridPaybox.substring(startIndex);
 
                     // Filter card start tag from already-filtered children
                     hasCardInBlock = true;
                     filteredChildren = filterCardTags(
                         filteredChildren,
                         startIndex,
-                        filteredTextAfterTimelineGrid.length
+                        filteredTextAfterTimelineGridPaybox.length
                     );
 
                     if (!filteredChildren || filteredChildren.length === 0) {
@@ -1148,12 +1268,32 @@ export const PortableText = ({ blocks, className = "" }: PortableTextProps) => {
         processGrid();
     }
 
+    // Process any remaining paybox content
+    if (insidePaybox) {
+        if (currentPayboxLines.length > 0) {
+            const [titleLine, ...restLines] = currentPayboxLines;
+            const title = titleLine.plain.trim();
+            if (title) {
+                payboxItems.push({
+                    title,
+                    lines: restLines,
+                    images: payboxImages,
+                });
+            }
+        }
+    }
+
     // Process any remaining card content
     if (insideCard) {
         const cardItem = parseCardContent(cardText);
         if (cardItem) {
             cardItems.push(cardItem);
         }
+    }
+
+    // Process any collected payboxes
+    if (payboxItems.length > 0) {
+        processPayboxes();
     }
 
     // Process any collected cards
