@@ -3,12 +3,16 @@ import { Footer } from "@/components/Footer";
 import { BoardGovernanceHero } from "@/components/BoardGovernanceHero";
 import { HowWeAreGovernedSection } from "@/components/HowWeAreGovernedSection";
 import { GovernanceStructureSection } from "@/components/GovernanceStructureSection";
-import { CommitteeSection } from "@/components/CommitteeSection";
-import { AccountabilityComplianceSection } from "@/components/AccountabilityComplianceSection";
 import { useEffect, useState, useMemo } from "react";
 import { getAllTeamMembers } from "@/lib/sanity.queries";
 import type { SanityTeamMember } from "@/lib/sanity.types";
 import { Users, Building2, Briefcase, Hammer, DollarSign } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 // Helper functions to filter team members by role
 const getExecutiveCommitteeMembers = (
@@ -90,32 +94,12 @@ const getProjectManagementCommitteeMembers = (
         });
 };
 
-const getManagementTeamMembers = (
-    members: SanityTeamMember[]
-): SanityTeamMember[] => {
-    return members
-        .filter(
-            (member) =>
-                member.role &&
-                (member.role === "General Manager" ||
-                    member.role === "Nurse Manager" ||
-                    member.role === "Office Manager" ||
-                    member.role === "Project Manager")
-        )
-        .sort((a, b) => {
-            // Sort by order if available
-            if (a.order !== null && b.order !== null) {
-                return a.order - b.order;
-            }
-            if (a.order !== null) return -1;
-            if (b.order !== null) return 1;
-            return 0;
-        });
-};
-
 const BoardGovernance = () => {
     const [teamMembers, setTeamMembers] = useState<SanityTeamMember[]>([]);
     const [loading, setLoading] = useState(true);
+    const [activeCommitteeKey, setActiveCommitteeKey] = useState<
+        "executive" | "management" | "project" | null
+    >(null);
 
     useEffect(() => {
         const fetchTeamMembers = async () => {
@@ -146,10 +130,44 @@ const BoardGovernance = () => {
         () => getProjectManagementCommitteeMembers(teamMembers),
         [teamMembers]
     );
-    const managementTeamMembers = useMemo(
-        () => getManagementTeamMembers(teamMembers),
-        [teamMembers]
-    );
+
+    const committees = useMemo(() => {
+        return [
+            {
+                key: "executive" as const,
+                name: "Executive Committee",
+                introText:
+                    "The Executive Committee members are volunteers from diverse professional backgrounds who provide strategic oversight and ensure CCC is well governed and financially responsible.",
+                members: executiveCommitteeMembers,
+                note: "In accordance with our Articles of Association, one third of Executive Committee Members retire each year by rotation and may offer themselves for re-election, supporting healthy renewal and continuity of governance.",
+            },
+            {
+                key: "management" as const,
+                name: "Management Committee",
+                introText:
+                    "The Management Committee is drawn from the Executive Committee. It meets regularly with the Management Team to review operations, staffing, resident and community issues, and reports back to the full Executive Committee.",
+                members: managementCommitteeMembers,
+            },
+            {
+                key: "project" as const,
+                name: "Project Management Committee",
+                introText:
+                    "The Project Management Committee reports directly to the Executive Committee and oversees CCC's redevelopment project at 63 Cumberland Road, working closely with our professional consultants. Together, this group ensures our new home is safe, modern, and cost-effective, while honouring the legacy of CCC.",
+                members: projectManagementCommitteeMembers,
+            },
+        ];
+    }, [
+        executiveCommitteeMembers,
+        managementCommitteeMembers,
+        projectManagementCommitteeMembers,
+    ]);
+
+    const activeCommittee = useMemo(() => {
+        if (!activeCommitteeKey) return null;
+        return committees.find(
+            (committee) => committee.key === activeCommitteeKey
+        );
+    }, [activeCommitteeKey, committees]);
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -216,52 +234,88 @@ const BoardGovernance = () => {
                     ]}
                 />
 
-                {/* Executive Committee */}
-                <CommitteeSection
-                    title="Executive Committee (Board)"
-                    introText="The Executive Committee members are volunteers from diverse professional backgrounds who provide strategic oversight and ensure CCC is well governed and financially responsible."
-                    members={executiveCommitteeMembers}
-                    loading={loading}
-                    note="In accordance with our Articles of Association, one third of Executive Committee Members retire each year by rotation and may offer themselves for re-election, supporting healthy renewal and continuity of governance."
-                />
+                {/* Committee Buttons Section */}
+                <section className="py-12 md:py-20">
+                    <div className="container mx-auto px-4">
+                        <div className="max-w-4xl mx-auto">
+                            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
+                                Our Committees
+                            </h2>
+                            <div className="grid gap-4 md:grid-cols-3">
+                                {committees.map((committee) => (
+                                    <button
+                                        key={committee.key}
+                                        type="button"
+                                        onClick={() =>
+                                            setActiveCommitteeKey(committee.key)
+                                        }
+                                        className="rounded-lg border border-border/50 bg-card p-6 text-left shadow-sm transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                    >
+                                        <h3 className="text-lg font-semibold text-foreground">
+                                            {committee.name}
+                                        </h3>
+                                        <p className="mt-2 text-sm text-muted-foreground">
+                                            {loading
+                                                ? "Loading members…"
+                                                : `${committee.members.length} member${
+                                                      committee.members
+                                                          .length === 1
+                                                          ? ""
+                                                          : "s"
+                                                  }`}
+                                        </p>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
 
-                {/* Management Committee */}
-                <CommitteeSection
-                    title="Management Committee"
-                    introText="The Management Committee is drawn from the Executive Committee. It meets regularly with the Management Team to review operations, staffing, resident and community issues, and reports back to the full Executive Committee."
-                    members={managementCommitteeMembers}
-                    loading={loading}
-                    cleanRoleTitles={true}
-                    sectionType="management-committee"
-                />
-
-                {/* Project Management Committee */}
-                <CommitteeSection
-                    title="Project Management Committee"
-                    introText="The Project Management Committee reports directly to the Executive Committee and oversees CCC's redevelopment project at 63 Cumberland Road, working closely with our professional consultants. Together, this group ensures our new home is safe, modern, and cost-effective, while honouring the legacy of CCC."
-                    members={projectManagementCommitteeMembers}
-                    loading={loading}
-                    cleanRoleTitles={true}
-                    sectionType="project-management-committee"
-                />
-
-                {/* Management Team */}
-                <CommitteeSection
-                    title="Management Team"
-                    introText="CCC's Management Team is responsible for delivering our services day to day and implementing the direction set by the Executive and Management Committees."
-                    members={managementTeamMembers}
-                    loading={loading}
-                />
-
-                {/* Accountability & Compliance */}
-                <AccountabilityComplianceSection
-                    title="Accountability & Compliance"
-                    paragraphs={[
-                        "China Coast Community Limited is incorporated and domiciled in Hong Kong and is approved as a charity under Section 88 of the Inland Revenue Ordinance.",
-                        "Our financial statements are audited annually by independent auditors (currently Kenny Tam & Co., Certified Public Accountants) and prepared in accordance with all applicable Hong Kong Financial Reporting Standards and the Hong Kong Companies Ordinance.",
-                        "The Executive Committee is ultimately responsible for ensuring that CCC remains financially sound, compliant, and true to its charitable objects.",
-                    ]}
-                />
+                    <Dialog
+                        open={Boolean(activeCommittee)}
+                        onOpenChange={(open) => {
+                            if (!open) setActiveCommitteeKey(null);
+                        }}
+                    >
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>
+                                    {activeCommittee?.name}
+                                </DialogTitle>
+                            </DialogHeader>
+                            {activeCommittee?.introText && (
+                                <p className="text-sm text-muted-foreground mb-4">
+                                    {activeCommittee.introText}
+                                </p>
+                            )}
+                            {loading ? (
+                                <p className="text-sm text-muted-foreground">
+                                    Loading committee members...
+                                </p>
+                            ) : activeCommittee &&
+                              activeCommittee.members.length > 0 ? (
+                                <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                    {activeCommittee.members.map((member) => (
+                                        <li
+                                            key={member._id}
+                                            className="rounded-md border border-border/50 bg-card/50 px-3 py-2 text-sm text-foreground"
+                                        >
+                                            {member.name}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="text-sm text-muted-foreground">
+                                    No committee members are listed yet.
+                                </p>
+                            )}
+                            {activeCommittee?.note && (
+                                <p className="text-xs text-muted-foreground italic mt-4">
+                                    {activeCommittee.note}
+                                </p>
+                            )}
+                        </DialogContent>
+                    </Dialog>
+                </section>
             </main>
 
             <Footer />
