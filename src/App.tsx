@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CookieBanner } from "@/components/CookieBanner";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 // Keep Index synchronous for fastest initial load
 import Index from "./pages/Index";
@@ -48,6 +49,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+                <ScrollToTop />
                 {/* Skip to main content link for keyboard users */}
                 <a
                     href="#main-content"

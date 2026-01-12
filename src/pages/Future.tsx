@@ -101,10 +101,10 @@ const Future = () => {
                 <WhatIsBeingBuiltSection
                     title="What the new home will offer"
                     intentions={[
-                        "Provide comfortable bedrooms with improved privacy and accessibility, so residents can live with dignity.",
-                        "Include dedicated spaces for activities, dining, rehabilitation and quiet rest.",
-                        "Meet latest fire, health and safety standards under RCHE regulations in Hong Kong.",
-                        "Enable CCC to provide care to residents with varying care requirements.",
+                        "Provide comfortable bedrooms with dignity by improving privacy and accessibility.",
+                        "Include dedicated spaces, wide, open corridors and thoughtful accessibility features with lifts, dining, gardens, rehabilitation and quiet rest.",
+                        "Meet latest fire, health and safety, RCHE standards under regulations in Hong Kong.",
+                        "Enable CCC to provide care to residents with various degrees of care requirements.",
                     ]}
                     paragraphs={[]}
                     quotes={[
