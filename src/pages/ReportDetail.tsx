@@ -16,8 +16,18 @@ const ReportDetail = () => {
     useEffect(() => {
         const fetchReport = async () => {
             if (slug) {
-                const data = await getReportBySlug(slug);
-                setReport(data);
+                try {
+                    const data = await getReportBySlug(slug);
+                    setReport(data);
+                    if (!data) {
+                        console.warn(`Report not found for slug: ${slug}`);
+                    }
+                } catch (error) {
+                    console.error("Error fetching report:", error);
+                    setReport(null);
+                }
+            } else {
+                console.warn("No slug provided in URL");
             }
             setLoading(false);
         };
@@ -115,23 +125,73 @@ const ReportDetail = () => {
                             )}
 
                             {report.pdf && (
-                                <Button asChild className="mt-6" size="lg">
-                                    <a
-                                        href={
-                                            getImageUrlFromString(
-                                                report.pdf.url
-                                            ) || report.pdf.url
-                                        }
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <Download
-                                            className="mr-2 h-5 w-5"
-                                            aria-hidden="true"
+                                <div className="mt-8 space-y-4">
+                                    {/* Download Button */}
+                                    <div className="flex justify-center md:justify-start">
+                                        <Button asChild size="lg">
+                                            <a
+                                                href={
+                                                    getImageUrlFromString(
+                                                        report.pdf.url
+                                                    ) || report.pdf.url
+                                                }
+                                                download
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                <Download
+                                                    className="mr-2 h-5 w-5"
+                                                    aria-hidden="true"
+                                                />
+                                                Download PDF Report
+                                            </a>
+                                        </Button>
+                                    </div>
+
+                                    {/* Embedded PDF Viewer */}
+                                    <div className="w-full border rounded-lg overflow-hidden shadow-lg bg-card">
+                                        <iframe
+                                            src={
+                                                (getImageUrlFromString(
+                                                    report.pdf.url
+                                                ) || report.pdf.url) + "#view=FitH"
+                                            }
+                                            title={`${report.title} PDF Viewer`}
+                                            className="w-full h-[500px] sm:h-[600px] md:h-[700px] lg:h-[800px]"
+                                            aria-label={`PDF viewer for ${report.title}`}
                                         />
-                                        Download PDF Report
-                                    </a>
-                                </Button>
+                                    </div>
+
+                                    {/* Fallback message for browsers that don't support PDF viewing */}
+                                    <p className="text-sm text-muted-foreground text-center">
+                                        Having trouble viewing the PDF?{" "}
+                                        <a
+                                            href={
+                                                getImageUrlFromString(
+                                                    report.pdf.url
+                                                ) || report.pdf.url
+                                            }
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-primary hover:underline"
+                                        >
+                                            Open in a new tab
+                                        </a>{" "}
+                                        or{" "}
+                                        <a
+                                            href={
+                                                getImageUrlFromString(
+                                                    report.pdf.url
+                                                ) || report.pdf.url
+                                            }
+                                            download
+                                            className="text-primary hover:underline"
+                                        >
+                                            download it
+                                        </a>
+                                        .
+                                    </p>
+                                </div>
                             )}
 
                             {report.summary && (

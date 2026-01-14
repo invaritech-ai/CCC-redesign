@@ -51,7 +51,7 @@ const NAV_ITEMS: NavItem[] = [
         label: "Care & Community",
         children: [
             {
-                label: "Community Members Programme",
+                label: "Community Members",
                 href: "/care-community/community-members-programme",
             },
             {

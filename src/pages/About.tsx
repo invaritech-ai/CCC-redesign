@@ -25,6 +25,7 @@ const About = () => {
             "Since 1978, China Coast Community (CCC) has stood apart as the sole residential care home in Hong Kong exclusively for English-speaking elderly individuals. Our commitment extends beyond language; we embrace all creeds, cultures, and ethnicities, ensuring a truly inclusive environment. From our inception, we have proudly allocated 30% of our residential facilities to those receiving CSSA or equivalent support, upholding our founding principle of accessible, high-quality care for all.",
           ]}
           pullQuote="For over 45 years, CCC delivered excellent care to all its residents and extended its reach to its English-speaking community members."
+          pullQuoteAttribution="Resident at CCC Care Home"
         />
 
         {/* Our Commitment to the Community */}

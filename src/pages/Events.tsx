@@ -213,7 +213,7 @@ const Events = () => {
                                 </p>
                             </div>
                         ) : events.length > 0 ? (
-                            <>
+                            <div className="max-w-4xl mx-auto">
                                 <SearchAndFilter
                                     searchValue={searchQuery}
                                     onSearchChange={setSearchQuery}
@@ -240,7 +240,7 @@ const Events = () => {
 
                                 {displayedEvents.length > 0 ? (
                                     <>
-                                        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-2 max-w-7xl mx-auto">
+                                        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-2 w-full">
                                             {displayedEvents.map((event) => (
                                                 <Card
                                                     key={event._id}
@@ -334,13 +334,13 @@ const Events = () => {
                                         )}
                                     </>
                                 ) : (
-                                    <div className="max-w-4xl mx-auto text-center py-12">
+                                    <div className="text-center py-12">
                                         <p className="text-lg text-muted-foreground">
                                             No events found matching your filters.
                                         </p>
                                     </div>
                                 )}
-                            </>
+                            </div>
                         ) : (
                             <div className="max-w-4xl mx-auto text-center py-12">
                                 <p className="text-lg text-muted-foreground">

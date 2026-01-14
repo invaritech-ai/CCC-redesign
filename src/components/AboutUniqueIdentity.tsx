@@ -4,12 +4,14 @@ interface AboutUniqueIdentityProps {
   title: string;
   paragraphs: string[];
   pullQuote?: string;
+  pullQuoteAttribution?: string;
 }
 
 export const AboutUniqueIdentity = ({
   title,
   paragraphs,
   pullQuote,
+  pullQuoteAttribution,
 }: AboutUniqueIdentityProps) => {
   return (
     <section className="py-12 md:py-20">
@@ -27,7 +29,9 @@ export const AboutUniqueIdentity = ({
                 {paragraph}
               </p>
             ))}
-            {pullQuote && <PullQuote quote={pullQuote} />}
+            {pullQuote && (
+              <PullQuote quote={pullQuote} attribution={pullQuoteAttribution} />
+            )}
           </div>
         </div>
       </div>
