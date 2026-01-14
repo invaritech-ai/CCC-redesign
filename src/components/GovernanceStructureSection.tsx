@@ -1,12 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Download, Users, Building2, Briefcase, Hammer, DollarSign } from "lucide-react";
+import { Download } from "lucide-react";
 import { ReactNode } from "react";
 
 interface GovernanceItem {
   title: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
+  onClick?: () => void;
+  clickLabel?: string;
 }
 
 interface GovernanceStructureSectionProps {
@@ -56,28 +58,56 @@ export const GovernanceStructureSection = ({
             {governanceItems.map((item, index) => {
               const Icon = item.icon;
               const bgColor = getCardBackgroundColor(index);
+              const isClickable = Boolean(item.onClick);
+              
+              const cardContent = (
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <Icon className="h-6 w-6 text-primary" />
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold mb-2 text-foreground">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {item.description}
+                      </p>
+                      {isClickable && item.clickLabel && (
+                        <p className="text-sm text-primary font-medium mt-3">
+                          {item.clickLabel} →
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              );
+
+              if (isClickable) {
+                return (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={item.onClick}
+                    className="text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg"
+                  >
+                    <Card
+                      className={`overflow-hidden ${bgColor} transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer h-full`}
+                    >
+                      {cardContent}
+                    </Card>
+                  </button>
+                );
+              }
+
               return (
                 <Card
                   key={index}
                   className={`overflow-hidden ${bgColor} transition-all duration-300 hover:shadow-md hover:-translate-y-1`}
                 >
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0">
-                        <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <Icon className="h-6 w-6 text-primary" />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold mb-2 text-foreground">
-                          {item.title}
-                        </h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          {item.description}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
+                  {cardContent}
                 </Card>
               );
             })}

@@ -228,7 +228,7 @@ const Reports = () => {
                                 </p>
                             </div>
                         ) : reports.length > 0 ? (
-                            <>
+                            <div className="max-w-4xl mx-auto">
                                 <SearchAndFilter
                                     searchValue={searchQuery}
                                     onSearchChange={setSearchQuery}
@@ -248,7 +248,7 @@ const Reports = () => {
 
                                 {displayedReports.length > 0 ? (
                                     <>
-                                        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-2 max-w-7xl mx-auto">
+                                        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-2 w-full">
                                             {displayedReports.map((report) => (
                                                 <Card
                                                     key={report._id}
@@ -267,38 +267,38 @@ const Reports = () => {
                                                                 ) || ""
                                                             }
                                                             alt={report.title}
-                                                            className="w-full h-32 md:h-24 object-cover"
+                                                            className="w-full h-36 md:h-28 object-cover"
                                                             width="800"
                                                             height="400"
                                                         />
                                                     )}
-                                                    <div className="p-4 md:p-3">
-                                                        <div className="flex items-center gap-2 mb-1.5 md:mb-1">
+                                                    <div className="p-5 md:p-4">
+                                                        <div className="flex items-center gap-2 mb-2">
                                                             <FileText className="h-4 w-4 text-primary" />
                                                             <span className="text-xs font-semibold text-muted-foreground">
                                                                 {report.year}
                                                             </span>
                                                         </div>
-                                                        <h2 className="text-lg font-semibold mb-1.5 md:mb-1 leading-tight line-clamp-2">
+                                                        <h2 className="text-base md:text-lg font-semibold mb-2 leading-tight line-clamp-2">
                                                             {report.title}
                                                         </h2>
                                                         {report.description && (
-                                                            <p className="text-sm text-muted-foreground mb-2 md:mb-1.5 line-clamp-2">
+                                                            <p className="text-xs md:text-sm text-muted-foreground mb-3 line-clamp-2">
                                                                 {
                                                                     report.description
                                                                 }
                                                             </p>
                                                         )}
-                                                        <div className="flex flex-col sm:flex-row gap-3 mt-3">
+                                                        <div className="flex flex-col sm:flex-row gap-2.5 mt-4">
                                                             {report.slug
                                                                 ?.current && (
                                                                 <Link
                                                                     to={`/who-we-are/publications/annual-reports/${report.slug.current}`}
-                                                                    className="inline-flex items-center text-primary hover:underline text-base font-semibold py-2"
+                                                                    className="inline-flex items-center text-primary hover:underline text-sm md:text-base font-semibold"
                                                                 >
                                                                     View details{" "}
                                                                     <ArrowRight
-                                                                        className="ml-2 h-5 w-5"
+                                                                        className="ml-1.5 h-4 w-4 md:h-5 md:w-5"
                                                                         aria-hidden="true"
                                                                     />
                                                                 </Link>
@@ -317,10 +317,10 @@ const Reports = () => {
                                                                     }
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
-                                                                    className="inline-flex items-center text-primary hover:underline text-base font-semibold py-2 sm:ml-auto"
+                                                                    className="inline-flex items-center text-primary hover:underline text-sm md:text-base font-semibold sm:ml-auto"
                                                                 >
                                                                     <Download
-                                                                        className="h-5 w-5 mr-2"
+                                                                        className="h-4 w-4 md:h-5 md:w-5 mr-1.5"
                                                                         aria-hidden="true"
                                                                     />
                                                                     Download PDF
@@ -346,14 +346,14 @@ const Reports = () => {
                                         )}
                                     </>
                                 ) : (
-                                    <div className="max-w-4xl mx-auto text-center py-12">
+                                    <div className="text-center py-12">
                                         <p className="text-lg text-muted-foreground">
                                             No reports found matching your
                                             filters.
                                         </p>
                                     </div>
                                 )}
-                            </>
+                            </div>
                         ) : (
                             <div className="max-w-4xl mx-auto text-center py-12">
                                 <p className="text-lg text-muted-foreground">

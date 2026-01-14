@@ -392,13 +392,19 @@ export const getAllReports = async () => {
     description,
     author,
     relatedTopics,
-    "pdf": pdf.asset,
+    "pdf": pdf.asset->{
+      _id,
+      _type,
+      url,
+      originalFilename
+    },
     "image": image.asset
   }`;
 
     try {
         return await sanityClient.fetch(query);
     } catch (error) {
+        console.error("Error fetching all reports:", error);
         return [];
     }
 };
@@ -418,13 +424,20 @@ export const getReportBySlug = async (slug: string) => {
     description,
     author,
     relatedTopics,
-    "pdf": pdf.asset,
+    "pdf": pdf.asset->{
+      _id,
+      _type,
+      url,
+      originalFilename
+    },
     "image": image.asset
   }`;
 
     try {
-        return await sanityClient.fetch(query, { slug });
+        const result = await sanityClient.fetch(query, { slug });
+        return result;
     } catch (error) {
+        console.error("Error fetching report by slug:", error);
         return null;
     }
 };
