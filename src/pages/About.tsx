@@ -31,7 +31,7 @@ const About = () => {
         <AboutCommitmentSection
           title="Continuing Our Mission: Care Beyond Our Walls"
           paragraphs={[
-            "While our residential home at 63 Cumberland Road undergoes an exciting redevelopment, our dedication to the English-speaking elderly community remains unwavering. We have temporarily suspended residential services to build a state-of-the-art modern facility, expected to reopen by mid-2028. In the interim, CCC has intensified its focus on supporting elders in the wider community. We currently serve 78 active Community Members, providing vital social connections and activities to combat isolation and loneliness. Our team also continues to pay regular visits to former residents, ensuring their ongoing well-being and connection to the CCC family.",
+            "While our residential home at 63 Cumberland Road undergoes an exciting redevelopment, our dedication to the English-speaking elderly community remains unwavering. We have temporarily suspended residential services to build a state-of-the-art modern facility, expected to reopen by mid-2028. In the interim, CCC has intensified its focus on supporting elders in the wider community. We currently serve 80+ active Community Members, providing vital social connections and activities to combat isolation and loneliness. Our team also continues to pay regular visits to former residents, ensuring their ongoing well-being and connection to the CCC family.",
           ]}
           stats={[
             { number: "80+", label: "Current Community Members" },

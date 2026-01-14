@@ -12,6 +12,7 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
+    DialogDescription
 } from "@/components/ui/dialog";
 
 // Helper functions to filter team members by role
@@ -240,12 +241,12 @@ const BoardGovernance = () => {
                             <DialogTitle>
                                 {activeCommittee?.name}
                             </DialogTitle>
+                            {activeCommittee?.introText && (
+                                <DialogDescription>
+                                    {activeCommittee.introText}
+                                </DialogDescription>
+                            )}
                         </DialogHeader>
-                        {activeCommittee?.introText && (
-                            <p className="text-sm text-muted-foreground mb-4">
-                                {activeCommittee.introText}
-                            </p>
-                        )}
                         {loading ? (
                             <p className="text-sm text-muted-foreground">
                                 Loading committee members...
