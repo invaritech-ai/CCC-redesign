@@ -31,11 +31,11 @@ const getExecutiveCommitteeMembers = (
         )
         .sort((a, b) => {
             // Sort by order if available, otherwise maintain original order
-            if (a.order !== null && b.order !== null) {
+            if (a.order != null && b.order != null) {
                 return a.order - b.order;
             }
-            if (a.order !== null) return -1;
-            if (b.order !== null) return 1;
+            if (a.order != null) return -1;
+            if (b.order != null) return 1;
             return 0;
         });
 };
@@ -60,11 +60,11 @@ const getManagementCommitteeMembers = (
         if (!aIsChair && bIsChair) return 1;
 
         // Within same type, sort by order if available
-        if (a.order !== null && b.order !== null) {
+        if (a.order != null && b.order != null) {
             return a.order - b.order;
         }
-        if (a.order !== null) return -1;
-        if (b.order !== null) return 1;
+        if (a.order != null) return -1;
+        if (b.order != null) return 1;
         return 0;
     });
 };
@@ -81,11 +81,11 @@ const getProjectManagementCommitteeMembers = (
         )
         .sort((a, b) => {
             // Sort by order if available
-            if (a.order !== null && b.order !== null) {
+            if (a.order != null && b.order != null) {
                 return a.order - b.order;
             }
-            if (a.order !== null) return -1;
-            if (b.order !== null) return 1;
+            if (a.order != null) return -1;
+            if (b.order != null) return 1;
             // Ex-officio members come after regular members
             const aIsExOfficio = a.role?.includes("Ex-officio");
             const bIsExOfficio = b.role?.includes("Ex-officio");
