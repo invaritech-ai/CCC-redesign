@@ -16,7 +16,7 @@ const Future = () => {
             name: "Pre-Construction Phase",
             status: "completed" as const,
             description:
-                "Feasibility studies completed. Architect's General Building Plans submitted and Buildings Department Approval received for demolition and construction. All consents have been obtained.",
+                "Feasibility studies completed. Architect's General Building Plans submitted and Buildings Department Approval received for demolition and construction.",
         },
         {
             name: "Construction Phase",

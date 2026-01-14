@@ -208,7 +208,7 @@ export const PayBoxCards = ({ items }: { items: PayBoxItem[] }) => {
                                                     <dt className="text-xs font-semibold text-muted-foreground">
                                                         {pair.key}
                                                     </dt>
-                                                    <dd className="text-sm font-medium text-foreground break-words">
+                                                    <dd className="text-xs font-medium text-foreground break-words">
                                                         {linkifyLine(pair.value)}
                                                     </dd>
                                                 </div>

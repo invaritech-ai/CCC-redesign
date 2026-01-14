@@ -6,7 +6,7 @@ import { GovernanceStructureSection } from "@/components/GovernanceStructureSect
 import { useEffect, useState, useMemo } from "react";
 import { getAllTeamMembers } from "@/lib/sanity.queries";
 import type { SanityTeamMember } from "@/lib/sanity.types";
-import { Users, Building2, Briefcase, Hammer, DollarSign } from "lucide-react";
+import { Users, Building2, Hammer } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -206,116 +206,74 @@ const BoardGovernance = () => {
                             description:
                                 "Overall strategic direction, governance, and oversight.",
                             icon: Users,
+                            onClick: () => setActiveCommitteeKey("executive"),
+                            clickLabel: "View members",
                         },
                         {
                             title: "Management Committee",
                             description:
                                 "Drawn from ExCo to handle day-to-day operational oversight and to meet regularly with the Management Team.",
                             icon: Building2,
-                        },
-                        {
-                            title: "Management Team",
-                            description:
-                                "General Manager, Nurse Manager, and Office Manager; responsible for the delivery of services and reporting to the Management Committee and ExCo.",
-                            icon: Briefcase,
+                            onClick: () => setActiveCommitteeKey("management"),
+                            clickLabel: "View members",
                         },
                         {
                             title: "Project Management Committee",
                             description:
                                 "Reports directly to ExCo and oversees the redevelopment project at 63 Cumberland Road.",
                             icon: Hammer,
-                        },
-                        {
-                            title: "Funding Committee",
-                            description:
-                                "Comprised of Executive Committee members, advising on fundraising initiatives. All members are volunteers.",
-                            icon: DollarSign,
+                            onClick: () => setActiveCommitteeKey("project"),
+                            clickLabel: "View members",
                         },
                     ]}
                 />
 
-                {/* Committee Buttons Section */}
-                <section className="py-12 md:py-20">
-                    <div className="container mx-auto px-4">
-                        <div className="max-w-4xl mx-auto">
-                            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-                                Our Committees
-                            </h2>
-                            <div className="grid gap-4 md:grid-cols-3">
-                                {committees.map((committee) => (
-                                    <button
-                                        key={committee.key}
-                                        type="button"
-                                        onClick={() =>
-                                            setActiveCommitteeKey(committee.key)
-                                        }
-                                        className="rounded-lg border border-border/50 bg-card p-6 text-left shadow-sm transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                {/* Committee Members Dialog */}
+                <Dialog
+                    open={Boolean(activeCommittee)}
+                    onOpenChange={(open) => {
+                        if (!open) setActiveCommitteeKey(null);
+                    }}
+                >
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>
+                                {activeCommittee?.name}
+                            </DialogTitle>
+                        </DialogHeader>
+                        {activeCommittee?.introText && (
+                            <p className="text-sm text-muted-foreground mb-4">
+                                {activeCommittee.introText}
+                            </p>
+                        )}
+                        {loading ? (
+                            <p className="text-sm text-muted-foreground">
+                                Loading committee members...
+                            </p>
+                        ) : activeCommittee &&
+                          activeCommittee.members.length > 0 ? (
+                            <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                {activeCommittee.members.map((member) => (
+                                    <li
+                                        key={member._id}
+                                        className="rounded-md border border-border/50 bg-card/50 px-3 py-2 text-sm text-foreground"
                                     >
-                                        <h3 className="text-lg font-semibold text-foreground">
-                                            {committee.name}
-                                        </h3>
-                                        <p className="mt-2 text-sm text-muted-foreground">
-                                            {loading
-                                                ? "Loading members…"
-                                                : `${committee.members.length} member${
-                                                      committee.members
-                                                          .length === 1
-                                                          ? ""
-                                                          : "s"
-                                                  }`}
-                                        </p>
-                                    </button>
+                                        {member.name}
+                                    </li>
                                 ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    <Dialog
-                        open={Boolean(activeCommittee)}
-                        onOpenChange={(open) => {
-                            if (!open) setActiveCommitteeKey(null);
-                        }}
-                    >
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>
-                                    {activeCommittee?.name}
-                                </DialogTitle>
-                            </DialogHeader>
-                            {activeCommittee?.introText && (
-                                <p className="text-sm text-muted-foreground mb-4">
-                                    {activeCommittee.introText}
-                                </p>
-                            )}
-                            {loading ? (
-                                <p className="text-sm text-muted-foreground">
-                                    Loading committee members...
-                                </p>
-                            ) : activeCommittee &&
-                              activeCommittee.members.length > 0 ? (
-                                <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                                    {activeCommittee.members.map((member) => (
-                                        <li
-                                            key={member._id}
-                                            className="rounded-md border border-border/50 bg-card/50 px-3 py-2 text-sm text-foreground"
-                                        >
-                                            {member.name}
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p className="text-sm text-muted-foreground">
-                                    No committee members are listed yet.
-                                </p>
-                            )}
-                            {activeCommittee?.note && (
-                                <p className="text-xs text-muted-foreground italic mt-4">
-                                    {activeCommittee.note}
-                                </p>
-                            )}
-                        </DialogContent>
-                    </Dialog>
-                </section>
+                            </ul>
+                        ) : (
+                            <p className="text-sm text-muted-foreground">
+                                No committee members are listed yet.
+                            </p>
+                        )}
+                        {activeCommittee?.note && (
+                            <p className="text-xs text-muted-foreground italic mt-4">
+                                {activeCommittee.note}
+                            </p>
+                        )}
+                    </DialogContent>
+                </Dialog>
             </main>
 
             <Footer />
