@@ -2,6 +2,7 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { PageContent } from "@/components/PageContent";
 import { DynamicForm } from "@/components/DynamicForm";
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getPageContent, getFormByPage } from "@/lib/sanity.queries";
 import type { SanityPageContent, SanityFormBuilder } from "@/lib/sanity.types";
@@ -131,6 +132,26 @@ const SupportDonate = () => {
             </div>
           </section>
         )}
+
+        <section className="py-8 md:py-10 bg-muted/40">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center space-y-3">
+              <h2 className="text-xl md:text-2xl font-semibold">
+                Our Major Donors
+              </h2>
+              <p className="text-muted-foreground">
+                We are deeply grateful to the individuals and organisations whose
+                generosity sustains China Coast Community.
+              </p>
+              <Link
+                to="/donate/major-donors"
+                className="inline-flex items-center justify-center rounded-full border border-primary px-5 py-2 text-sm font-medium text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                View the list of major donors
+              </Link>
+            </div>
+          </div>
+        </section>
 
         {formConfig && (
           <section id="donation-form">

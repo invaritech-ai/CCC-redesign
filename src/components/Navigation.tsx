@@ -72,6 +72,7 @@ const NAV_ITEMS: NavItem[] = [
         label: "Get Involved",
         children: [
             { label: "Donate", href: "/donate" },
+            { label: "Our Major Donors", href: "/donate/major-donors" },
             { label: "Volunteer", href: "/get-involved/volunteer" },
         ],
     },
