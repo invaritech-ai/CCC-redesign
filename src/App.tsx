@@ -74,6 +74,10 @@ const App = () => (
                         />
                         <Route path="/donate" element={<SupportDonate />} />
                         <Route
+                            path="/donate/major-donors"
+                            element={<CMSPage slug="donate/major-donors" />}
+                        />
+                        <Route
                             path="/support/confirmation"
                             element={<SupportConfirmation />}
                         />
