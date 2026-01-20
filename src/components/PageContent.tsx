@@ -5,6 +5,7 @@ import type {
     SanityPageContent,
 } from "@/lib/sanity.types";
 import { getImageUrl } from "@/lib/sanityImage";
+import { cn } from "@/lib/utils";
 
 interface PageContentProps {
     heading: string;
@@ -13,6 +14,7 @@ interface PageContentProps {
     badgeText?: string;
     heroImage?: SanityPageContent["heroImage"];
     bottomImages?: SanityPageContent["bottomImages"];
+    pageSlug?: string;
 }
 
 export const PageContent = ({
@@ -22,7 +24,10 @@ export const PageContent = ({
     badgeText,
     heroImage,
     bottomImages,
+    pageSlug,
 }: PageContentProps) => {
+    const isMajorDonorsPage = pageSlug === "donate/major-donors";
+
     const heroImageUrl = heroImage
         ? getImageUrl(heroImage, { width: 1920, quality: 90 })
         : null;
@@ -74,7 +79,11 @@ export const PageContent = ({
                         <div className="max-w-4xl mx-auto">
                             <PortableText
                                 blocks={content}
-                                className="space-y-6"
+                                className={cn(
+                                    "space-y-6",
+                                    isMajorDonorsPage &&
+                                        "md:[&>ul]:grid md:[&>ul]:grid-cols-2 md:[&>ul]:gap-x-16 md:[&>ul]:gap-y-2"
+                                )}
                             />
                         </div>
                     </div>

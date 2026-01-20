@@ -117,6 +117,7 @@ const SupportDonate = () => {
             subheading={pageContent.subheading}
             content={pageContent.content}
             badgeText={pageContent.badgeText}
+            pageSlug="support/donate"
           />
         ) : (
           <section className="bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center">

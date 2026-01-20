@@ -202,6 +202,7 @@ const Reports = () => {
                         subheading={pageContent.subheading}
                         content={pageContent.content}
                         badgeText={pageContent.badgeText}
+                        pageSlug="who-we-are/publications/annual-reports"
                     />
                 ) : (
                     <section className="bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center">
