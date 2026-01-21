@@ -95,8 +95,9 @@ This guide will help you set up Resend to send email notifications when the cont
 
 The `resend` package has been added to `package.json`. You need to install it:
 
+Run the following command from the project root:
+
 ```bash
-cd /Users/avi/Documents/Projects/Webdev/CCC-redesign
 npm install
 ```
 

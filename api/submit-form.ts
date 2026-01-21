@@ -362,11 +362,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             `[Submit Form] ✅ Success (${Date.now() - requestStartTime}ms)`
         );
 
-        // Send email notification (non-blocking, only for contact form)
-        sendEmailNotification(formName, fields, fileLinks).catch((error) => {
-            console.error("[Email] Error in email notification:", error);
-            // Email failure doesn't affect form submission success
-        });
+        // Send email notification (only for contact form)
+        // Await to ensure Vercel waits for completion, but don't fail on error
+        const isContactForm = formName.toLowerCase().includes("contact");
+        if (isContactForm) {
+            try {
+                await sendEmailNotification(formName, fields, fileLinks);
+            } catch (error: unknown) {
+                const errorMessage =
+                    error instanceof Error
+                        ? error.message
+                        : "Unknown error sending email";
+                console.error("[Email] Error in email notification:", errorMessage);
+                // Email failure doesn't affect form submission success
+            }
+        }
 
         return res.status(200).json({
             success: true,
