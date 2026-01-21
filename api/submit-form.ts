@@ -16,6 +16,7 @@ interface FormSubmissionPayload {
     googleSheetUrl: string;
     fields: Record<string, string | boolean | number | null | undefined>;
     fileFields?: Record<string, { name: string; data: string; type: string }>;
+    captchaToken?: string;
 }
 
 const SHEET_NAME = "Sheet1";
@@ -163,6 +164,41 @@ async function getOrCreateHeaders(
 }
 
 /**
+ * Verify Cloudflare Turnstile CAPTCHA token
+ */
+async function verifyTurnstileToken(token: string): Promise<boolean> {
+    const secretKey = process.env.TURNSTILE_SECRET_KEY;
+    if (!secretKey) {
+        console.warn("[Turnstile] Secret key not configured, skipping verification");
+        return true; // Allow submission if Turnstile is not configured
+    }
+
+    try {
+        const response = await fetch(
+            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({
+                    secret: secretKey,
+                    response: token,
+                }),
+            }
+        );
+
+        const data = await response.json();
+        return data.success === true;
+    } catch (error: unknown) {
+        const errorMessage =
+            error instanceof Error ? error.message : "Unknown error";
+        console.error("[Turnstile] Verification error:", errorMessage);
+        return false;
+    }
+}
+
+/**
  * Build values array matching headers exactly
  */
 function buildValuesArray(
@@ -270,13 +306,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
-        const { formName, pageSlug, googleSheetUrl, fields, fileFields } =
-            req.body as FormSubmissionPayload;
+        const {
+            formName,
+            pageSlug,
+            googleSheetUrl,
+            fields,
+            fileFields,
+            captchaToken,
+        } = req.body as FormSubmissionPayload;
 
         // Validate required fields
         if (!formName || !googleSheetUrl || !fields) {
             return res.status(400).json({
                 error: "Missing required fields: formName, googleSheetUrl, and fields",
+            });
+        }
+
+        // Verify CAPTCHA token if provided
+        if (captchaToken) {
+            const isValid = await verifyTurnstileToken(captchaToken);
+            if (!isValid) {
+                console.warn(
+                    `[Submit Form] ❌ CAPTCHA verification failed for form: ${formName}`
+                );
+                return res.status(400).json({
+                    error: "CAPTCHA verification failed. Please try again.",
+                });
+            }
+        } else if (process.env.TURNSTILE_SECRET_KEY) {
+            // If Turnstile is configured but no token provided, reject
+            console.warn(
+                `[Submit Form] ❌ Missing CAPTCHA token for form: ${formName}`
+            );
+            return res.status(400).json({
+                error: "Security verification required. Please complete the CAPTCHA.",
             });
         }
 
