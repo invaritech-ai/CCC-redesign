@@ -12,6 +12,7 @@ if (!process.env.VERCEL_ENV || process.env.VERCEL_ENV === "development") {
 
 interface FormSubmissionPayload {
     formName: string;
+    pageSlug?: string;
     googleSheetUrl: string;
     fields: Record<string, string | boolean | number | null | undefined>;
     fileFields?: Record<string, { name: string; data: string; type: string }>;
@@ -194,11 +195,14 @@ function buildValuesArray(
  */
 async function sendEmailNotification(
     formName: string,
+    pageSlug: string | undefined,
     fields: Record<string, string | boolean | number | null | undefined>,
     fileLinks: Record<string, string>
 ): Promise<void> {
-    // Only send emails for contact form
-    const isContactForm = formName.toLowerCase().includes("contact");
+    // Only send emails for contact form (check pageSlug first, then form name as fallback)
+    const isContactForm =
+        pageSlug?.toLowerCase() === "contact" ||
+        formName.toLowerCase().includes("contact");
     if (!isContactForm) {
         return;
     }
@@ -266,7 +270,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
-        const { formName, googleSheetUrl, fields, fileFields } =
+        const { formName, pageSlug, googleSheetUrl, fields, fileFields } =
             req.body as FormSubmissionPayload;
 
         // Validate required fields
@@ -364,10 +368,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         // Send email notification (only for contact form)
         // Await to ensure Vercel waits for completion, but don't fail on error
-        const isContactForm = formName.toLowerCase().includes("contact");
+        const isContactForm =
+            pageSlug?.toLowerCase() === "contact" ||
+            formName.toLowerCase().includes("contact");
         if (isContactForm) {
             try {
-                await sendEmailNotification(formName, fields, fileLinks);
+                await sendEmailNotification(formName, pageSlug, fields, fileLinks);
             } catch (error: unknown) {
                 const errorMessage =
                     error instanceof Error

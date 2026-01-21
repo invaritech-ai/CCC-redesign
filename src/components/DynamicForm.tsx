@@ -168,6 +168,7 @@ export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) =>
 
       const payload = {
         formName: formConfig.formName,
+        pageSlug: formConfig.pageSlug,
         googleSheetUrl: formConfig.googleSheetUrl,
         fields: formData,
         fileFields: Object.keys(fileFields).length > 0 ? fileFields : undefined,
