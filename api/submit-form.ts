@@ -3,6 +3,7 @@ import { google } from "googleapis";
 import { config } from "dotenv";
 import { resolve } from "path";
 import { put } from "@vercel/blob";
+import { Resend } from "resend";
 
 // Load .env.local in local development
 if (!process.env.VERCEL_ENV || process.env.VERCEL_ENV === "development") {
@@ -18,6 +19,11 @@ interface FormSubmissionPayload {
 
 const SHEET_NAME = "Sheet1";
 const TIMESTAMP_HEADER = "Timestamp";
+
+// Initialize Resend client (only if API key is available)
+const resend = process.env.RESEND_API_KEY
+    ? new Resend(process.env.RESEND_API_KEY)
+    : null;
 
 /**
  * Extract sheet ID from Google Sheets URL
@@ -182,6 +188,76 @@ function buildValuesArray(
     });
 }
 
+/**
+ * Send email notification via Resend
+ * Only sends for contact form submissions
+ */
+async function sendEmailNotification(
+    formName: string,
+    fields: Record<string, string | boolean | number | null | undefined>,
+    fileLinks: Record<string, string>
+): Promise<void> {
+    // Only send emails for contact form
+    const isContactForm = formName.toLowerCase().includes("contact");
+    if (!isContactForm) {
+        return;
+    }
+
+    // Skip if Resend is not configured
+    if (!resend || !process.env.RESEND_API_KEY) {
+        console.log("[Email] Resend not configured, skipping email notification");
+        return;
+    }
+
+    // Build email body
+    const fieldLines = Object.entries(fields)
+        .map(([key, value]) => {
+            if (value === null || value === undefined) {
+                return `${key}: (empty)`;
+            }
+            if (typeof value === "boolean") {
+                return `${key}: ${value ? "Yes" : "No"}`;
+            }
+            return `${key}: ${String(value)}`;
+        })
+        .filter((line) => line.trim() !== "");
+
+    const fileLines = Object.entries(fileLinks).map(
+        ([key, url]) => `${key} (file): ${url}`
+    );
+
+    const emailBody = [
+        `Form: ${formName}`,
+        `Submitted: ${new Date().toISOString()}`,
+        "",
+        "--- Form Fields ---",
+        ...fieldLines,
+        ...(fileLines.length > 0 ? ["", "--- File Uploads ---", ...fileLines] : []),
+    ].join("\n");
+
+    // Get sender email from env or use default
+    const fromEmail =
+        process.env.RESEND_FROM_EMAIL || "notifications@invaritech.ai";
+    const toEmail = process.env.RESEND_TO_EMAIL || "community@biznetvigator.com";
+
+    try {
+        await resend.emails.send({
+            from: fromEmail,
+            to: toEmail,
+            replyTo: toEmail,
+            subject: `New form submission: ${formName}`,
+            text: emailBody,
+        });
+
+        console.log(`[Email] ✅ Notification sent to ${toEmail}`);
+    } catch (error: unknown) {
+        const errorMessage =
+            error instanceof Error ? error.message : "Unknown error";
+        console.error(`[Email] ❌ Failed to send notification:`, errorMessage);
+        // Don't throw - email failure shouldn't break form submission
+    }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     const requestStartTime = Date.now();
 
@@ -285,6 +361,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.log(
             `[Submit Form] ✅ Success (${Date.now() - requestStartTime}ms)`
         );
+
+        // Send email notification (non-blocking, only for contact form)
+        sendEmailNotification(formName, fields, fileLinks).catch((error) => {
+            console.error("[Email] Error in email notification:", error);
+            // Email failure doesn't affect form submission success
+        });
 
         return res.status(200).json({
             success: true,
