@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { SanityFormBuilder, SanityFormField } from "@/lib/sanity.types";
 import { validateFile, fileToBase64, MAX_FILE_SIZE } from "@/lib/fileValidation";
 import { Upload, X, FileText } from "lucide-react";
+import { Turnstile } from "@/components/Turnstile";
 
 interface DynamicFormProps {
   formConfig: SanityFormBuilder;
@@ -29,6 +30,12 @@ export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) =>
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaError, setCaptchaError] = useState(false);
+  const [captchaKey, setCaptchaKey] = useState(0);
+
+  // Get Turnstile site key from environment
+  const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
   // Validate and filter fields
   const validFieldTypes: SanityFormField["fieldType"][] = ["text", "textarea", "boolean", "upload"];
@@ -146,7 +153,19 @@ export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) =>
   };
 
   const onSubmit = async (data: Record<string, any>) => {
+    // Validate CAPTCHA if enabled
+    if (turnstileSiteKey && !captchaToken) {
+      setCaptchaError(true);
+      toast({
+        title: "Verification required",
+        description: "Please complete the security verification.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
+    setCaptchaError(false);
 
     try {
       // Process file uploads - convert to base64
@@ -168,9 +187,11 @@ export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) =>
 
       const payload = {
         formName: formConfig.formName,
+        pageSlug: formConfig.pageSlug,
         googleSheetUrl: formConfig.googleSheetUrl,
         fields: formData,
         fileFields: Object.keys(fileFields).length > 0 ? fileFields : undefined,
+        captchaToken: captchaToken || undefined,
       };
 
       const response = await fetch("/api/submit-form", {
@@ -194,16 +215,39 @@ export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) =>
       // Reset form
       form.reset();
       setUploadedFiles({});
+      setCaptchaToken(null);
+      // Force Turnstile remount to visually reset the widget
+      setCaptchaKey((prev) => prev + 1);
     } catch (error) {
       toast({
         title: "Submission failed",
         description: error instanceof Error ? error.message : "An error occurred. Please try again.",
         variant: "destructive",
       });
+      // Reset CAPTCHA on error so user can try again
+      setCaptchaToken(null);
+      // Force Turnstile remount to visually reset the widget
+      setCaptchaKey((prev) => prev + 1);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  // Memoized callbacks for Turnstile to prevent unnecessary re-renders
+  const handleCaptchaVerify = useCallback((token: string) => {
+    setCaptchaToken(token);
+    setCaptchaError(false);
+  }, []);
+
+  const handleCaptchaError = useCallback(() => {
+    setCaptchaToken(null);
+    setCaptchaError(true);
+  }, []);
+
+  const handleCaptchaExpire = useCallback(() => {
+    setCaptchaToken(null);
+    setCaptchaError(true);
+  }, []);
 
   // Sort fields by order (handle null orders by treating them as high numbers)
   // Secondary sort by fieldName for deterministic ordering when orders are equal
@@ -368,7 +412,27 @@ export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) =>
             />
           ))}
 
-          <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+          {/* Cloudflare Turnstile CAPTCHA */}
+          {turnstileSiteKey && (
+            <div className="space-y-2">
+              <Turnstile
+                key={captchaKey}
+                siteKey={turnstileSiteKey}
+                onVerify={handleCaptchaVerify}
+                onError={handleCaptchaError}
+                onExpire={handleCaptchaExpire}
+                theme="auto"
+                size="normal"
+              />
+              {captchaError && (
+                <p className="text-sm text-destructive">
+                  Please complete the security verification to submit the form.
+                </p>
+              )}
+            </div>
+          )}
+
+          <Button type="submit" size="lg" className="w-full" disabled={isSubmitting || (turnstileSiteKey && !captchaToken)}>
             {isSubmitting ? "Submitting..." : "Submit"}
           </Button>
         </form>
