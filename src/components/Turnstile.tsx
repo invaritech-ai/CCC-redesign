@@ -4,6 +4,7 @@ interface TurnstileProps {
     siteKey: string;
     onVerify: (token: string) => void;
     onError?: () => void;
+    onExpire?: () => void;
     theme?: "light" | "dark" | "auto";
     size?: "normal" | "compact";
 }
@@ -17,6 +18,7 @@ declare global {
                     sitekey: string;
                     callback: (token: string) => void;
                     "error-callback"?: () => void;
+                    "expired-callback"?: () => void;
                     theme?: "light" | "dark" | "auto";
                     size?: "normal" | "compact";
                 }
@@ -31,6 +33,7 @@ export const Turnstile = ({
     siteKey,
     onVerify,
     onError,
+    onExpire,
     theme = "auto",
     size = "normal",
 }: TurnstileProps) => {
@@ -73,6 +76,7 @@ export const Turnstile = ({
                 sitekey: siteKey,
                 callback: onVerify,
                 "error-callback": onError,
+                "expired-callback": onExpire,
                 theme,
                 size,
             });
@@ -83,7 +87,7 @@ export const Turnstile = ({
                 onError();
             }
         }
-    }, [isLoaded, siteKey, onVerify, onError, theme, size]);
+    }, [isLoaded, siteKey, onVerify, onError, onExpire, theme, size]);
 
     return <div ref={containerRef} className="turnstile-container" />;
 };

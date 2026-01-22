@@ -244,6 +244,11 @@ export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) =>
     setCaptchaError(true);
   }, []);
 
+  const handleCaptchaExpire = useCallback(() => {
+    setCaptchaToken(null);
+    setCaptchaError(true);
+  }, []);
+
   // Sort fields by order (handle null orders by treating them as high numbers)
   // Secondary sort by fieldName for deterministic ordering when orders are equal
   const sortedFields = [...validFields].sort((a, b) => {
@@ -415,6 +420,7 @@ export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) =>
                 siteKey={turnstileSiteKey}
                 onVerify={handleCaptchaVerify}
                 onError={handleCaptchaError}
+                onExpire={handleCaptchaExpire}
                 theme="auto"
                 size="normal"
               />
