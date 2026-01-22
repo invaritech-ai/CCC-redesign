@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -32,6 +32,7 @@ export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) =>
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState(false);
+  const [captchaKey, setCaptchaKey] = useState(0);
 
   // Get Turnstile site key from environment
   const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
@@ -215,6 +216,8 @@ export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) =>
       form.reset();
       setUploadedFiles({});
       setCaptchaToken(null);
+      // Force Turnstile remount to visually reset the widget
+      setCaptchaKey((prev) => prev + 1);
     } catch (error) {
       toast({
         title: "Submission failed",
@@ -223,20 +226,23 @@ export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) =>
       });
       // Reset CAPTCHA on error so user can try again
       setCaptchaToken(null);
+      // Force Turnstile remount to visually reset the widget
+      setCaptchaKey((prev) => prev + 1);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleCaptchaVerify = (token: string) => {
+  // Memoized callbacks for Turnstile to prevent unnecessary re-renders
+  const handleCaptchaVerify = useCallback((token: string) => {
     setCaptchaToken(token);
     setCaptchaError(false);
-  };
+  }, []);
 
-  const handleCaptchaError = () => {
+  const handleCaptchaError = useCallback(() => {
     setCaptchaToken(null);
     setCaptchaError(true);
-  };
+  }, []);
 
   // Sort fields by order (handle null orders by treating them as high numbers)
   // Secondary sort by fieldName for deterministic ordering when orders are equal
@@ -405,6 +411,7 @@ export const DynamicForm = ({ formConfig, inline = false }: DynamicFormProps) =>
           {turnstileSiteKey && (
             <div className="space-y-2">
               <Turnstile
+                key={captchaKey}
                 siteKey={turnstileSiteKey}
                 onVerify={handleCaptchaVerify}
                 onError={handleCaptchaError}
