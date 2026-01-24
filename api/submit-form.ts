@@ -27,6 +27,13 @@ const resend = process.env.RESEND_API_KEY
     ? new Resend(process.env.RESEND_API_KEY)
     : null;
 
+console.log("[Email] Resend client initialization:", {
+    hasApiKey: !!process.env.RESEND_API_KEY,
+    apiKeyLength: process.env.RESEND_API_KEY?.length || 0,
+    apiKeyPrefix: process.env.RESEND_API_KEY?.substring(0, 3) || "N/A",
+    resendClientInitialized: !!resend,
+});
+
 /**
  * Extract sheet ID from Google Sheets URL
  */
@@ -188,7 +195,7 @@ async function verifyTurnstileToken(token: string): Promise<boolean> {
             }
         );
 
-        const data = await response.json();
+        const data = (await response.json()) as { success?: boolean };
         return data.success === true;
     } catch (error: unknown) {
         const errorMessage =
@@ -235,19 +242,52 @@ async function sendEmailNotification(
     fields: Record<string, string | boolean | number | null | undefined>,
     fileLinks: Record<string, string>
 ): Promise<void> {
+    console.log("[Email] ===== Email notification function called =====");
+    console.log("[Email] Input parameters:", {
+        formName,
+        pageSlug,
+        fieldsCount: Object.keys(fields).length,
+        fileLinksCount: Object.keys(fileLinks).length,
+    });
+
     // Only send emails for contact form (check pageSlug first, then form name as fallback)
+    const pageSlugLower = pageSlug?.toLowerCase();
+    const formNameLower = formName.toLowerCase();
     const isContactForm =
-        pageSlug?.toLowerCase() === "contact" ||
-        formName.toLowerCase().includes("contact");
+        pageSlugLower === "contact" || formNameLower.includes("contact");
+
+    console.log("[Email] Contact form detection:", {
+        pageSlug,
+        pageSlugLower,
+        formName,
+        formNameLower,
+        pageSlugMatches: pageSlugLower === "contact",
+        formNameIncludesContact: formNameLower.includes("contact"),
+        isContactForm,
+    });
+
     if (!isContactForm) {
+        console.log("[Email] ⏭️  Not a contact form, skipping email notification");
         return;
     }
 
     // Skip if Resend is not configured
+    console.log("[Email] Checking Resend configuration:", {
+        resendClientExists: !!resend,
+        hasApiKey: !!process.env.RESEND_API_KEY,
+        apiKeyLength: process.env.RESEND_API_KEY?.length || 0,
+    });
+
     if (!resend || !process.env.RESEND_API_KEY) {
-        console.log("[Email] Resend not configured, skipping email notification");
+        console.log("[Email] ⚠️  Resend not configured, skipping email notification");
+        console.log("[Email] Configuration details:", {
+            resendClient: resend ? "exists" : "null",
+            apiKeyPresent: process.env.RESEND_API_KEY ? "yes" : "no",
+        });
         return;
     }
+
+    console.log("[Email] ✅ Resend is configured, proceeding with email preparation");
 
     // Build email body
     const fieldLines = Object.entries(fields)
@@ -275,33 +315,99 @@ async function sendEmailNotification(
         ...(fileLines.length > 0 ? ["", "--- File Uploads ---", ...fileLines] : []),
     ].join("\n");
 
+    console.log("[Email] Email body constructed:", {
+        bodyLength: emailBody.length,
+        fieldLinesCount: fieldLines.length,
+        fileLinesCount: fileLines.length,
+        bodyPreview: emailBody.substring(0, 200) + "...",
+    });
+
     // Get sender email from env or use default
     const fromEmail =
         process.env.RESEND_FROM_EMAIL || "notifications@invaritech.ai";
     const toEmail = process.env.RESEND_TO_EMAIL || "community@biznetvigator.com";
 
-    try {
-        await resend.emails.send({
-            from: fromEmail,
-            to: toEmail,
-            replyTo: toEmail,
-            subject: `New form submission: ${formName}`,
-            text: emailBody,
-        });
+    console.log("[Email] Email addresses:", {
+        fromEmail,
+        toEmail,
+        fromEmailSource: process.env.RESEND_FROM_EMAIL ? "env" : "default",
+        toEmailSource: process.env.RESEND_TO_EMAIL ? "env" : "default",
+    });
 
+    const emailPayload = {
+        from: fromEmail,
+        to: toEmail,
+        replyTo: toEmail,
+        subject: `New form submission: ${formName}`,
+        text: emailBody,
+    };
+
+    console.log("[Email] 📤 Attempting to send email with payload:", {
+        from: emailPayload.from,
+        to: emailPayload.to,
+        replyTo: emailPayload.replyTo,
+        subject: emailPayload.subject,
+        textLength: emailPayload.text.length,
+    });
+
+    try {
+        const emailStartTime = Date.now();
+        console.log("[Email] Calling resend.emails.send()...");
+        
+        const result = await resend.emails.send(emailPayload);
+        
+        const emailDuration = Date.now() - emailStartTime;
+        console.log(`[Email] ✅ Email sent successfully in ${emailDuration}ms`);
+        console.log("[Email] Resend API response:", JSON.stringify(result, null, 2));
         console.log(`[Email] ✅ Notification sent to ${toEmail}`);
     } catch (error: unknown) {
         const errorMessage =
             error instanceof Error ? error.message : "Unknown error";
-        console.error(`[Email] ❌ Failed to send notification:`, errorMessage);
+        const errorStack = error instanceof Error ? error.stack : "No stack trace";
+        const errorDetails = error instanceof Error ? {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+        } : { error: String(error) };
+
+        console.error(`[Email] ❌ Failed to send notification`);
+        console.error("[Email] Error message:", errorMessage);
+        console.error("[Email] Error stack:", errorStack);
+        console.error("[Email] Full error details:", JSON.stringify(errorDetails, null, 2));
+        
+        // Log additional error context if available
+        if (error && typeof error === "object") {
+            console.error("[Email] Error object keys:", Object.keys(error));
+            if ("response" in error) {
+                console.error("[Email] Error response:", JSON.stringify(error.response, null, 2));
+            }
+            if ("status" in error) {
+                console.error("[Email] Error status:", error.status);
+            }
+        }
+        
         // Don't throw - email failure shouldn't break form submission
     }
+    
+    console.log("[Email] ===== Email notification function completed =====");
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     const requestStartTime = Date.now();
+    console.log("[Submit Form] ===== New form submission request =====");
+    console.log("[Submit Form] Request method:", req.method);
+    console.log("[Submit Form] Environment check:", {
+        hasResendApiKey: !!process.env.RESEND_API_KEY,
+        resendApiKeyLength: process.env.RESEND_API_KEY?.length || 0,
+        hasResendFromEmail: !!process.env.RESEND_FROM_EMAIL,
+        hasResendToEmail: !!process.env.RESEND_TO_EMAIL,
+        resendFromEmail: process.env.RESEND_FROM_EMAIL || "not set (using default)",
+        resendToEmail: process.env.RESEND_TO_EMAIL || "not set (using default)",
+        vercelEnv: process.env.VERCEL_ENV,
+    });
 
     if (req.method !== "POST") {
+        console.log("[Submit Form] ❌ Invalid method:", req.method);
         return res.status(405).json({ error: "Method not allowed" });
     }
 
@@ -314,6 +420,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             fileFields,
             captchaToken,
         } = req.body as FormSubmissionPayload;
+
+        console.log("[Submit Form] Request payload received:", {
+            formName,
+            pageSlug,
+            hasGoogleSheetUrl: !!googleSheetUrl,
+            fieldsCount: fields ? Object.keys(fields).length : 0,
+            fileFieldsCount: fileFields ? Object.keys(fileFields).length : 0,
+            hasCaptchaToken: !!captchaToken,
+        });
 
         // Validate required fields
         if (!formName || !googleSheetUrl || !fields) {
@@ -431,20 +546,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         // Send email notification (only for contact form)
         // Await to ensure Vercel waits for completion, but don't fail on error
+        console.log("[Submit Form] Checking if email should be sent...");
         const isContactForm =
             pageSlug?.toLowerCase() === "contact" ||
             formName.toLowerCase().includes("contact");
+        
+        console.log("[Submit Form] Contact form check:", {
+            pageSlug,
+            formName,
+            isContactForm,
+        });
+
         if (isContactForm) {
+            console.log("[Submit Form] 📧 Contact form detected, attempting to send email...");
             try {
                 await sendEmailNotification(formName, pageSlug, fields, fileLinks);
+                console.log("[Submit Form] ✅ Email notification process completed");
             } catch (error: unknown) {
                 const errorMessage =
                     error instanceof Error
                         ? error.message
                         : "Unknown error sending email";
-                console.error("[Email] Error in email notification:", errorMessage);
+                const errorStack = error instanceof Error ? error.stack : "No stack trace";
+                console.error("[Submit Form] ❌ Error in email notification:", errorMessage);
+                console.error("[Submit Form] Error stack:", errorStack);
                 // Email failure doesn't affect form submission success
             }
+        } else {
+            console.log("[Submit Form] ⏭️  Not a contact form, skipping email");
         }
 
         return res.status(200).json({
