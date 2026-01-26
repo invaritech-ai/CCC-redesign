@@ -235,20 +235,39 @@ async function sendEmailNotification(
     fields: Record<string, string | boolean | number | null | undefined>,
     fileLinks: Record<string, string>
 ): Promise<void> {
+    console.log("[Email] ===== Email notification function called =====");
+    console.log("[Email] Input parameters:", {
+        formName,
+        pageSlug,
+        fieldsCount: Object.keys(fields).length,
+        fileLinksCount: Object.keys(fileLinks).length,
+    });
+
     // Only send emails for contact form (check pageSlug first, then form name as fallback)
     const pageSlugLower = pageSlug?.toLowerCase();
     const formNameLower = formName.toLowerCase();
     const isContactForm =
         pageSlugLower === "contact" || formNameLower.includes("contact");
 
+
     if (!isContactForm) {
+        console.log("[Email] ⏭️  Not a contact form, skipping email notification");
         return;
     }
 
     // Skip if Resend is not configured
+    console.log("[Email] Checking Resend configuration:", {
+        resendClientExists: !!resend,
+        hasApiKey: !!process.env.RESEND_API_KEY,
+        apiKeyLength: process.env.RESEND_API_KEY?.length || 0,
+    });
+
     if (!resend || !process.env.RESEND_API_KEY) {
+
         return;
     }
+
+    console.log("[Email] ✅ Resend is configured, proceeding with email preparation");
 
     // Build email body
     const fieldLines = Object.entries(fields)
@@ -276,6 +295,13 @@ async function sendEmailNotification(
         ...(fileLines.length > 0 ? ["", "--- File Uploads ---", ...fileLines] : []),
     ].join("\n");
 
+    console.log("[Email] Email body constructed:", {
+        bodyLength: emailBody.length,
+        fieldLinesCount: fieldLines.length,
+        fileLinesCount: fileLines.length,
+        bodyPreview: emailBody.substring(0, 200) + "...",
+    });
+
     // Get sender email from env or use default
     const fromEmail =
         process.env.RESEND_FROM_EMAIL || "noreply@notifications.invaritech.ai";
@@ -295,12 +321,16 @@ async function sendEmailNotification(
         const errorMessage =
             error instanceof Error ? error.message : "Unknown error";
         console.error(`[Email] Failed to send notification: ${errorMessage}`);
+
         // Don't throw - email failure shouldn't break form submission
     }
+    
+    console.log("[Email] ===== Email notification function completed =====");
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method !== "POST") {
+        console.log("[Submit Form] ❌ Invalid method:", req.method);
         return res.status(405).json({ error: "Method not allowed" });
     }
 
@@ -313,6 +343,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             fileFields,
             captchaToken,
         } = req.body as FormSubmissionPayload;
+
+        console.log("[Submit Form] Request payload received:", {
+            formName,
+            pageSlug,
+            hasGoogleSheetUrl: !!googleSheetUrl,
+            fieldsCount: fields ? Object.keys(fields).length : 0,
+            fileFieldsCount: fileFields ? Object.keys(fileFields).length : 0,
+            hasCaptchaToken: !!captchaToken,
+        });
 
         // Validate required fields
         if (!formName || !googleSheetUrl || !fields) {
