@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Calendar, MapPin, ArrowRight } from "lucide-react";
+import { Calendar, MapPin, ArrowRight, UserRound } from "lucide-react";
 import { format } from "date-fns";
 import { getImageUrl } from "@/lib/sanityImage";
 import type { SanityEvent, SanityFormBuilder, SanityPageContent } from "@/lib/sanity.types";
@@ -296,6 +296,17 @@ const Events = () => {
                                                                     />
                                                                     <span className="line-clamp-1">
                                                                         {event.location}
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                            {event.organizer?.name && (
+                                                                <div className="flex items-center gap-1.5">
+                                                                    <UserRound
+                                                                        className="h-3 w-3 shrink-0"
+                                                                        aria-hidden="true"
+                                                                    />
+                                                                    <span className="line-clamp-1">
+                                                                        {event.organizer.name}
                                                                     </span>
                                                                 </div>
                                                             )}
