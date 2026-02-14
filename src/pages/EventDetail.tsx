@@ -3,7 +3,7 @@ import { Footer } from "@/components/Footer";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getEventBySlug, getFormByPage } from "@/lib/sanity.queries";
-import { Calendar, MapPin, ExternalLink } from "lucide-react";
+import { Calendar, MapPin, ExternalLink, UserRound, Mail, Phone } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -133,9 +133,42 @@ const EventDetail = () => {
 
                             {event.description && (
                                 <div className="prose prose-lg max-w-none mb-8">
+                                    <h2 className="text-xl font-semibold mb-3">Description</h2>
                                     <p className="text-lg text-muted-foreground leading-relaxed whitespace-pre-line">
                                         {event.description}
                                     </p>
+                                </div>
+                            )}
+
+                            {(event.organizer?.name || event.organizer?.email || event.organizer?.phone) && (
+                                <div className="mb-8 p-4 rounded-lg border bg-muted/30">
+                                    <h2 className="text-xl font-semibold mb-3 flex items-center gap-2">
+                                        <UserRound className="h-5 w-5" aria-hidden="true" />
+                                        Organizer
+                                    </h2>
+                                    <div className="space-y-2 text-muted-foreground">
+                                        {event.organizer?.name && (
+                                            <p className="font-medium text-foreground">{event.organizer.name}</p>
+                                        )}
+                                        {event.organizer?.email && (
+                                            <a
+                                                href={`mailto:${event.organizer.email}`}
+                                                className="flex items-center gap-2 text-primary hover:underline"
+                                            >
+                                                <Mail className="h-4 w-4 shrink-0" aria-hidden="true" />
+                                                {event.organizer.email}
+                                            </a>
+                                        )}
+                                        {event.organizer?.phone && (
+                                            <a
+                                                href={`tel:${event.organizer.phone}`}
+                                                className="flex items-center gap-2 text-primary hover:underline"
+                                            >
+                                                <Phone className="h-4 w-4 shrink-0" aria-hidden="true" />
+                                                {event.organizer.phone}
+                                            </a>
+                                        )}
+                                    </div>
                                 </div>
                             )}
 
