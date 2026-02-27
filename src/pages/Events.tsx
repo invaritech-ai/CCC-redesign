@@ -280,12 +280,7 @@ const Events = () => {
                                                                     aria-hidden="true"
                                                                 />
                                                                 <span className="line-clamp-1">
-                                                                    {format(
-                                                                        new Date(
-                                                                            event.date
-                                                                        ),
-                                                                        "PPP 'at' p"
-                                                                    )}
+                                                                    {format(new Date(event.date), "PPP")} at {event.time ?? format(new Date(event.date), "p")}
                                                                 </span>
                                                             </div>
                                                             {event.location && (
