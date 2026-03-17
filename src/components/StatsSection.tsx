@@ -61,7 +61,7 @@ export const StatsSection = () => {
         },
         {
             icon: Globe,
-            number: "9+",
+            number: "12+",
             label: "Nationalities",
         },
     ];
