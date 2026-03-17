@@ -84,7 +84,7 @@ const Future = () => {
                 <WhyRedevelopingSection
                     title="Why is CCC redeveloping?"
                     paragraphs={[
-                        "The building at 63 Cumberland Road, which housed CCC for many years, reached a point where significant upgrading was required to meet latest safety and building standards and to prepare for future care needs. After careful review, the Board decided that a full redevelopment would best secure the long-term future of CCC as a home for English-speaking elders in Hong Kong.",
+                        'The building at 63 Cumberland Road, which housed CCC for many years, reached a point where significant upgrading was required to meet latest safety and building standards. "To prepare for future care needs", after a careful review, and the Board decided that a full redevelopment would best secure the long-term future of CCC as a home for English-speaking elders in Hong Kong.',
                     ]}
                     benefits={[
                         "Provide a modern, safe residential care home designed to current regulations.",
