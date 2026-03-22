@@ -84,7 +84,7 @@ const Future = () => {
                 <WhyRedevelopingSection
                     title="Why is CCC redeveloping?"
                     paragraphs={[
-                        'The building at 63 Cumberland Road, which housed CCC for many years, reached a point where significant upgrading was required to meet latest safety and building standards. "To prepare for future care needs", after a careful review, and the Board decided that a full redevelopment would best secure the long-term future of CCC as a home for English-speaking elders in Hong Kong.',
+                        "The building at 63 Cumberland Road, which housed CCC for many years, reached a point where significant upgrading was required to meet latest safety and building standards. After a careful review, and to prepare for future care needs, the Board decided that a full redevelopment would best secure the long-term future of CCC as a home for English-speaking elders in Hong Kong.",
                     ]}
                     benefits={[
                         "Provide a modern, safe residential care home designed to current regulations.",
@@ -159,7 +159,7 @@ const Future = () => {
                     title="How the project is governed"
                     introText="The redevelopment is overseen by CCC's volunteer Executive Committee and Management Committee, with a dedicated Project Management Committee providing specialist oversight."
                     projectManagerName="Ms Tiffany Wong"
-                    projectManagerJoinedDate="July 2025"
+                    projectManagerJoinedDate="June 2025"
                 />
 
                 {/* Section 8: Image Gallery */}

@@ -36,7 +36,6 @@ const Events = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState<string>("all");
     const [dateFilter, setDateFilter] = useState<string>("all");
-    const [displayCount, setDisplayCount] = useState(12);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -144,26 +143,15 @@ const Events = () => {
         });
     }, [events, searchQuery, selectedCategory, dateFilter]);
 
-    // Get displayed events (paginated)
     const displayedEvents = useMemo(() => {
-        return filteredEvents.slice(0, displayCount);
-    }, [filteredEvents, displayCount]);
-
-    const handleLoadMore = () => {
-        setDisplayCount((prev) => prev + 12);
-    };
+        return filteredEvents.slice(0, 12);
+    }, [filteredEvents]);
 
     const handleClearFilters = () => {
         setSearchQuery("");
         setSelectedCategory("all");
         setDateFilter("all");
-        setDisplayCount(12);
     };
-
-    // Reset pagination when filters change
-    useEffect(() => {
-        setDisplayCount(12);
-    }, [searchQuery, selectedCategory, dateFilter]);
 
     const categoryFilterOptions = availableCategories.map((category) => ({
         label: category,
@@ -327,17 +315,6 @@ const Events = () => {
                                             ))}
                                         </div>
 
-                                        {displayedEvents.length < filteredEvents.length && (
-                                            <div className="text-center mt-8">
-                                                <Button
-                                                    onClick={handleLoadMore}
-                                                    variant="outline"
-                                                    className="min-w-[150px]"
-                                                >
-                                                    Load More
-                                                </Button>
-                                            </div>
-                                        )}
                                     </>
                                 ) : (
                                     <div className="text-center py-12">

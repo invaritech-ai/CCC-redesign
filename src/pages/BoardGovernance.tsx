@@ -12,12 +12,12 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogDescription
+    DialogDescription,
 } from "@/components/ui/dialog";
 
 // Helper functions to filter team members by role
 const getExecutiveCommitteeMembers = (
-    members: SanityTeamMember[]
+    members: SanityTeamMember[],
 ): SanityTeamMember[] => {
     return members
         .filter(
@@ -27,7 +27,7 @@ const getExecutiveCommitteeMembers = (
                     member.role === "Hon. Legal Adviser" ||
                     member.role === "Hon. Treasurer" ||
                     member.role === "Hon. Medical Adviser" ||
-                    member.role === "Board Member")
+                    member.role === "Board Member"),
         )
         .sort((a, b) => {
             // Sort by order if available, otherwise maintain original order
@@ -41,13 +41,13 @@ const getExecutiveCommitteeMembers = (
 };
 
 const getManagementCommitteeMembers = (
-    members: SanityTeamMember[]
+    members: SanityTeamMember[],
 ): SanityTeamMember[] => {
     const filtered = members.filter(
         (member) =>
             member.role &&
             (member.role === "Chair Management Committee" ||
-                member.role === "Member Management Committee")
+                member.role === "Member Management Committee"),
     );
 
     // Sort: Chair first, then Members, maintaining order numbers within each group
@@ -70,14 +70,14 @@ const getManagementCommitteeMembers = (
 };
 
 const getProjectManagementCommitteeMembers = (
-    members: SanityTeamMember[]
+    members: SanityTeamMember[],
 ): SanityTeamMember[] => {
     return members
         .filter(
             (member) =>
                 member.role &&
                 (member.role === "Project Management Committee" ||
-                    member.role === "Ex-officio members Project management")
+                    member.role === "Ex-officio members Project management"),
         )
         .sort((a, b) => {
             // Sort by order if available
@@ -121,15 +121,15 @@ const BoardGovernance = () => {
     // Filter team members by committee
     const executiveCommitteeMembers = useMemo(
         () => getExecutiveCommitteeMembers(teamMembers),
-        [teamMembers]
+        [teamMembers],
     );
     const managementCommitteeMembers = useMemo(
         () => getManagementCommitteeMembers(teamMembers),
-        [teamMembers]
+        [teamMembers],
     );
     const projectManagementCommitteeMembers = useMemo(
         () => getProjectManagementCommitteeMembers(teamMembers),
-        [teamMembers]
+        [teamMembers],
     );
 
     const committees = useMemo(() => {
@@ -166,7 +166,7 @@ const BoardGovernance = () => {
     const activeCommittee = useMemo(() => {
         if (!activeCommitteeKey) return null;
         return committees.find(
-            (committee) => committee.key === activeCommitteeKey
+            (committee) => committee.key === activeCommitteeKey,
         );
     }, [activeCommitteeKey, committees]);
 
@@ -189,10 +189,7 @@ const BoardGovernance = () => {
                         <>
                             In addition, a Project Management Committee oversees
                             the redevelopment of our home at{" "}
-                            <strong>63 Cumberland Road</strong>, while a Funding
-                            Committee advises on fundraising initiatives. All
-                            Executive and Fundraising Committee members are
-                            volunteers.
+                            <strong>63 Cumberland Road</strong>.
                         </>,
                     ]}
                 />
@@ -238,9 +235,7 @@ const BoardGovernance = () => {
                 >
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>
-                                {activeCommittee?.name}
-                            </DialogTitle>
+                            <DialogTitle>{activeCommittee?.name}</DialogTitle>
                             {activeCommittee?.introText && (
                                 <DialogDescription>
                                     {activeCommittee.introText}

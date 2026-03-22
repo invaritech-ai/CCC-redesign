@@ -8,7 +8,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import heroImageJPG from "@/assets/hero-elderly-walking.jpg";
 import { DonateNowButton } from "./DonateNowButton";
 
 export const HeroSection = () => {
@@ -34,8 +33,9 @@ export const HeroSection = () => {
 
                         <div className="space-y-4">
                             <h1 className="text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight">
-                                A Caring Home for Hong Kong's English-Speaking
-                                Elderly
+                                A Licensed Care Home in Hong Kong for
+                                English-Speaking Elderly of Every Nationality
+                                and Ethnicity
                             </h1>
                             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
                                 Your support helps us create a safe, modern home
@@ -96,14 +96,14 @@ export const HeroSection = () => {
 
                     {/* Right Image */}
                     <div className="relative">
-                        <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
+                        <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl relative">
                             <picture>
                                 <source
-                                    srcSet="/hero-image-no-text.webp"
+                                    srcSet="/hero-image-custom.webp"
                                     type="image/webp"
                                 />
                                 <img
-                                    src={heroImageJPG}
+                                    src="/hero-image-custom.png"
                                     alt="Caring elderly community - two people walking together in a peaceful garden"
                                     className="w-full h-full object-cover"
                                     fetchPriority="high"
@@ -111,6 +111,10 @@ export const HeroSection = () => {
                                     height="600"
                                 />
                             </picture>
+                            {/* <Heart
+                                className="absolute bottom-5 right-5 h-14 w-14 text-primary fill-primary hidden md:block"
+                                style={{ animation: "heartbeat 1.2s ease-in-out infinite" }}
+                            /> */}
                         </div>
                         <div className="absolute -bottom-6 -left-6 bg-card p-4 rounded-xl shadow-lg border hidden md:block">
                             <p className="text-sm text-muted-foreground mb-1">
