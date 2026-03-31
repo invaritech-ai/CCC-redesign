@@ -75,25 +75,8 @@ const EventDetail = () => {
             <Navigation />
 
             <main id="main-content" className="flex-1">
-                <section 
-                    className={`relative bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center ${
-                        event.image ? 'bg-cover bg-center' : ''
-                    }`}
-                    style={event.image ? {
-                        backgroundImage: `url(${getImageUrl(event.image, {
-                            width: 1920,
-                            height: 1080,
-                            format: "webp",
-                        })})`
-                    } : undefined}
-                >
-                    {/* Dark overlay */}
-                    {event.image && (
-                        <div className="absolute inset-0 bg-black/60"></div>
-                    )}
-                    
-                    {/* Content */}
-                    <div className="container mx-auto px-4 w-full relative z-10">
+                <section className="bg-primary text-primary-foreground py-12 md:py-16">
+                    <div className="container mx-auto px-4 w-full">
                         <div className="max-w-4xl md:mx-auto md:text-center">
                             {event.featured && (
                                 <Badge className="mb-6 bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 md:mx-auto">
@@ -130,6 +113,16 @@ const EventDetail = () => {
                 <section className="py-16">
                     <div className="container mx-auto px-4">
                         <div className="max-w-4xl mx-auto">
+
+                            {event.image && (
+                                <div className="mb-10">
+                                    <img
+                                        src={getImageUrl(event.image, { width: 1600, format: "webp" })}
+                                        alt={event.title}
+                                        className="w-full h-auto rounded-lg"
+                                    />
+                                </div>
+                            )}
 
                             {event.description && (
                                 <div className="prose prose-lg max-w-none mb-8">
