@@ -106,13 +106,7 @@ export const SearchAndFilter = ({
             {/* Results Count */}
             <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <span>
-                    {totalCount > 0 ? (
-                        <>
-                            Showing {displayedCount} of {totalCount} result{totalCount !== 1 ? "s" : ""}
-                        </>
-                    ) : (
-                        "No results found"
-                    )}
+                    {totalCount === 0 && "No results found"}
                 </span>
                 {hasActiveFilters && (
                     <div className="flex flex-wrap gap-2">
