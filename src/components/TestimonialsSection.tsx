@@ -21,7 +21,8 @@ export const TestimonialsSection = () => {
     useEffect(() => {
         const fetchTestimonials = async () => {
             const data = await getLatestTestimonials(10);
-            setTestimonials(data);
+            const shuffled = [...data].sort(() => Math.random() - 0.5);
+            setTestimonials(shuffled);
             setLoading(false);
         };
         fetchTestimonials();
