@@ -1,9 +1,23 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import { applySeo, getCanonicalUrl } from "@/lib/seo";
 
 const NotFound = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    applySeo({
+      title: "Page Not Found | China Coast Community",
+      description: "The page you are looking for could not be found.",
+      url: getCanonicalUrl(location.pathname),
+      robots: "noindex, nofollow",
+    });
+
+    return () => applySeo();
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen flex flex-col">

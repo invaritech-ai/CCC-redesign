@@ -1,8 +1,21 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { CheckCircle2 } from "lucide-react";
+import { useEffect } from "react";
+import { applySeo, getCanonicalUrl } from "@/lib/seo";
 
 const SupportConfirmation = () => {
+  useEffect(() => {
+    applySeo({
+      title: "Donation Confirmed | China Coast Community",
+      description: "Donation payment confirmation for China Coast Community.",
+      url: getCanonicalUrl("/support/confirmation"),
+      robots: "noindex, nofollow",
+    });
+
+    return () => applySeo();
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
@@ -37,4 +50,3 @@ const SupportConfirmation = () => {
 };
 
 export default SupportConfirmation;
-

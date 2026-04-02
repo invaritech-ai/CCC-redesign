@@ -3,8 +3,21 @@ import { Footer } from "@/components/Footer";
 import { XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { applySeo, getCanonicalUrl } from "@/lib/seo";
 
 const SupportPaymentFailed = () => {
+  useEffect(() => {
+    applySeo({
+      title: "Donation Payment Failed | China Coast Community",
+      description: "Donation payment failure page for China Coast Community.",
+      url: getCanonicalUrl("/support/payment-failed"),
+      robots: "noindex, nofollow",
+    });
+
+    return () => applySeo();
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
@@ -29,7 +42,7 @@ const SupportPaymentFailed = () => {
                 Please try again or contact us if the problem persists.
               </p>
               <Button asChild>
-                <Link to="/support/donate">Try Again</Link>
+                <Link to="/donate">Try Again</Link>
               </Button>
             </div>
           </div>
@@ -42,4 +55,3 @@ const SupportPaymentFailed = () => {
 };
 
 export default SupportPaymentFailed;
-

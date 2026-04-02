@@ -5,20 +5,7 @@ import { DynamicForm } from "@/components/DynamicForm";
 import { useEffect, useState } from "react";
 import { getPageContent, getFormByPage } from "@/lib/sanity.queries";
 import type { SanityPageContent, SanityFormBuilder } from "@/lib/sanity.types";
-
-// Helper function to update meta tags
-const updateMetaTag = (name: string, content: string, isProperty = false) => {
-  const attribute = isProperty ? "property" : "name";
-  let element = document.querySelector(`meta[${attribute}="${name}"]`) as HTMLMetaElement;
-  
-  if (!element) {
-    element = document.createElement("meta");
-    element.setAttribute(attribute, name);
-    document.head.appendChild(element);
-  }
-  
-  element.content = content;
-};
+import { applySeo, getCanonicalUrl, getPublicPathForPageSlug } from "@/lib/seo";
 
 const Volunteer = () => {
   const [pageContent, setPageContent] = useState<SanityPageContent | null>(null);
@@ -56,40 +43,13 @@ const Volunteer = () => {
     const description = pageContent.subheading || 
       "Opportunities for time donors and volunteers.";
     
-    const canonicalUrl = `https://www.chinacoastcommunity.org.hk/volunteer`;
+    applySeo({
+      title: pageTitle,
+      description,
+      url: getCanonicalUrl(getPublicPathForPageSlug("volunteer")),
+    });
 
-    // Update title
-    document.title = pageTitle;
-
-    // Update meta description
-    updateMetaTag("description", description);
-
-    // Update Open Graph tags
-    updateMetaTag("og:title", pageTitle, true);
-    updateMetaTag("og:description", description, true);
-    updateMetaTag("og:url", canonicalUrl, true);
-    updateMetaTag("og:type", "website", true);
-
-    // Update canonical URL
-    let canonicalLink = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
-    if (!canonicalLink) {
-      canonicalLink = document.createElement("link");
-      canonicalLink.rel = "canonical";
-      document.head.appendChild(canonicalLink);
-    }
-    canonicalLink.href = canonicalUrl;
-
-    // Cleanup function to restore default meta tags when component unmounts
-    return () => {
-      document.title = "China Coast Community - Caring for Hong Kong's English-Speaking Elderly";
-      updateMetaTag("description", "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment to create a safe, modern community where every senior is valued.");
-      updateMetaTag("og:title", "China Coast Community - Caring for Hong Kong's English-Speaking Elderly", true);
-      updateMetaTag("og:description", "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment.", true);
-      updateMetaTag("og:url", "https://www.chinacoastcommunity.org.hk/", true);
-      if (canonicalLink) {
-        canonicalLink.href = "https://www.chinacoastcommunity.org.hk/";
-      }
-    };
+    return () => applySeo();
   }, [pageContent]);
 
   if (loading) {
@@ -140,4 +100,3 @@ const Volunteer = () => {
 };
 
 export default Volunteer;
-

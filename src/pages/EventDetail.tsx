@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { getImageUrl } from "@/lib/sanityImage";
 import { DynamicForm } from "@/components/DynamicForm";
 import type { SanityEvent, SanityFormBuilder } from "@/lib/sanity.types";
+import { applySeo, getCanonicalUrl } from "@/lib/seo";
 
 const EventDetail = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -34,6 +35,40 @@ const EventDetail = () => {
         };
         fetchEvent();
     }, [slug]);
+
+    useEffect(() => {
+        if (loading) {
+            return;
+        }
+
+        const canonicalUrl = getCanonicalUrl(
+            slug
+                ? `/care-community/activities-and-events/${slug}`
+                : "/care-community/activities-and-events"
+        );
+
+        if (!event) {
+            applySeo({
+                title: "Event Not Found | China Coast Community",
+                description: "The event you are looking for doesn't exist.",
+                url: canonicalUrl,
+                robots: "noindex, nofollow",
+            });
+
+            return () => applySeo();
+        }
+
+        applySeo({
+            title: `${event.title} | China Coast Community`,
+            description:
+                event.description?.trim().slice(0, 160) ||
+                `Event details for ${event.title} at China Coast Community.`,
+            url: canonicalUrl,
+            type: "article",
+        });
+
+        return () => applySeo();
+    }, [event, loading, slug]);
 
     if (loading) {
         return (

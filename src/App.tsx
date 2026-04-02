@@ -3,7 +3,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+    BrowserRouter,
+    Routes,
+    Route,
+    Navigate,
+    useParams,
+} from "react-router-dom";
 import { CookieBanner } from "@/components/CookieBanner";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -43,6 +49,21 @@ const LoadingFallback = () => (
     </div>
 );
 
+const ReportAliasRedirect = () => {
+    const { slug } = useParams<{ slug: string }>();
+
+    return (
+        <Navigate
+            to={
+                slug
+                    ? `/who-we-are/publications/annual-reports/${slug}`
+                    : "/who-we-are/publications/annual-reports"
+            }
+            replace
+        />
+    );
+};
+
 const App = () => (
     <QueryClientProvider client={queryClient}>
         <TooltipProvider>
@@ -59,6 +80,42 @@ const App = () => (
                 </a>
                 <Suspense fallback={<LoadingFallback />}>
                     <Routes>
+                        {/* Canonical Redirects */}
+                        <Route
+                            path="/volunteer"
+                            element={
+                                <Navigate
+                                    to="/get-involved/volunteer"
+                                    replace
+                                />
+                            }
+                        />
+                        <Route
+                            path="/support/donate"
+                            element={<Navigate to="/donate" replace />}
+                        />
+                        <Route
+                            path="/updates"
+                            element={<Navigate to="/news" replace />}
+                        />
+                        <Route
+                            path="/team"
+                            element={<Navigate to="/who-we-are/team" replace />}
+                        />
+                        <Route
+                            path="/reports"
+                            element={
+                                <Navigate
+                                    to="/who-we-are/publications/annual-reports"
+                                    replace
+                                />
+                            }
+                        />
+                        <Route
+                            path="/reports/:slug"
+                            element={<ReportAliasRedirect />}
+                        />
+
                         {/* Static Routes */}
                         <Route path="/" element={<Index />} />
                         <Route path="/who-we-are/about" element={<About />} />
@@ -89,8 +146,6 @@ const App = () => (
                             path="/who-we-are/publications/annual-reports"
                             element={<Reports />}
                         />
-                        {/* Shorter route alias for reports listing */}
-                        <Route path="/reports" element={<Reports />} />
                         <Route
                             path="/news"
                             element={
@@ -185,11 +240,6 @@ const App = () => (
                         />
                         <Route
                             path="/who-we-are/publications/annual-reports/:slug"
-                            element={<ReportDetail />}
-                        />
-                        {/* Shorter route alias for reports */}
-                        <Route
-                            path="/reports/:slug"
                             element={<ReportDetail />}
                         />
                         <Route

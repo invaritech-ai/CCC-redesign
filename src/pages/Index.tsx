@@ -1,7 +1,13 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
 import { RedevelopmentBanner } from "@/components/RedevelopmentBanner";
 import { HeroSection } from "@/components/HeroSection";
+import {
+    applySeo,
+    DEFAULT_OG_IMAGE_URL,
+    DEFAULT_SITE_DESCRIPTION,
+    DEFAULT_SITE_URL,
+} from "@/lib/seo";
 
 // Lazy load below-the-fold sections
 const KeyHighlightsSection = lazy(() =>
@@ -32,20 +38,25 @@ const Footer = lazy(() =>
 );
 
 const Index = () => {
+    useEffect(() => {
+        applySeo();
+    }, []);
+
     const structuredData = {
         "@context": "https://schema.org",
         "@type": "NGO",
         "name": "China Coast Community",
-        "description": "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment to create a safe, modern community where every senior is valued.",
+        "description": DEFAULT_SITE_DESCRIPTION,
         "foundingDate": "1978",
-        "url": "https://www.chinacoastcommunity.org.hk",
+        "url": DEFAULT_SITE_URL,
         "logo": "https://www.chinacoastcommunity.org.hk/ccc-logo.svg",
+        "image": DEFAULT_OG_IMAGE_URL,
         "address": {
             "@type": "PostalAddress",
             "addressCountry": "HK",
             "addressLocality": "Hong Kong"
         },
-        "sameAs": []
+        "sameAs": ["https://zh-hk.facebook.com/chinacoastcommunity/"]
     };
 
     return (

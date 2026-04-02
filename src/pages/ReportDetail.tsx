@@ -7,6 +7,7 @@ import { FileText, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getImageUrl, getImageUrlFromString } from "@/lib/sanityImage";
 import type { SanityReport } from "@/lib/sanity.types";
+import { applySeo, getCanonicalUrl } from "@/lib/seo";
 
 const ReportDetail = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -33,6 +34,41 @@ const ReportDetail = () => {
         };
         fetchReport();
     }, [slug]);
+
+    useEffect(() => {
+        if (loading) {
+            return;
+        }
+
+        const canonicalUrl = getCanonicalUrl(
+            slug
+                ? `/who-we-are/publications/annual-reports/${slug}`
+                : "/who-we-are/publications/annual-reports"
+        );
+
+        if (!report) {
+            applySeo({
+                title: "Report Not Found | China Coast Community",
+                description: "The report you are looking for doesn't exist.",
+                url: canonicalUrl,
+                robots: "noindex, nofollow",
+            });
+
+            return () => applySeo();
+        }
+
+        applySeo({
+            title: `${report.title} | China Coast Community`,
+            description:
+                report.summary?.trim().slice(0, 160) ||
+                report.description?.trim().slice(0, 160) ||
+                `Annual report from China Coast Community: ${report.title}.`,
+            url: canonicalUrl,
+            type: "article",
+        });
+
+        return () => applySeo();
+    }, [loading, report, slug]);
 
     if (loading) {
         return (

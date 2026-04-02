@@ -1,6 +1,38 @@
 {
     "buildCommand": "npm run build",
     "outputDirectory": "dist",
+    "redirects": [
+        {
+            "source": "/volunteer",
+            "destination": "/get-involved/volunteer",
+            "permanent": true
+        },
+        {
+            "source": "/support/donate",
+            "destination": "/donate",
+            "permanent": true
+        },
+        {
+            "source": "/updates",
+            "destination": "/news",
+            "permanent": true
+        },
+        {
+            "source": "/team",
+            "destination": "/who-we-are/team",
+            "permanent": true
+        },
+        {
+            "source": "/reports",
+            "destination": "/who-we-are/publications/annual-reports",
+            "permanent": true
+        },
+        {
+            "source": "/reports/:slug",
+            "destination": "/who-we-are/publications/annual-reports/:slug",
+            "permanent": true
+        }
+    ],
     "rewrites": [
         {
             "source": "/api/(.*)",

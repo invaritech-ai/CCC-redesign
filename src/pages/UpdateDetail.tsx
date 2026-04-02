@@ -1,6 +1,6 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { useParams } from "react-router-dom";
+import { Navigate, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getUpdateBySlug, getCaseStudyBySlug } from "@/lib/sanity.queries";
 import { Calendar, User, Building2 } from "lucide-react";
@@ -13,6 +13,7 @@ import type {
     SanityPortableTextBlock,
     SanityImageBlock,
 } from "@/lib/sanity.types";
+import { applySeo, getCanonicalUrl } from "@/lib/seo";
 
 // Simple portable text renderer
 const PortableText = ({ blocks }: { blocks: SanityPortableTextBlock[] }) => {
@@ -108,8 +109,23 @@ const PortableText = ({ blocks }: { blocks: SanityPortableTextBlock[] }) => {
     );
 };
 
+const extractPortableTextText = (blocks?: SanityPortableTextBlock[]) => {
+    if (!blocks?.length) {
+        return "";
+    }
+
+    return blocks
+        .filter((block): block is Extract<SanityPortableTextBlock, { _type: "block" }> => block._type === "block")
+        .flatMap((block) => block.children ?? [])
+        .map((child) => child.text ?? "")
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .trim();
+};
+
 const UpdateDetail = () => {
     const { slug } = useParams<{ slug: string }>();
+    const location = useLocation();
     const [update, setUpdate] = useState<SanityUpdate | null>(null);
     const [caseStudy, setCaseStudy] = useState<SanityCaseStudy | null>(null);
     const [loading, setLoading] = useState(true);
@@ -137,6 +153,66 @@ const UpdateDetail = () => {
         fetchContent();
     }, [slug]);
 
+    const content = isCaseStudy ? caseStudy : update;
+    const contentTitle = isCaseStudy ? caseStudy?.title : update?.title;
+    const contentImage = isCaseStudy 
+        ? (caseStudy?.images && caseStudy.images.length > 0 ? caseStudy.images[0].image : undefined)
+        : update?.image;
+    const contentDate = isCaseStudy 
+        ? (caseStudy?.date ? new Date(caseStudy.date).toISOString() : undefined)
+        : update?.publishedAt;
+    const contentFeatured = isCaseStudy ? caseStudy?.featured : update?.featured;
+    const canonicalDetailPath = slug
+        ? isCaseStudy || update?.type === "story"
+            ? `/news/stories/${slug}`
+            : `/news/${slug}`
+        : location.pathname;
+
+    useEffect(() => {
+        if (loading) {
+            return;
+        }
+
+        if (!content) {
+            applySeo({
+                title: "Content Not Found | China Coast Community",
+                description: "The content you are looking for doesn't exist.",
+                url: getCanonicalUrl(location.pathname),
+                robots: "noindex, nofollow",
+            });
+
+            return () => applySeo();
+        }
+
+        const description = (
+            isCaseStudy
+                ? extractPortableTextText(caseStudy?.description) ||
+                  extractPortableTextText(caseStudy?.outcomes) ||
+                  `${caseStudy?.title ?? "Story"} from China Coast Community.`
+                : update?.excerpt ||
+                  extractPortableTextText(update?.body) ||
+                  `${update?.title ?? "Update"} from China Coast Community.`
+        ).slice(0, 160);
+
+        applySeo({
+            title: `${contentTitle} | China Coast Community`,
+            description,
+            url: getCanonicalUrl(canonicalDetailPath),
+            type: "article",
+        });
+
+        return () => applySeo();
+    }, [
+        canonicalDetailPath,
+        caseStudy,
+        content,
+        contentTitle,
+        isCaseStudy,
+        loading,
+        location.pathname,
+        update,
+    ]);
+
     if (loading) {
         return (
             <div className="min-h-screen flex flex-col">
@@ -149,15 +225,9 @@ const UpdateDetail = () => {
         );
     }
 
-    const content = isCaseStudy ? caseStudy : update;
-    const contentTitle = isCaseStudy ? caseStudy?.title : update?.title;
-    const contentImage = isCaseStudy 
-        ? (caseStudy?.images && caseStudy.images.length > 0 ? caseStudy.images[0].image : undefined)
-        : update?.image;
-    const contentDate = isCaseStudy 
-        ? (caseStudy?.date ? new Date(caseStudy.date).toISOString() : undefined)
-        : update?.publishedAt;
-    const contentFeatured = isCaseStudy ? caseStudy?.featured : update?.featured;
+    if (slug && content && location.pathname !== canonicalDetailPath) {
+        return <Navigate to={canonicalDetailPath} replace />;
+    }
 
     if (!content) {
         return (

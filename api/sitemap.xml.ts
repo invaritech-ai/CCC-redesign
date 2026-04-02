@@ -19,6 +19,13 @@ const getBaseUrl = (): string => {
 
 const BASE_URL = getBaseUrl();
 
+const PAGE_SLUG_CANONICAL_PATHS: Record<string, string> = {
+    team: "/who-we-are/team",
+    volunteer: "/get-involved/volunteer",
+    "support/donate": "/donate",
+    updates: "/news",
+};
+
 interface SitemapEntry {
     loc: string;
     lastmod?: string;
@@ -81,6 +88,41 @@ function getUpdatePath(update: { slug: string; type: string }): string {
     return `/news/${update.slug}`;
 }
 
+function getCanonicalPagePath(pageSlug: string): string {
+    if (PAGE_SLUG_CANONICAL_PATHS[pageSlug]) {
+        return PAGE_SLUG_CANONICAL_PATHS[pageSlug];
+    }
+
+    return pageSlug.startsWith("/") ? pageSlug : `/${pageSlug}`;
+}
+
+function dedupeEntries(entries: SitemapEntry[]): SitemapEntry[] {
+    const entryMap = new Map<string, SitemapEntry>();
+
+    entries.forEach((entry) => {
+        const existing = entryMap.get(entry.loc);
+
+        if (!existing) {
+            entryMap.set(entry.loc, entry);
+            return;
+        }
+
+        entryMap.set(entry.loc, {
+            loc: entry.loc,
+            lastmod: entry.lastmod ?? existing.lastmod,
+            changefreq: existing.changefreq ?? entry.changefreq,
+            priority:
+                existing.priority === undefined
+                    ? entry.priority
+                    : entry.priority === undefined
+                      ? existing.priority
+                      : Math.max(existing.priority, entry.priority),
+        });
+    });
+
+    return Array.from(entryMap.values());
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
         const entries: SitemapEntry[] = [];
@@ -116,11 +158,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             { loc: `${BASE_URL}/donate`, changefreq: "monthly", priority: 0.9 },
             {
                 loc: `${BASE_URL}/who-we-are/publications/annual-reports`,
-                changefreq: "monthly",
-                priority: 0.7,
-            },
-            {
-                loc: `${BASE_URL}/reports`,
                 changefreq: "monthly",
                 priority: 0.7,
             },
@@ -325,13 +362,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                                 changefreq: "yearly",
                                 priority: 0.6,
                             });
-                            // Also add shorter alias
-                            entries.push({
-                                loc: `${BASE_URL}/reports/${report.slug}`,
-                                lastmod: formatDate(report._updatedAt),
-                                changefreq: "yearly",
-                                priority: 0.6,
-                            });
                         }
                     });
                 }
@@ -371,7 +401,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     pageContent.forEach((page: any) => {
                         if (page.pageSlug) {
                             entries.push({
-                                loc: `${BASE_URL}/${page.pageSlug}`,
+                                loc: `${BASE_URL}${getCanonicalPagePath(
+                                    page.pageSlug
+                                )}`,
                                 lastmod: formatDate(page._updatedAt),
                                 changefreq: "monthly",
                                 priority: 0.7,
@@ -389,7 +421,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         // Generate XML
-        const xml = generateSitemapXML(entries);
+        const xml = generateSitemapXML(dedupeEntries(entries));
 
         // Set headers
         res.setHeader("Content-Type", "application/xml; charset=utf-8");
