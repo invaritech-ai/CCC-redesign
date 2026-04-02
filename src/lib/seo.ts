@@ -10,6 +10,8 @@ export const DEFAULT_SITE_URL = `${CANONICAL_BASE_URL}/`;
 
 export const DEFAULT_OG_IMAGE_URL = `${CANONICAL_BASE_URL}/og-image-ccc-2026-04-02.jpg`;
 
+export const DEFAULT_OG_LOGO_URL = `${CANONICAL_BASE_URL}/ccc-logo.svg`;
+
 export const DEFAULT_OG_IMAGE_ALT =
     "China Coast Community social sharing image featuring the CCC name and redevelopment message.";
 
@@ -124,6 +126,7 @@ export const applySeo = ({
     updateMetaTag("og:type", type, true);
     updateMetaTag("og:url", url, true);
     updateMetaTag("og:site_name", "China Coast Community", true);
+    updateMetaTag("og:logo", DEFAULT_OG_LOGO_URL, true);
     updateMetaTag("og:locale", "en_HK", true);
     updateMetaTag("og:image", image, true);
     updateMetaTag("og:image:secure_url", image, true);

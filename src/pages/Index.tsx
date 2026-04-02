@@ -5,6 +5,7 @@ import { HeroSection } from "@/components/HeroSection";
 import {
     applySeo,
     DEFAULT_OG_IMAGE_URL,
+    DEFAULT_OG_LOGO_URL,
     DEFAULT_SITE_DESCRIPTION,
     DEFAULT_SITE_URL,
 } from "@/lib/seo";
@@ -49,7 +50,7 @@ const Index = () => {
         "description": DEFAULT_SITE_DESCRIPTION,
         "foundingDate": "1978",
         "url": DEFAULT_SITE_URL,
-        "logo": "https://www.chinacoastcommunity.org.hk/ccc-logo.svg",
+        "logo": DEFAULT_OG_LOGO_URL,
         "image": DEFAULT_OG_IMAGE_URL,
         "address": {
             "@type": "PostalAddress",
