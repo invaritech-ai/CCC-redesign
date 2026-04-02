@@ -8,10 +8,7 @@ export const DEFAULT_SITE_DESCRIPTION =
 
 export const DEFAULT_SITE_URL = `${CANONICAL_BASE_URL}/`;
 
-// Bump when replacing the share image; keep `?v=` in index.html og/twitter meta in sync.
-const DEFAULT_OG_IMAGE_VERSION = "2026-04";
-
-export const DEFAULT_OG_IMAGE_URL = `${CANONICAL_BASE_URL}/og-image-ccc.jpg?v=${DEFAULT_OG_IMAGE_VERSION}`;
+export const DEFAULT_OG_IMAGE_URL = `${CANONICAL_BASE_URL}/og-image-ccc-2026-04-02.jpg`;
 
 export const DEFAULT_OG_IMAGE_ALT =
     "China Coast Community social sharing image featuring the CCC name and redevelopment message.";
