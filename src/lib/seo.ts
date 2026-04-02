@@ -127,6 +127,16 @@ export const applySeo = ({
     updateMetaTag("og:site_name", "China Coast Community", true);
     updateMetaTag("og:locale", "en_HK", true);
     updateMetaTag("og:image", image, true);
+    updateMetaTag("og:image:secure_url", image, true);
+    const imageLower = image.split("?")[0].toLowerCase();
+    const ogMime = imageLower.endsWith(".png")
+        ? "image/png"
+        : imageLower.endsWith(".webp")
+          ? "image/webp"
+          : imageLower.endsWith(".gif")
+            ? "image/gif"
+            : "image/jpeg";
+    updateMetaTag("og:image:type", ogMime, true);
     updateMetaTag("og:image:alt", imageAlt, true);
     updateMetaTag("og:image:width", DEFAULT_OG_IMAGE_WIDTH, true);
     updateMetaTag("og:image:height", DEFAULT_OG_IMAGE_HEIGHT, true);
