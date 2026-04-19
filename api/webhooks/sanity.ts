@@ -67,18 +67,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const webhookSecret = process.env.SANITY_WEBHOOK_SECRET;
 
         if (!webhookSecret) {
-            if (process.env.VERCEL_ENV === "production") {
-                console.error(
-                    "[Sanity Webhook] SANITY_WEBHOOK_SECRET must be configured in production."
-                );
-                return res.status(500).json({
-                    error: "Webhook secret not configured",
-                });
-            }
-
-            console.warn(
-                "[Sanity Webhook] SANITY_WEBHOOK_SECRET not configured. Allowing webhook only in non-production environments."
+            console.error(
+                "[Sanity Webhook] SANITY_WEBHOOK_SECRET must be configured."
             );
+            return res.status(500).json({
+                error: "Webhook secret not configured",
+            });
         } else {
             const sharedSecret = req.headers["x-webhook-secret"] as
                 | string
