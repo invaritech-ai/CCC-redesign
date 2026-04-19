@@ -5,8 +5,21 @@ import { AboutUniqueIdentity } from "@/components/AboutUniqueIdentity";
 import { AboutCommitmentSection } from "@/components/AboutCommitmentSection";
 import { AboutRedevelopmentSection } from "@/components/AboutRedevelopmentSection";
 import { AboutCTASection } from "@/components/AboutCTASection";
+import { useEffect } from "react";
+import { applySeo, getCanonicalUrl } from "@/lib/seo";
 
 const About = () => {
+    useEffect(() => {
+        applySeo({
+            title: "About China Coast Community | China Coast Community",
+            description:
+                "Learn about China Coast Community's 45+ year mission supporting Hong Kong's English-speaking elders through compassionate care and community programs.",
+            url: getCanonicalUrl("/who-we-are/about"),
+        });
+
+        return () => applySeo();
+    }, []);
+
     return (
         <div className="min-h-screen flex flex-col">
             <Navigation />

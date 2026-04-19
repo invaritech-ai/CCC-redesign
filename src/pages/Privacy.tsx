@@ -4,11 +4,19 @@ import { DynamicForm } from "@/components/DynamicForm";
 import { useEffect, useState } from "react";
 import { getFormByPage } from "@/lib/sanity.queries";
 import type { SanityFormBuilder } from "@/lib/sanity.types";
+import { applySeo, getCanonicalUrl } from "@/lib/seo";
 
 const Privacy = () => {
   const [formConfig, setFormConfig] = useState<SanityFormBuilder | null>(null);
 
   useEffect(() => {
+    applySeo({
+      title: "Privacy Policy | China Coast Community",
+      description:
+        "Read how China Coast Community handles privacy, cookies, and personal data across our website and services.",
+      url: getCanonicalUrl("/privacy"),
+    });
+
     const fetchForm = async () => {
       try {
         const form = await getFormByPage("privacy");
@@ -18,12 +26,14 @@ const Privacy = () => {
       }
     };
     fetchForm();
+
+    return () => applySeo();
   }, []);
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
       
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         <section className="bg-primary text-primary-foreground py-20">
           <div className="container mx-auto px-4">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">Privacy Policy</h1>

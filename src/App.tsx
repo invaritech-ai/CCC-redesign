@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,11 +8,13 @@ import {
     Routes,
     Route,
     Navigate,
+    useLocation,
     useParams,
 } from "react-router-dom";
 import { CookieBanner } from "@/components/CookieBanner";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { syncCanonicalForPath } from "@/lib/seo";
 
 // Keep Index synchronous for fastest initial load
 import Index from "./pages/Index";
@@ -64,12 +66,23 @@ const ReportAliasRedirect = () => {
     );
 };
 
+const RouteCanonicalSync = () => {
+    const location = useLocation();
+
+    useEffect(() => {
+        syncCanonicalForPath(location.pathname);
+    }, [location.pathname]);
+
+    return null;
+};
+
 const App = () => (
     <QueryClientProvider client={queryClient}>
         <TooltipProvider>
             <Toaster />
             <Sonner />
             <BrowserRouter>
+                <RouteCanonicalSync />
                 <ScrollToTop />
                 {/* Skip to main content link for keyboard users */}
                 <a

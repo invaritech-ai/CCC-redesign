@@ -8,11 +8,19 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { getFormByPage } from "@/lib/sanity.queries";
 import type { SanityFormBuilder } from "@/lib/sanity.types";
+import { applySeo, getCanonicalUrl } from "@/lib/seo";
 
 const Contact = () => {
   const [formConfig, setFormConfig] = useState<SanityFormBuilder | null>(null);
 
   useEffect(() => {
+    applySeo({
+      title: "Contact China Coast Community | China Coast Community",
+      description:
+        "Get in touch with China Coast Community for care enquiries, volunteering, donations, and community support services.",
+      url: getCanonicalUrl("/contact"),
+    });
+
     const fetchForm = async () => {
       try {
         const form = await getFormByPage("contact");
@@ -22,12 +30,14 @@ const Contact = () => {
       }
     };
     fetchForm();
+
+    return () => applySeo();
   }, []);
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
       
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         {/* Hero Section */}
         <section className="bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center">
           <div className="container mx-auto px-4">

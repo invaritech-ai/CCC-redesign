@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/generate-seo-prerender.mjs",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "seo:check-bot-access": "node scripts/check-crawler-access.mjs",
+    "seo:verify-html": "node scripts/verify-seo-html.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

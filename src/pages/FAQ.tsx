@@ -20,6 +20,23 @@ import type {
     SanityFormBuilder,
     SanityFAQ,
 } from "@/lib/sanity.types";
+import { applySeo, getCanonicalUrl, serializeJsonLd } from "@/lib/seo";
+
+const faqAnswerToText = (answer: SanityFAQ["answer"]) => {
+    if (!Array.isArray(answer)) {
+        return "";
+    }
+
+    return answer
+        .map((block) =>
+            block._type === "block"
+                ? block.children?.map((child) => child.text ?? "").join(" ")
+                : ""
+        )
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .trim();
+};
 
 const FAQ = () => {
     const [pageContent, setPageContent] =
@@ -29,6 +46,21 @@ const FAQ = () => {
         null
     );
     const [loading, setLoading] = useState(true);
+    const faqSchema =
+        faqs.length > 0
+            ? {
+                  "@context": "https://schema.org",
+                  "@type": "FAQPage",
+                  mainEntity: faqs.map((faq) => ({
+                      "@type": "Question",
+                      name: faq.question,
+                      acceptedAnswer: {
+                          "@type": "Answer",
+                          text: faqAnswerToText(faq.answer),
+                      },
+                  })),
+              }
+            : null;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -53,80 +85,21 @@ const FAQ = () => {
         fetchData();
     }, []);
 
-    // Update SEO meta tags
     useEffect(() => {
-        const baseTitle = "China Coast Community";
         const pageTitle = pageContent?.heading
-            ? `${pageContent.heading} | ${baseTitle}`
-            : `FAQs | ${baseTitle}`;
-
+            ? `${pageContent.heading} | China Coast Community`
+            : "Frequently Asked Questions | China Coast Community";
         const description =
             pageContent?.subheading ||
-            "Frequently Asked Questions - China Coast Community";
+            "Frequently asked questions about China Coast Community services and programs.";
 
-        const canonicalUrl = `https://www.chinacoastcommunity.org.hk/care-community/faqs`;
+        applySeo({
+            title: pageTitle,
+            description,
+            url: getCanonicalUrl("/care-community/faqs"),
+        });
 
-        // Update title
-        document.title = pageTitle;
-
-        // Update meta description
-        const updateMetaTag = (name: string, content: string, isProperty = false) => {
-            const attribute = isProperty ? "property" : "name";
-            let element = document.querySelector(
-                `meta[${attribute}="${name}"]`
-            ) as HTMLMetaElement;
-
-            if (!element) {
-                element = document.createElement("meta");
-                element.setAttribute(attribute, name);
-                document.head.appendChild(element);
-            }
-
-            element.content = content;
-        };
-
-        updateMetaTag("description", description);
-
-        // Update Open Graph tags
-        updateMetaTag("og:title", pageTitle, true);
-        updateMetaTag("og:description", description, true);
-        updateMetaTag("og:url", canonicalUrl, true);
-        updateMetaTag("og:type", "website", true);
-
-        // Update canonical URL
-        let canonicalLink = document.querySelector(
-            'link[rel="canonical"]'
-        ) as HTMLLinkElement;
-        if (!canonicalLink) {
-            canonicalLink = document.createElement("link");
-            canonicalLink.rel = "canonical";
-            document.head.appendChild(canonicalLink);
-        }
-        canonicalLink.href = canonicalUrl;
-
-        // Cleanup function to restore default meta tags when component unmounts
-        return () => {
-            document.title =
-                "China Coast Community - Caring for Hong Kong's English-Speaking Elderly";
-            updateMetaTag(
-                "description",
-                "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment to create a safe, modern community where every senior is valued."
-            );
-            updateMetaTag(
-                "og:title",
-                "China Coast Community - Caring for Hong Kong's English-Speaking Elderly",
-                true
-            );
-            updateMetaTag(
-                "og:description",
-                "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment.",
-                true
-            );
-            updateMetaTag("og:url", "https://www.chinacoastcommunity.org.hk/", true);
-            if (canonicalLink) {
-                canonicalLink.href = "https://www.chinacoastcommunity.org.hk/";
-            }
-        };
+        return () => applySeo();
     }, [pageContent]);
 
     if (loading) {
@@ -146,6 +119,14 @@ const FAQ = () => {
             <Navigation />
 
             <main id="main-content" className="flex-1">
+                {faqSchema && (
+                    <script
+                        type="application/ld+json"
+                        dangerouslySetInnerHTML={{
+                            __html: serializeJsonLd(faqSchema),
+                        }}
+                    />
+                )}
                 {/* Render page content from CMS if available */}
                 {pageContent ? (
                     <PageContent
@@ -187,7 +168,7 @@ const FAQ = () => {
                                             </AccordionTrigger>
                                             <AccordionContent>
                                                 <div className="pt-2">
-                                                    <PortableText blocks={faq.answer} />
+                                                    <PortableText blocks={faq.answer ?? []} />
                                                 </div>
                                             </AccordionContent>
                                         </AccordionItem>

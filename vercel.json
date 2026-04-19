@@ -49,6 +49,24 @@
     ],
     "headers": [
         {
+            "source": "/404",
+            "headers": [
+                {
+                    "key": "X-Robots-Tag",
+                    "value": "noindex, nofollow"
+                }
+            ]
+        },
+        {
+            "source": "/404.html",
+            "headers": [
+                {
+                    "key": "X-Robots-Tag",
+                    "value": "noindex, nofollow"
+                }
+            ]
+        },
+        {
             "source": "/og-image-ccc-2026-04-02.jpg",
             "headers": [
                 {
@@ -67,6 +85,19 @@
                 {
                     "key": "Content-Type",
                     "value": "application/xml; charset=utf-8"
+                }
+            ]
+        },
+        {
+            "source": "/robots.txt",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "public, max-age=300, s-maxage=300, stale-while-revalidate=3600"
+                },
+                {
+                    "key": "Content-Type",
+                    "value": "text/plain; charset=utf-8"
                 }
             ]
         }

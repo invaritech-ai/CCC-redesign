@@ -13,7 +13,7 @@ import type {
     SanityPortableTextBlock,
     SanityImageBlock,
 } from "@/lib/sanity.types";
-import { applySeo, getCanonicalUrl } from "@/lib/seo";
+import { applySeo, getCanonicalUrl, serializeJsonLd } from "@/lib/seo";
 
 // Simple portable text renderer
 const PortableText = ({ blocks }: { blocks: SanityPortableTextBlock[] }) => {
@@ -252,11 +252,40 @@ const UpdateDetail = () => {
         );
     }
 
+    const updateSchema = {
+        "@context": "https://schema.org",
+        "@type": isCaseStudy ? "Article" : "NewsArticle",
+        headline: contentTitle,
+        description: isCaseStudy
+            ? extractPortableTextText(caseStudy?.description).slice(0, 200)
+            : (update?.excerpt || extractPortableTextText(update?.body)).slice(0, 200),
+        datePublished: contentDate
+            ? new Date(contentDate).toISOString()
+            : undefined,
+        author:
+            !isCaseStudy && update?.author
+                ? {
+                      "@type": "Person",
+                      name: update.author,
+                  }
+                : undefined,
+        image: contentImage
+            ? getImageUrl(contentImage, { width: 1200, format: "webp" })
+            : undefined,
+        url: getCanonicalUrl(canonicalDetailPath),
+    };
+
     return (
         <div className="min-h-screen flex flex-col">
             <Navigation />
 
             <main id="main-content" className="flex-1">
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: serializeJsonLd(updateSchema),
+                    }}
+                />
                 <section 
                     className={`relative bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center ${
                         contentImage ? 'bg-cover bg-center' : ''

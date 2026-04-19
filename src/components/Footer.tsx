@@ -44,6 +44,12 @@ export const Footer = () => {
                                 About Us
                             </Link>
                             <Link
+                                to="/news"
+                                className="text-muted-foreground hover:text-primary transition-colors"
+                            >
+                                Latest News
+                            </Link>
+                            <Link
                                 to="/contact"
                                 className="text-muted-foreground hover:text-primary transition-colors"
                             >

@@ -7,7 +7,7 @@ import { FileText, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getImageUrl, getImageUrlFromString } from "@/lib/sanityImage";
 import type { SanityReport } from "@/lib/sanity.types";
-import { applySeo, getCanonicalUrl } from "@/lib/seo";
+import { applySeo, getCanonicalUrl, serializeJsonLd } from "@/lib/seo";
 
 const ReportDetail = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -105,11 +105,40 @@ const ReportDetail = () => {
         );
     }
 
+    const reportSchema = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: report.title,
+        description:
+            report.summary || report.description || `Annual report ${report.title}`,
+        datePublished: report.year
+            ? new Date(`${report.year}-01-01`).toISOString()
+            : undefined,
+        author: report.author
+            ? {
+                  "@type": "Person",
+                  name: report.author,
+              }
+            : undefined,
+        image: report.image
+            ? getImageUrl(report.image, { width: 1200, format: "webp" })
+            : undefined,
+        url: getCanonicalUrl(
+            `/who-we-are/publications/annual-reports/${slug}`
+        ),
+    };
+
     return (
         <div className="min-h-screen flex flex-col">
             <Navigation />
 
             <main id="main-content" className="flex-1">
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: serializeJsonLd(reportSchema),
+                    }}
+                />
                 <section 
                     className={`relative bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center ${
                         report.image ? 'bg-cover bg-center' : ''

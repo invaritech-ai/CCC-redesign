@@ -8,8 +8,21 @@ import { WhatIsBeingBuiltSection } from "@/components/WhatIsBeingBuiltSection";
 import { WhereResidentsAreNowSection } from "@/components/WhereResidentsAreNowSection";
 import { HowCareContinuesSection } from "@/components/HowCareContinuesSection";
 import { GovernanceTeamSection } from "@/components/GovernanceTeamSection";
+import { useEffect } from "react";
+import { applySeo, getCanonicalUrl } from "@/lib/seo";
 
 const Future = () => {
+    useEffect(() => {
+        applySeo({
+            title: "Redevelopment at 63 Cumberland Road | China Coast Community",
+            description:
+                "Follow China Coast Community's redevelopment journey to build a safer, modern home for Hong Kong's English-speaking elders.",
+            url: getCanonicalUrl("/redevelopment"),
+        });
+
+        return () => applySeo();
+    }, []);
+
     // Timeline phases for the reconstruction project
     const timelinePhases = [
         {

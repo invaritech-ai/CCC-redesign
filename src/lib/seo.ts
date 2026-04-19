@@ -108,6 +108,16 @@ export const getCanonicalUrl = (path: string) => {
         : `${CANONICAL_BASE_URL}${normalizedPath}`;
 };
 
+export const syncCanonicalForPath = (path: string) => {
+    const canonicalUrl = getCanonicalUrl(path);
+    updateMetaTag("og:url", canonicalUrl, true);
+    updateCanonicalLink(canonicalUrl);
+    return canonicalUrl;
+};
+
+export const serializeJsonLd = (data: unknown) =>
+    JSON.stringify(data).replace(/</g, "\\u003c");
+
 export const applySeo = ({
     title = DEFAULT_SITE_TITLE,
     description = DEFAULT_SITE_DESCRIPTION,

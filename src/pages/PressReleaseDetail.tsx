@@ -8,22 +8,7 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { PortableText } from "@/components/PortableText";
 import type { SanityPressRelease } from "@/lib/sanity.types";
-
-// Helper function to update meta tags
-const updateMetaTag = (name: string, content: string, isProperty = false) => {
-    const attribute = isProperty ? "property" : "name";
-    let element = document.querySelector(
-        `meta[${attribute}="${name}"]`
-    ) as HTMLMetaElement;
-
-    if (!element) {
-        element = document.createElement("meta");
-        element.setAttribute(attribute, name);
-        document.head.appendChild(element);
-    }
-
-    element.content = content;
-};
+import { applySeo, getCanonicalUrl } from "@/lib/seo";
 
 const PressReleaseDetail = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -43,14 +28,29 @@ const PressReleaseDetail = () => {
         fetchPressRelease();
     }, [slug]);
 
-    // Update SEO meta tags when press release is loaded
     useEffect(() => {
-        if (!pressRelease) return;
+        const canonicalPath = slug
+            ? `/news/media-and-press/press-releases/${slug}`
+            : "/news/media-and-press";
 
-        const baseTitle = "China Coast Community";
+        if (!pressRelease && !loading) {
+            applySeo({
+                title: "Press Release Not Found | China Coast Community",
+                description:
+                    "The press release you are looking for does not exist.",
+                url: getCanonicalUrl(canonicalPath),
+                robots: "noindex, nofollow",
+            });
+            return () => applySeo();
+        }
+
+        if (!pressRelease) {
+            return;
+        }
+
         const pageTitle = pressRelease.title
-            ? `${pressRelease.title} | Media and Press | ${baseTitle}`
-            : `Press Release | Media and Press | ${baseTitle}`;
+            ? `${pressRelease.title} | Media and Press | China Coast Community`
+            : "Press Release | Media and Press | China Coast Community";
 
         // Extract description from content
         const contentText =
@@ -65,55 +65,15 @@ const PressReleaseDetail = () => {
                 ? contentText.substring(0, 160) + "..."
                 : contentText || "Press release from China Coast Community.";
 
-        const canonicalUrl = `https://www.chinacoastcommunity.org.hk/news/media-and-press/press-releases/${slug}`;
+        applySeo({
+            title: pageTitle,
+            description,
+            url: getCanonicalUrl(canonicalPath),
+            type: "article",
+        });
 
-        // Update title
-        document.title = pageTitle;
-
-        // Update meta description
-        updateMetaTag("description", description);
-
-        // Update Open Graph tags
-        updateMetaTag("og:title", pageTitle, true);
-        updateMetaTag("og:description", description, true);
-        updateMetaTag("og:url", canonicalUrl, true);
-        updateMetaTag("og:type", "article", true);
-
-        // Update canonical URL
-        let canonicalLink = document.querySelector(
-            'link[rel="canonical"]'
-        ) as HTMLLinkElement;
-        if (!canonicalLink) {
-            canonicalLink = document.createElement("link");
-            canonicalLink.rel = "canonical";
-            document.head.appendChild(canonicalLink);
-        }
-        canonicalLink.href = canonicalUrl;
-
-        // Cleanup function to restore default meta tags when component unmounts
-        return () => {
-            document.title =
-                "China Coast Community - Caring for Hong Kong's English-Speaking Elderly";
-            updateMetaTag(
-                "description",
-                "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment to create a safe, modern community where every senior is valued."
-            );
-            updateMetaTag(
-                "og:title",
-                "China Coast Community - Caring for Hong Kong's English-Speaking Elderly",
-                true
-            );
-            updateMetaTag(
-                "og:description",
-                "A caring home for Hong Kong's English-speaking elderly since 1978. Supporting our redevelopment.",
-                true
-            );
-            updateMetaTag("og:url", "https://www.chinacoastcommunity.org.hk/", true);
-            if (canonicalLink) {
-                canonicalLink.href = "https://www.chinacoastcommunity.org.hk/";
-            }
-        };
-    }, [pressRelease, slug]);
+        return () => applySeo();
+    }, [pressRelease, loading, slug]);
 
     if (loading) {
         return (

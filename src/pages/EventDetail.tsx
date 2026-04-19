@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { getImageUrl } from "@/lib/sanityImage";
 import { DynamicForm } from "@/components/DynamicForm";
 import type { SanityEvent, SanityFormBuilder } from "@/lib/sanity.types";
-import { applySeo, getCanonicalUrl } from "@/lib/seo";
+import { applySeo, getCanonicalUrl, serializeJsonLd } from "@/lib/seo";
 
 const EventDetail = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -105,11 +105,53 @@ const EventDetail = () => {
         );
     }
 
+    const parsedEventDate = event.date ? new Date(event.date) : null;
+    const hasValidEventDate = Boolean(
+        parsedEventDate && !Number.isNaN(parsedEventDate.getTime())
+    );
+    const eventStartIso = hasValidEventDate
+        ? parsedEventDate!.toISOString()
+        : undefined;
+
+    const eventSchema = {
+        "@context": "https://schema.org",
+        "@type": "Event",
+        name: event.title,
+        description: event.description || undefined,
+        startDate: eventStartIso,
+        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+        eventStatus: "https://schema.org/EventScheduled",
+        location: event.location
+            ? {
+                  "@type": "Place",
+                  name: event.location,
+              }
+            : undefined,
+        organizer: event.organizer?.name
+            ? {
+                  "@type": "Organization",
+                  name: event.organizer.name,
+                  email: event.organizer.email || undefined,
+                  telephone: event.organizer.phone || undefined,
+              }
+            : undefined,
+        image: event.image
+            ? getImageUrl(event.image, { width: 1200, format: "webp" })
+            : undefined,
+        url: getCanonicalUrl(`/care-community/activities-and-events/${slug}`),
+    };
+
     return (
         <div className="min-h-screen flex flex-col">
             <Navigation />
 
             <main id="main-content" className="flex-1">
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: serializeJsonLd(eventSchema),
+                    }}
+                />
                 <section className="bg-primary text-primary-foreground py-12 md:py-16">
                     <div className="container mx-auto px-4 w-full">
                         <div className="max-w-4xl md:mx-auto md:text-center">
@@ -128,7 +170,14 @@ const EventDetail = () => {
                                         aria-hidden="true"
                                     />
                                     <span>
-                                        {format(new Date(event.date), "PPP")} at {event.time ?? format(new Date(event.date), "p")}
+                                        {hasValidEventDate
+                                            ? format(parsedEventDate!, "PPP")
+                                            : "Date to be confirmed"}
+                                        {event.time
+                                            ? ` at ${event.time}`
+                                            : hasValidEventDate
+                                              ? ` at ${format(parsedEventDate!, "p")}`
+                                              : ""}
                                     </span>
                                 </div>
                                 {event.location && (

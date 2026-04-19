@@ -14,6 +14,7 @@ import {
     DialogTitle,
     DialogDescription,
 } from "@/components/ui/dialog";
+import { applySeo, getCanonicalUrl } from "@/lib/seo";
 
 // Helper functions to filter team members by role
 const getExecutiveCommitteeMembers = (
@@ -103,6 +104,13 @@ const BoardGovernance = () => {
     >(null);
 
     useEffect(() => {
+        applySeo({
+            title: "Board & Governance | China Coast Community",
+            description:
+                "Meet the volunteer committees and governance structure guiding China Coast Community's mission and redevelopment oversight.",
+            url: getCanonicalUrl("/who-we-are/board-governance"),
+        });
+
         const fetchTeamMembers = async () => {
             setLoading(true);
             try {
@@ -116,6 +124,8 @@ const BoardGovernance = () => {
         };
 
         fetchTeamMembers();
+
+        return () => applySeo();
     }, []);
 
     // Filter team members by committee

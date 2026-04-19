@@ -157,6 +157,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             },
             { loc: `${BASE_URL}/donate`, changefreq: "monthly", priority: 0.9 },
             {
+                loc: `${BASE_URL}/donate/major-donors`,
+                changefreq: "monthly",
+                priority: 0.6,
+            },
+            {
                 loc: `${BASE_URL}/who-we-are/publications/annual-reports`,
                 changefreq: "monthly",
                 priority: 0.7,
