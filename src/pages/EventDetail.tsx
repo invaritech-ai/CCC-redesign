@@ -6,6 +6,7 @@ import {
     getEventBySlug,
     getFormByPage,
     getEventsExcludingSlug,
+    getEventAdjacentByDate,
     type RelatedListRow,
 } from "@/lib/sanity.queries";
 import { Calendar, MapPin, ExternalLink, UserRound, Mail, Phone } from "lucide-react";
@@ -21,6 +22,7 @@ import {
     RelatedContentLinks,
     SupportCtaLinks,
 } from "@/components/seo/RelatedContentLinks";
+import { DetailAdjacentLinks } from "@/components/seo/DetailAdjacentLinks";
 import {
     disambiguateTitleWithSlugYear,
     getSlugValue,
@@ -38,6 +40,10 @@ const EventDetail = () => {
     const [relatedFallback, setRelatedFallback] = useState<RelatedListRow[]>(
         []
     );
+    const [adjacent, setAdjacent] = useState<{
+        prev: { to: string; label: string } | null;
+        next: { to: string; label: string } | null;
+    }>({ prev: null, next: null });
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -67,6 +73,36 @@ const EventDetail = () => {
         };
     }, [slug, loading, event]);
 
+    useEffect(() => {
+        if (!slug || loading || !event) return;
+        let cancelled = false;
+        (async () => {
+            const n = await getEventAdjacentByDate(slug);
+            if (cancelled) return;
+            const olderSlug = getSlugValue(n.older?.slug);
+            const newerSlug = getSlugValue(n.newer?.slug);
+            setAdjacent({
+                prev:
+                    olderSlug && n.older?.title
+                        ? {
+                              to: `/care-community/activities-and-events/${olderSlug}`,
+                              label: n.older.title,
+                          }
+                        : null,
+                next:
+                    newerSlug && n.newer?.title
+                        ? {
+                              to: `/care-community/activities-and-events/${newerSlug}`,
+                              label: n.newer.title,
+                          }
+                        : null,
+            });
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [slug, loading, event]);
+
     const breadcrumbItems = useMemo(() => {
         if (!event?.title) return [];
         return [
@@ -85,6 +121,10 @@ const EventDetail = () => {
             {
                 title: "All activities & events",
                 to: "/care-community/activities-and-events",
+            },
+            {
+                title: "Past events archive",
+                to: "/care-community/activities-and-events/archive",
             },
             {
                 title: "Community members programme",
@@ -344,6 +384,10 @@ const EventDetail = () => {
                             )}
 
                             <div className="mt-12 space-y-10 pt-8 border-t">
+                                <DetailAdjacentLinks
+                                    prev={adjacent.prev}
+                                    next={adjacent.next}
+                                />
                                 <RelatedContentLinks links={relatedNavLinks} />
                                 <SupportCtaLinks />
                             </div>

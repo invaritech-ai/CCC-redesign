@@ -934,6 +934,262 @@ export const getEventsExcludingSlug = async (
     }
 };
 
+/** Events ordered by date desc, for hub/archive slices (GROQ end index is exclusive). */
+export const getEventsOrderedSlice = async (
+    startIdx: number,
+    endIdx: number
+) => {
+    if (!isSanityConfigured() || endIdx <= startIdx) return [];
+
+    const query = `*[_type == "event"] | order(date desc) [$startIdx...$endIdx] {
+    _id,
+    title,
+    slug,
+    date,
+    time,
+    description,
+    location,
+    registrationLink,
+    category,
+    organizer,
+    "image": image.asset,
+    featured
+  }`;
+
+    try {
+        return (await sanityClient.fetch(query, { startIdx, endIdx })) ?? [];
+    } catch {
+        return [];
+    }
+};
+
+export const getEventCount = async (): Promise<number> => {
+    if (!isSanityConfigured()) return 0;
+    try {
+        const n = await sanityClient.fetch(`count(*[_type == "event"])`);
+        return typeof n === "number" ? n : 0;
+    } catch {
+        return 0;
+    }
+};
+
+export type AdjacentNeighbor = { title: string; slug: { current?: string } } | null;
+
+/**
+ * Adjacent events by calendar date (newer = more recent date).
+ */
+export const getEventAdjacentByDate = async (
+    slug: string
+): Promise<{ newer: AdjacentNeighbor; older: AdjacentNeighbor }> => {
+    if (!isSanityConfigured()) {
+        return { newer: null, older: null };
+    }
+
+    const currentQuery = `*[_type == "event" && slug.current == $slug][0]{ date }`;
+    try {
+        const row = await sanityClient.fetch<{ date?: string }>(currentQuery, {
+            slug,
+        });
+        const date = row?.date;
+        if (!date) return { newer: null, older: null };
+
+        const newerQuery = `*[_type == "event" && date > $date] | order(date asc) [0] {
+          title, slug
+        }`;
+        const olderQuery = `*[_type == "event" && date < $date] | order(date desc) [0] {
+          title, slug
+        }`;
+
+        const [newer, older] = await Promise.all([
+            sanityClient.fetch<AdjacentNeighbor>(newerQuery, { date }),
+            sanityClient.fetch<AdjacentNeighbor>(olderQuery, { date }),
+        ]);
+        return { newer: newer ?? null, older: older ?? null };
+    } catch {
+        return { newer: null, older: null };
+    }
+};
+
+/**
+ * Adjacent reports by year (newer = higher year).
+ */
+export const getReportAdjacentByYear = async (
+    slug: string
+): Promise<{ newer: AdjacentNeighbor; older: AdjacentNeighbor }> => {
+    if (!isSanityConfigured()) {
+        return { newer: null, older: null };
+    }
+
+    const currentQuery = `*[_type == "report" && slug.current == $slug][0]{ year }`;
+    try {
+        const row = await sanityClient.fetch<{ year?: number }>(currentQuery, {
+            slug,
+        });
+        const year = row?.year;
+        if (year === undefined || year === null) {
+            return { newer: null, older: null };
+        }
+
+        const newerQuery = `*[_type == "report" && year > $year] | order(year asc) [0] {
+          title, slug
+        }`;
+        const olderQuery = `*[_type == "report" && year < $year] | order(year desc) [0] {
+          title, slug
+        }`;
+
+        const [newer, older] = await Promise.all([
+            sanityClient.fetch<AdjacentNeighbor>(newerQuery, { year }),
+            sanityClient.fetch<AdjacentNeighbor>(olderQuery, { year }),
+        ]);
+        return { newer: newer ?? null, older: older ?? null };
+    } catch {
+        return { newer: null, older: null };
+    }
+};
+
+/**
+ * Adjacent press releases by date.
+ */
+export const getPressReleaseAdjacentByDate = async (
+    slug: string
+): Promise<{ newer: AdjacentNeighbor; older: AdjacentNeighbor }> => {
+    if (!isSanityConfigured()) {
+        return { newer: null, older: null };
+    }
+
+    const currentQuery = `*[_type == "pressRelease" && slug.current == $slug][0]{ date }`;
+    try {
+        const row = await sanityClient.fetch<{ date?: string }>(currentQuery, {
+            slug,
+        });
+        const date = row?.date;
+        if (!date) return { newer: null, older: null };
+
+        const newerQuery = `*[_type == "pressRelease" && date > $date] | order(date asc) [0] {
+          title, slug
+        }`;
+        const olderQuery = `*[_type == "pressRelease" && date < $date] | order(date desc) [0] {
+          title, slug
+        }`;
+
+        const [newer, older] = await Promise.all([
+            sanityClient.fetch<AdjacentNeighbor>(newerQuery, { date }),
+            sanityClient.fetch<AdjacentNeighbor>(olderQuery, { date }),
+        ]);
+        return { newer: newer ?? null, older: older ?? null };
+    } catch {
+        return { newer: null, older: null };
+    }
+};
+
+/**
+ * Adjacent galleries by creation time.
+ */
+export const getGalleryAdjacentByCreatedAt = async (
+    slug: string
+): Promise<{ newer: AdjacentNeighbor; older: AdjacentNeighbor }> => {
+    if (!isSanityConfigured()) {
+        return { newer: null, older: null };
+    }
+
+    const currentQuery = `*[_type == "gallery" && slug.current == $slug][0]{ _createdAt }`;
+    try {
+        const row = await sanityClient.fetch<{ _createdAt?: string }>(
+            currentQuery,
+            { slug }
+        );
+        const createdAt = row?._createdAt;
+        if (!createdAt) return { newer: null, older: null };
+
+        const newerQuery = `*[_type == "gallery" && _createdAt > $createdAt] | order(_createdAt asc) [0] {
+          title, slug
+        }`;
+        const olderQuery = `*[_type == "gallery" && _createdAt < $createdAt] | order(_createdAt desc) [0] {
+          title, slug
+        }`;
+
+        const [newer, older] = await Promise.all([
+            sanityClient.fetch<AdjacentNeighbor>(newerQuery, { createdAt }),
+            sanityClient.fetch<AdjacentNeighbor>(olderQuery, { createdAt }),
+        ]);
+        return { newer: newer ?? null, older: older ?? null };
+    } catch {
+        return { newer: null, older: null };
+    }
+};
+
+/** Galleries slice for archive pagination (newest first). */
+export const getGalleriesOrderedSlice = async (
+    startIdx: number,
+    endIdx: number
+) => {
+    if (!isSanityConfigured() || endIdx <= startIdx) return [];
+
+    const query = `*[_type == "gallery"] | order(_createdAt desc) [$startIdx...$endIdx] {
+    _id,
+    title,
+    slug,
+    description,
+    images[]{
+      "image": image.asset,
+      caption,
+      alt
+    },
+    categories,
+    featured
+  }`;
+
+    try {
+        return (await sanityClient.fetch(query, { startIdx, endIdx })) ?? [];
+    } catch {
+        return [];
+    }
+};
+
+/** Press releases slice for archive pagination (newest first). */
+export const getPressReleasesOrderedSlice = async (
+    startIdx: number,
+    endIdx: number
+) => {
+    if (!isSanityConfigured() || endIdx <= startIdx) return [];
+
+    const query = `*[_type == "pressRelease"] | order(date desc) [$startIdx...$endIdx] {
+    _id,
+    title,
+    slug,
+    date,
+    content,
+    mediaLinks,
+    featured
+  }`;
+
+    try {
+        return (await sanityClient.fetch(query, { startIdx, endIdx })) ?? [];
+    } catch {
+        return [];
+    }
+};
+
+export const getGalleryCount = async (): Promise<number> => {
+    if (!isSanityConfigured()) return 0;
+    try {
+        const n = await sanityClient.fetch(`count(*[_type == "gallery"])`);
+        return typeof n === "number" ? n : 0;
+    } catch {
+        return 0;
+    }
+};
+
+export const getPressReleaseCount = async (): Promise<number> => {
+    if (!isSanityConfigured()) return 0;
+    try {
+        const n = await sanityClient.fetch(`count(*[_type == "pressRelease"])`);
+        return typeof n === "number" ? n : 0;
+    } catch {
+        return 0;
+    }
+};
+
 /**
  * Reports excluding one slug, newest first by year.
  */

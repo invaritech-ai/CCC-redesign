@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
     getPressReleaseBySlug,
     getPressReleasesExcludingSlug,
+    getPressReleaseAdjacentByDate,
     type RelatedListRow,
 } from "@/lib/sanity.queries";
 import { Calendar, ExternalLink } from "lucide-react";
@@ -18,6 +19,7 @@ import {
     RelatedContentLinks,
     SupportCtaLinks,
 } from "@/components/seo/RelatedContentLinks";
+import { DetailAdjacentLinks } from "@/components/seo/DetailAdjacentLinks";
 import {
     getSlugValue,
     mergeDedupeInternalLinks,
@@ -33,6 +35,10 @@ const PressReleaseDetail = () => {
     const [relatedFallback, setRelatedFallback] = useState<RelatedListRow[]>(
         []
     );
+    const [adjacent, setAdjacent] = useState<{
+        prev: { to: string; label: string } | null;
+        next: { to: string; label: string } | null;
+    }>({ prev: null, next: null });
 
     useEffect(() => {
         const fetchPressRelease = async () => {
@@ -57,6 +63,36 @@ const PressReleaseDetail = () => {
         };
     }, [slug, loading, pressRelease]);
 
+    useEffect(() => {
+        if (!slug || loading || !pressRelease) return;
+        let cancelled = false;
+        (async () => {
+            const n = await getPressReleaseAdjacentByDate(slug);
+            if (cancelled) return;
+            const olderSlug = getSlugValue(n.older?.slug);
+            const newerSlug = getSlugValue(n.newer?.slug);
+            setAdjacent({
+                prev:
+                    olderSlug && n.older?.title
+                        ? {
+                              to: `/news/media-and-press/press-releases/${olderSlug}`,
+                              label: n.older.title,
+                          }
+                        : null,
+                next:
+                    newerSlug && n.newer?.title
+                        ? {
+                              to: `/news/media-and-press/press-releases/${newerSlug}`,
+                              label: n.newer.title,
+                          }
+                        : null,
+            });
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [slug, loading, pressRelease]);
+
     const breadcrumbItems = useMemo(() => {
         if (!pressRelease?.title) return [];
         return [
@@ -70,6 +106,10 @@ const PressReleaseDetail = () => {
         if (!slug) return [];
         const raw: InternalNavLink[] = [
             { title: "Media and press", to: "/news/media-and-press" },
+            {
+                title: "Press releases archive",
+                to: "/news/media-and-press/press-releases/archive",
+            },
             { title: "Latest news", to: "/news" },
         ];
         for (const row of relatedFallback) {
@@ -241,6 +281,10 @@ const PressReleaseDetail = () => {
                                 )}
 
                             <div className="mt-12 space-y-10 pt-8 border-t border-border">
+                                <DetailAdjacentLinks
+                                    prev={adjacent.prev}
+                                    next={adjacent.next}
+                                />
                                 <RelatedContentLinks links={relatedNavLinks} />
                                 <SupportCtaLinks />
                             </div>

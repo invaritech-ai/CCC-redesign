@@ -33,7 +33,10 @@ const ReportDetail = lazy(() => import("./pages/ReportDetail"));
 const Updates = lazy(() => import("./pages/Updates"));
 const UpdateDetail = lazy(() => import("./pages/UpdateDetail"));
 const Events = lazy(() => import("./pages/Events"));
+const EventsArchive = lazy(() => import("./pages/EventsArchive"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
+const GalleriesArchive = lazy(() => import("./pages/GalleriesArchive"));
+const PressReleasesArchive = lazy(() => import("./pages/PressReleasesArchive"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const CMSPage = lazy(() => import("./pages/CMSPage"));
@@ -173,6 +176,10 @@ const App = () => (
                             path="/care-community/activities-and-events"
                             element={<Events />}
                         />
+                        <Route
+                            path="/care-community/activities-and-events/archive"
+                            element={<EventsArchive />}
+                        />
                         <Route path="/privacy" element={<Privacy />} />
 
                         {/* CMS Pages */}
@@ -240,6 +247,14 @@ const App = () => (
                         <Route
                             path="/news/media-and-press"
                             element={<MediaAndPress />}
+                        />
+                        <Route
+                            path="/news/media-and-press/galleries/archive"
+                            element={<GalleriesArchive />}
+                        />
+                        <Route
+                            path="/news/media-and-press/press-releases/archive"
+                            element={<PressReleasesArchive />}
                         />
 
                         {/* Legacy Redirects (Optional - handled by 404 or manual redirect if needed, but for now just new structure) */}

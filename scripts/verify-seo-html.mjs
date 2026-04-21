@@ -25,6 +25,24 @@ const checks = [
             "https://www.chinacoastcommunity.org.hk/care-community/activities-and-events",
     },
     {
+        route: "/care-community/activities-and-events/archive",
+        file: "care-community/activities-and-events/archive/index.html",
+        expectedCanonical:
+            "https://www.chinacoastcommunity.org.hk/care-community/activities-and-events/archive",
+    },
+    {
+        route: "/news/media-and-press/galleries/archive",
+        file: "news/media-and-press/galleries/archive/index.html",
+        expectedCanonical:
+            "https://www.chinacoastcommunity.org.hk/news/media-and-press/galleries/archive",
+    },
+    {
+        route: "/news/media-and-press/press-releases/archive",
+        file: "news/media-and-press/press-releases/archive/index.html",
+        expectedCanonical:
+            "https://www.chinacoastcommunity.org.hk/news/media-and-press/press-releases/archive",
+    },
+    {
         route: "/404",
         file: "404.html",
         expectedCanonical: "https://www.chinacoastcommunity.org.hk/404",

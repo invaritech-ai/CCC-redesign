@@ -15,6 +15,8 @@ import type { SanityEvent, SanityFormBuilder, SanityPageContent } from "@/lib/sa
 import { SearchAndFilter } from "@/components/SearchAndFilter";
 import { applySeo, getCanonicalUrl } from "@/lib/seo";
 
+const HUB_PREVIEW_LIMIT = 12;
+
 const Events = () => {
     const [events, setEvents] = useState<SanityEvent[]>([]);
     const [pageContent, setPageContent] = useState<SanityPageContent | null>(null);
@@ -100,7 +102,7 @@ const Events = () => {
     }, [events, searchQuery, selectedCategory, dateFilter]);
 
     const displayedEvents = useMemo(() => {
-        return filteredEvents.slice(0, 12);
+        return filteredEvents.slice(0, HUB_PREVIEW_LIMIT);
     }, [filteredEvents]);
 
     const handleClearFilters = () => {
@@ -271,6 +273,28 @@ const Events = () => {
                                             ))}
                                         </div>
 
+                                        {events.length > HUB_PREVIEW_LIMIT && (
+                                            <div className="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-4 text-center">
+                                                <p className="text-sm text-muted-foreground max-w-md sm:text-left">
+                                                    Looking for an older
+                                                    activity? Browse the full
+                                                    archive—every event page
+                                                    stays available for
+                                                    reference.
+                                                </p>
+                                                <Button
+                                                    asChild
+                                                    variant="outline"
+                                                    className="min-h-[44px] shrink-0"
+                                                >
+                                                    <Link
+                                                        to="/care-community/activities-and-events/archive"
+                                                    >
+                                                        View past events archive
+                                                    </Link>
+                                                </Button>
+                                            </div>
+                                        )}
                                     </>
                                 ) : (
                                     <div className="text-center py-12">

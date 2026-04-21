@@ -50,6 +50,24 @@ export const Footer = () => {
                                 Latest News
                             </Link>
                             <Link
+                                to="/care-community/activities-and-events/archive"
+                                className="text-muted-foreground hover:text-primary transition-colors"
+                            >
+                                Past Events Archive
+                            </Link>
+                            <Link
+                                to="/news/media-and-press/galleries/archive"
+                                className="text-muted-foreground hover:text-primary transition-colors"
+                            >
+                                Galleries Archive
+                            </Link>
+                            <Link
+                                to="/news/media-and-press/press-releases/archive"
+                                className="text-muted-foreground hover:text-primary transition-colors"
+                            >
+                                Press Releases Archive
+                            </Link>
+                            <Link
                                 to="/contact"
                                 className="text-muted-foreground hover:text-primary transition-colors"
                             >

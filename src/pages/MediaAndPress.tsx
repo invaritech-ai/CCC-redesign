@@ -2,7 +2,9 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { PageContent } from "@/components/PageContent";
 import { DynamicForm } from "@/components/DynamicForm";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import {
     getAllGalleries,
     getAllPressReleases,
@@ -18,6 +20,8 @@ import type {
     SanityPageContent,
 } from "@/lib/sanity.types";
 import { applySeo, getCanonicalUrl } from "@/lib/seo";
+
+const HUB_PREVIEW_LIMIT = 12;
 
 const MediaAndPress = () => {
     const [galleries, setGalleries] = useState<SanityGallery[]>([]);
@@ -67,6 +71,15 @@ const MediaAndPress = () => {
         return () => applySeo();
     }, [pageContent]);
 
+    const displayedGalleries = useMemo(
+        () => galleries.slice(0, HUB_PREVIEW_LIMIT),
+        [galleries]
+    );
+    const displayedPressReleases = useMemo(
+        () => pressReleases.slice(0, HUB_PREVIEW_LIMIT),
+        [pressReleases]
+    );
+
     return (
         <div className="min-h-screen flex flex-col">
             <Navigation />
@@ -105,13 +118,26 @@ const MediaAndPress = () => {
                                 Photo Galleries
                             </h2>
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-2 max-w-7xl mx-auto">
-                                {galleries.map((gallery) => (
+                                {displayedGalleries.map((gallery) => (
                                     <GalleryCard
                                         key={gallery._id}
                                         gallery={gallery}
                                     />
                                 ))}
                             </div>
+                            {galleries.length > HUB_PREVIEW_LIMIT && (
+                                <div className="mt-10 flex justify-center">
+                                    <Button
+                                        asChild
+                                        variant="outline"
+                                        className="min-h-[44px]"
+                                    >
+                                        <Link to="/news/media-and-press/galleries/archive">
+                                            View all photo galleries
+                                        </Link>
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     </section>
                 )}
@@ -124,13 +150,26 @@ const MediaAndPress = () => {
                                 Press Releases
                             </h2>
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-2 max-w-7xl mx-auto">
-                                {pressReleases.map((pressRelease) => (
+                                {displayedPressReleases.map((pressRelease) => (
                                     <PressReleaseCard
                                         key={pressRelease._id}
                                         pressRelease={pressRelease}
                                     />
                                 ))}
                             </div>
+                            {pressReleases.length > HUB_PREVIEW_LIMIT && (
+                                <div className="mt-10 flex justify-center">
+                                    <Button
+                                        asChild
+                                        variant="outline"
+                                        className="min-h-[44px]"
+                                    >
+                                        <Link to="/news/media-and-press/press-releases/archive">
+                                            View all press releases
+                                        </Link>
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     </section>
                 )}

@@ -71,6 +71,12 @@ const STATIC_ROUTE_SEO = [
             "Discover upcoming community activities and events hosted by China Coast Community for English-speaking elders in Hong Kong.",
     },
     {
+        path: "/care-community/activities-and-events/archive",
+        title: "Past events archive | China Coast Community",
+        description:
+            "Browse past community activities and events at China Coast Community.",
+    },
+    {
         path: "/care-community/faqs",
         title: "Frequently Asked Questions | China Coast Community",
         description:
@@ -111,6 +117,18 @@ const STATIC_ROUTE_SEO = [
         title: "Media and Press | China Coast Community",
         description:
             "View media coverage, press releases, and galleries from China Coast Community.",
+    },
+    {
+        path: "/news/media-and-press/galleries/archive",
+        title: "Photo galleries archive | China Coast Community",
+        description:
+            "Browse photo galleries from China Coast Community events and activities.",
+    },
+    {
+        path: "/news/media-and-press/press-releases/archive",
+        title: "Press releases archive | China Coast Community",
+        description:
+            "Browse press releases and announcements from China Coast Community.",
     },
 ];
 

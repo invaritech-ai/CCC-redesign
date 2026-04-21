@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
     getGalleryBySlug,
     getGalleriesExcludingSlug,
+    getGalleryAdjacentByCreatedAt,
     type RelatedListRow,
 } from "@/lib/sanity.queries";
 import { ImageGallery } from "@/components/ImageGallery";
@@ -16,6 +17,7 @@ import {
     RelatedContentLinks,
     SupportCtaLinks,
 } from "@/components/seo/RelatedContentLinks";
+import { DetailAdjacentLinks } from "@/components/seo/DetailAdjacentLinks";
 import {
     getSlugValue,
     mergeDedupeInternalLinks,
@@ -29,6 +31,10 @@ const GalleryDetail = () => {
     const [relatedFallback, setRelatedFallback] = useState<RelatedListRow[]>(
         []
     );
+    const [adjacent, setAdjacent] = useState<{
+        prev: { to: string; label: string } | null;
+        next: { to: string; label: string } | null;
+    }>({ prev: null, next: null });
 
     useEffect(() => {
         const fetchGallery = async () => {
@@ -53,6 +59,36 @@ const GalleryDetail = () => {
         };
     }, [slug, loading, gallery]);
 
+    useEffect(() => {
+        if (!slug || loading || !gallery) return;
+        let cancelled = false;
+        (async () => {
+            const n = await getGalleryAdjacentByCreatedAt(slug);
+            if (cancelled) return;
+            const olderSlug = getSlugValue(n.older?.slug);
+            const newerSlug = getSlugValue(n.newer?.slug);
+            setAdjacent({
+                prev:
+                    olderSlug && n.older?.title
+                        ? {
+                              to: `/news/media-and-press/galleries/${olderSlug}`,
+                              label: n.older.title,
+                          }
+                        : null,
+                next:
+                    newerSlug && n.newer?.title
+                        ? {
+                              to: `/news/media-and-press/galleries/${newerSlug}`,
+                              label: n.newer.title,
+                          }
+                        : null,
+            });
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [slug, loading, gallery]);
+
     const breadcrumbItems = useMemo(() => {
         if (!gallery?.title) return [];
         return [
@@ -66,6 +102,10 @@ const GalleryDetail = () => {
         if (!slug) return [];
         const raw: InternalNavLink[] = [
             { title: "Media and press", to: "/news/media-and-press" },
+            {
+                title: "Photo galleries archive",
+                to: "/news/media-and-press/galleries/archive",
+            },
             { title: "Latest news", to: "/news" },
         ];
         for (const row of relatedFallback) {
@@ -208,6 +248,10 @@ const GalleryDetail = () => {
                 <section className="py-12 border-t border-border bg-muted/20">
                     <div className="container mx-auto px-4">
                         <div className="max-w-4xl mx-auto space-y-10">
+                            <DetailAdjacentLinks
+                                prev={adjacent.prev}
+                                next={adjacent.next}
+                            />
                             <RelatedContentLinks links={relatedNavLinks} />
                             <SupportCtaLinks />
                         </div>

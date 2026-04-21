@@ -9,8 +9,7 @@ import {
     getFormByPage,
 } from "@/lib/sanity.queries";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { FileText, ArrowRight, Download } from "lucide-react";
 import { getImageUrl, getImageUrlFromString } from "@/lib/sanityImage";
 import type {
@@ -20,8 +19,12 @@ import type {
 } from "@/lib/sanity.types";
 import { SearchAndFilter } from "@/components/SearchAndFilter";
 import { applySeo, getCanonicalUrl } from "@/lib/seo";
+import { CrawlPagination } from "@/components/seo/CrawlPagination";
+
+const PAGE_SIZE = 12;
 
 const Reports = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [reports, setReports] = useState<SanityReport[]>([]);
     const [pageContent, setPageContent] = useState<SanityPageContent | null>(
         null
@@ -32,7 +35,11 @@ const Reports = () => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedYear, setSelectedYear] = useState<string>("all");
-    const [displayCount, setDisplayCount] = useState(12);
+
+    const page = useMemo(() => {
+        const raw = parseInt(searchParams.get("page") || "1", 10);
+        return Number.isFinite(raw) && raw >= 1 ? raw : 1;
+    }, [searchParams]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -48,23 +55,6 @@ const Reports = () => {
         };
         fetchData();
     }, []);
-
-    useEffect(() => {
-        const pageTitle = pageContent?.heading
-            ? `${pageContent.heading} | China Coast Community`
-            : "Annual Reports | China Coast Community";
-        const description =
-            pageContent?.subheading ||
-            "Transparency and impact reports from China Coast Community.";
-
-        applySeo({
-            title: pageTitle,
-            description,
-            url: getCanonicalUrl("/who-we-are/publications/annual-reports"),
-        });
-
-        return () => applySeo();
-    }, [pageContent]);
 
     // Get unique years from reports
     const availableYears = useMemo(() => {
@@ -105,25 +95,64 @@ const Reports = () => {
         });
     }, [reports, searchQuery, selectedYear]);
 
-    // Get displayed reports (paginated)
-    const displayedReports = useMemo(() => {
-        return filteredReports.slice(0, displayCount);
-    }, [filteredReports, displayCount]);
+    const totalPages = useMemo(
+        () => Math.max(1, Math.ceil(filteredReports.length / PAGE_SIZE) || 1),
+        [filteredReports.length]
+    );
 
-    const handleLoadMore = () => {
-        setDisplayCount((prev) => prev + 12);
+    const safePage = Math.min(page, totalPages);
+
+    const displayedReports = useMemo(() => {
+        const start = (safePage - 1) * PAGE_SIZE;
+        return filteredReports.slice(start, start + PAGE_SIZE);
+    }, [filteredReports, safePage]);
+
+    useEffect(() => {
+        const pageTitle = pageContent?.heading
+            ? `${pageContent.heading} | China Coast Community`
+            : "Annual Reports | China Coast Community";
+        const description =
+            pageContent?.subheading ||
+            "Transparency and impact reports from China Coast Community.";
+
+        const qs = safePage > 1 ? `?page=${safePage}` : "";
+        applySeo({
+            title: pageTitle,
+            description,
+            url: getCanonicalUrl(
+                `/who-we-are/publications/annual-reports${qs}`
+            ),
+        });
+
+        return () => applySeo();
+    }, [pageContent, safePage]);
+
+    const stripPageParam = () => {
+        setSearchParams(
+            (prev) => {
+                const next = new URLSearchParams(prev);
+                next.delete("page");
+                return next;
+            },
+            { replace: true }
+        );
     };
 
     const handleClearFilters = () => {
         setSearchQuery("");
         setSelectedYear("all");
-        setDisplayCount(12);
+        setSearchParams({}, { replace: true });
     };
 
-    // Reset pagination when filters change
-    useEffect(() => {
-        setDisplayCount(12);
-    }, [searchQuery, selectedYear]);
+    const handleSearchChange = (value: string) => {
+        setSearchQuery(value);
+        if (searchParams.get("page")) stripPageParam();
+    };
+
+    const handleYearChange = (value: string) => {
+        setSelectedYear(value);
+        if (searchParams.get("page")) stripPageParam();
+    };
 
     const yearFilterOptions = availableYears.map((year) => ({
         label: year.toString(),
@@ -171,14 +200,14 @@ const Reports = () => {
                             <div className="max-w-4xl mx-auto">
                                 <SearchAndFilter
                                     searchValue={searchQuery}
-                                    onSearchChange={setSearchQuery}
+                                    onSearchChange={handleSearchChange}
                                     filters={[
                                         {
                                             label: "Year",
                                             key: "year",
                                             options: yearFilterOptions,
                                             value: selectedYear,
-                                            onChange: setSelectedYear,
+                                            onChange: handleYearChange,
                                         },
                                     ]}
                                     onClearFilters={handleClearFilters}
@@ -272,16 +301,14 @@ const Reports = () => {
                                             ))}
                                         </div>
 
-                                        {displayedReports.length <
-                                            filteredReports.length && (
-                                            <div className="text-center mt-8">
-                                                <Button
-                                                    onClick={handleLoadMore}
-                                                    variant="outline"
-                                                    className="min-w-[150px]"
-                                                >
-                                                    Load More
-                                                </Button>
+                                        {totalPages > 1 && (
+                                            <div className="mt-10 max-w-2xl mx-auto">
+                                                <CrawlPagination
+                                                    basePath="/who-we-are/publications/annual-reports"
+                                                    currentPage={safePage}
+                                                    totalPages={totalPages}
+                                                    ariaLabel="Annual reports pages"
+                                                />
                                             </div>
                                         )}
                                     </>

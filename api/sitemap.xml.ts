@@ -188,9 +188,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 priority: 0.7,
             },
             {
+                loc: `${BASE_URL}/news/media-and-press/galleries/archive`,
+                changefreq: "weekly",
+                priority: 0.55,
+            },
+            {
+                loc: `${BASE_URL}/news/media-and-press/press-releases/archive`,
+                changefreq: "weekly",
+                priority: 0.55,
+            },
+            {
                 loc: `${BASE_URL}/care-community/activities-and-events`,
                 changefreq: "weekly",
                 priority: 0.8,
+            },
+            {
+                loc: `${BASE_URL}/care-community/activities-and-events/archive`,
+                changefreq: "weekly",
+                priority: 0.65,
             },
             { loc: `${BASE_URL}/privacy`, changefreq: "yearly", priority: 0.3 },
             // CMS Pages

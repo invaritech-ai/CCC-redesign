@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
     getReportBySlug,
     getReportsExcludingSlug,
+    getReportAdjacentByYear,
     type RelatedListRow,
 } from "@/lib/sanity.queries";
 import { FileText, Download } from "lucide-react";
@@ -17,6 +18,7 @@ import {
     RelatedContentLinks,
     SupportCtaLinks,
 } from "@/components/seo/RelatedContentLinks";
+import { DetailAdjacentLinks } from "@/components/seo/DetailAdjacentLinks";
 import {
     getSlugValue,
     mergeDedupeInternalLinks,
@@ -30,6 +32,10 @@ const ReportDetail = () => {
     const [relatedFallback, setRelatedFallback] = useState<RelatedListRow[]>(
         []
     );
+    const [adjacent, setAdjacent] = useState<{
+        prev: { to: string; label: string } | null;
+        next: { to: string; label: string } | null;
+    }>({ prev: null, next: null });
 
     useEffect(() => {
         const fetchReport = async () => {
@@ -58,6 +64,36 @@ const ReportDetail = () => {
         (async () => {
             const rows = await getReportsExcludingSlug(slug, 10);
             if (!cancelled) setRelatedFallback(rows);
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [slug, loading, report]);
+
+    useEffect(() => {
+        if (!slug || loading || !report) return;
+        let cancelled = false;
+        (async () => {
+            const n = await getReportAdjacentByYear(slug);
+            if (cancelled) return;
+            const olderSlug = getSlugValue(n.older?.slug);
+            const newerSlug = getSlugValue(n.newer?.slug);
+            setAdjacent({
+                prev:
+                    olderSlug && n.older?.title
+                        ? {
+                              to: `/who-we-are/publications/annual-reports/${olderSlug}`,
+                              label: n.older.title,
+                          }
+                        : null,
+                next:
+                    newerSlug && n.newer?.title
+                        ? {
+                              to: `/who-we-are/publications/annual-reports/${newerSlug}`,
+                              label: n.newer.title,
+                          }
+                        : null,
+            });
         })();
         return () => {
             cancelled = true;
@@ -339,6 +375,10 @@ const ReportDetail = () => {
                             )}
 
                             <div className="mt-12 space-y-10 pt-8 border-t border-border">
+                                <DetailAdjacentLinks
+                                    prev={adjacent.prev}
+                                    next={adjacent.next}
+                                />
                                 <RelatedContentLinks links={relatedNavLinks} />
                                 <SupportCtaLinks />
                             </div>
