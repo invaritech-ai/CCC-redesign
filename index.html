@@ -33,38 +33,6 @@
     <meta name="twitter:image:alt" content="China Coast Community social sharing image featuring the CCC name and redevelopment message." />
     
     <link rel="canonical" href="https://www.chinacoastcommunity.org.hk/" />
-    <script>
-      (() => {
-        const baseUrl = "https://www.chinacoastcommunity.org.hk";
-        const { pathname } = window.location;
-        const normalizedPath =
-          !pathname || pathname === "/"
-            ? "/"
-            : `/${pathname.replace(/^\/+/, "").replace(/\/+$/, "")}`;
-        const canonicalUrl =
-          normalizedPath === "/" ? `${baseUrl}/` : `${baseUrl}${normalizedPath}`;
-
-        const canonical =
-          document.querySelector('link[rel="canonical"]') ||
-          (() => {
-            const link = document.createElement("link");
-            link.rel = "canonical";
-            document.head.appendChild(link);
-            return link;
-          })();
-        canonical.href = canonicalUrl;
-
-        const ogUrl =
-          document.querySelector('meta[property="og:url"]') ||
-          (() => {
-            const meta = document.createElement("meta");
-            meta.setAttribute("property", "og:url");
-            document.head.appendChild(meta);
-            return meta;
-          })();
-        ogUrl.content = canonicalUrl;
-      })();
-    </script>
   </head>
 
   <body>

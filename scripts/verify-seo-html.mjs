@@ -59,10 +59,28 @@ const mustContain = (html, regex, message) => {
     }
 };
 
+/** Reject prerender output that reintroduces client-side canonical/og:url mutation. */
+const assertNoRuntimeCanonicalRewrite = (html, label) => {
+    const markers = [
+        `querySelector('link[rel="canonical"]')`,
+        "ogUrl.content = canonicalUrl",
+        'meta.setAttribute("property", "og:url")',
+    ];
+    for (const marker of markers) {
+        if (html.includes(marker)) {
+            throw new Error(
+                `${label}: disallowed runtime canonical rewrite marker found: ${marker}`
+            );
+        }
+    }
+};
+
 const main = async () => {
     for (const check of checks) {
         const filePath = path.join(distDir, check.file);
         const html = await fs.readFile(filePath, "utf-8");
+
+        assertNoRuntimeCanonicalRewrite(html, check.route);
 
         mustContain(html, /<title>.+<\/title>/i, `${check.route}: missing <title>`);
         mustContain(
@@ -114,6 +132,7 @@ const main = async () => {
     for (const route of routeManifest.slice(0, 10)) {
         const htmlPath = path.join(distDir, toHtmlPath(route));
         const html = await fs.readFile(htmlPath, "utf-8");
+        assertNoRuntimeCanonicalRewrite(html, route);
         mustContain(
             html,
             /<link rel="canonical" href="https:\/\/www\.chinacoastcommunity\.org\.hk/i,
