@@ -121,7 +121,7 @@ export const Footer = () => {
                     <p className="text-xs text-muted-foreground/60 text-center">
                         Designed & built by{" "}
                         <a
-                            href="https://www.invaritech.com/"
+                            href="https://www.invaritech.ai/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-primary transition-colors"
