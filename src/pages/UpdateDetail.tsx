@@ -1,8 +1,13 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Navigate, useLocation, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getUpdateBySlug, getCaseStudyBySlug } from "@/lib/sanity.queries";
+import { useEffect, useMemo, useState } from "react";
+import {
+    getUpdateBySlug,
+    getCaseStudyBySlug,
+    getUpdatesExcludingSlug,
+    type RelatedListRow,
+} from "@/lib/sanity.queries";
 import { Calendar, User, Building2 } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +19,19 @@ import type {
     SanityImageBlock,
 } from "@/lib/sanity.types";
 import { applySeo, getCanonicalUrl, serializeJsonLd } from "@/lib/seo";
+import { PageBreadcrumbs } from "@/components/seo/PageBreadcrumbs";
+import {
+    RelatedContentLinks,
+    SupportCtaLinks,
+} from "@/components/seo/RelatedContentLinks";
+import {
+    disambiguateTitleWithSlugYear,
+    getSlugValue,
+    getUpdateDetailPath,
+    mergeDedupeInternalLinks,
+    toInternalPath,
+    type InternalNavLink,
+} from "@/lib/internalNav";
 
 // Simple portable text renderer
 const PortableText = ({ blocks }: { blocks: SanityPortableTextBlock[] }) => {
@@ -130,6 +148,9 @@ const UpdateDetail = () => {
     const [caseStudy, setCaseStudy] = useState<SanityCaseStudy | null>(null);
     const [loading, setLoading] = useState(true);
     const [isCaseStudy, setIsCaseStudy] = useState(false);
+    const [relatedFallback, setRelatedFallback] = useState<RelatedListRow[]>(
+        []
+    );
 
     useEffect(() => {
         const fetchContent = async () => {
@@ -154,6 +175,18 @@ const UpdateDetail = () => {
     }, [slug]);
 
     const content = isCaseStudy ? caseStudy : update;
+
+    useEffect(() => {
+        if (!slug || loading || !content) return;
+        let cancelled = false;
+        (async () => {
+            const rows = await getUpdatesExcludingSlug(slug, 10);
+            if (!cancelled) setRelatedFallback(rows);
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [slug, loading, content, update, caseStudy, isCaseStudy]);
     const contentTitle = isCaseStudy ? caseStudy?.title : update?.title;
     const contentImage = isCaseStudy 
         ? (caseStudy?.images && caseStudy.images.length > 0 ? caseStudy.images[0].image : undefined)
@@ -167,6 +200,55 @@ const UpdateDetail = () => {
             ? `/news/stories/${slug}`
             : `/news/${slug}`
         : location.pathname;
+
+    const breadcrumbItems = useMemo(() => {
+        if (!contentTitle) return [];
+        const hub =
+            isCaseStudy || update?.type === "story"
+                ? { label: "Stories", href: "/news/stories" as const }
+                : { label: "News", href: "/news" as const };
+        return [
+            { label: "Home", href: "/" },
+            hub,
+            { label: contentTitle },
+        ];
+    }, [contentTitle, isCaseStudy, update?.type]);
+
+    const relatedNavLinks = useMemo((): InternalNavLink[] => {
+        if (!slug) return [];
+        const raw: InternalNavLink[] = [];
+        if (isCaseStudy || update?.type === "story") {
+            raw.push({ title: "All stories", to: "/news/stories" });
+        } else {
+            raw.push({ title: "Latest news", to: "/news" });
+        }
+        if (update?.relatedEvent) {
+            const es = getSlugValue(update.relatedEvent.slug);
+            if (es) {
+                raw.push({
+                    title: update.relatedEvent.title
+                        ? `Related event: ${update.relatedEvent.title}`
+                        : "Related event",
+                    to: `/care-community/activities-and-events/${es}`,
+                });
+            }
+        }
+        for (const rl of update?.relatedLinks ?? []) {
+            if (!rl?.url) continue;
+            const path = toInternalPath(rl.url);
+            if (!path) continue;
+            raw.push({ title: rl.title || path, to: path });
+        }
+        for (const row of relatedFallback) {
+            const s = getSlugValue(row.slug);
+            if (!s || s === slug) continue;
+            raw.push({
+                title: row.title,
+                to: getUpdateDetailPath(s, { type: row.type }),
+            });
+        }
+        return mergeDedupeInternalLinks(raw, 8);
+    }, [slug, isCaseStudy, update, relatedFallback]);
 
     useEffect(() => {
         if (loading) {
@@ -195,7 +277,10 @@ const UpdateDetail = () => {
         ).slice(0, 160);
 
         applySeo({
-            title: `${contentTitle} | China Coast Community`,
+            title: `${disambiguateTitleWithSlugYear(
+                contentTitle ?? "",
+                slug
+            )} | China Coast Community`,
             description,
             url: getCanonicalUrl(canonicalDetailPath),
             type: "article",
@@ -210,6 +295,7 @@ const UpdateDetail = () => {
         isCaseStudy,
         loading,
         location.pathname,
+        slug,
         update,
     ]);
 
@@ -286,6 +372,13 @@ const UpdateDetail = () => {
                         __html: serializeJsonLd(updateSchema),
                     }}
                 />
+                {breadcrumbItems.length > 0 && (
+                    <div className="border-b bg-muted/40">
+                        <div className="container mx-auto px-4 py-3">
+                            <PageBreadcrumbs items={breadcrumbItems} />
+                        </div>
+                    </div>
+                )}
                 <section 
                     className={`relative bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center ${
                         contentImage ? 'bg-cover bg-center' : ''
@@ -432,6 +525,11 @@ const UpdateDetail = () => {
                                     )}
                                 </>
                             )}
+
+                            <div className="mt-12 space-y-10 pt-8 border-t border-border">
+                                <RelatedContentLinks links={relatedNavLinks} />
+                                <SupportCtaLinks />
+                            </div>
                         </div>
                     </div>
                 </section>

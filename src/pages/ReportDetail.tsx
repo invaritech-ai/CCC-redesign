@@ -1,18 +1,35 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getReportBySlug } from "@/lib/sanity.queries";
+import { useEffect, useMemo, useState } from "react";
+import {
+    getReportBySlug,
+    getReportsExcludingSlug,
+    type RelatedListRow,
+} from "@/lib/sanity.queries";
 import { FileText, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getImageUrl, getImageUrlFromString } from "@/lib/sanityImage";
 import type { SanityReport } from "@/lib/sanity.types";
 import { applySeo, getCanonicalUrl, serializeJsonLd } from "@/lib/seo";
+import { PageBreadcrumbs } from "@/components/seo/PageBreadcrumbs";
+import {
+    RelatedContentLinks,
+    SupportCtaLinks,
+} from "@/components/seo/RelatedContentLinks";
+import {
+    getSlugValue,
+    mergeDedupeInternalLinks,
+    type InternalNavLink,
+} from "@/lib/internalNav";
 
 const ReportDetail = () => {
     const { slug } = useParams<{ slug: string }>();
     const [report, setReport] = useState<SanityReport | null>(null);
     const [loading, setLoading] = useState(true);
+    const [relatedFallback, setRelatedFallback] = useState<RelatedListRow[]>(
+        []
+    );
 
     useEffect(() => {
         const fetchReport = async () => {
@@ -34,6 +51,50 @@ const ReportDetail = () => {
         };
         fetchReport();
     }, [slug]);
+
+    useEffect(() => {
+        if (!slug || loading || !report) return;
+        let cancelled = false;
+        (async () => {
+            const rows = await getReportsExcludingSlug(slug, 10);
+            if (!cancelled) setRelatedFallback(rows);
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [slug, loading, report]);
+
+    const breadcrumbItems = useMemo(() => {
+        if (!report?.title) return [];
+        return [
+            { label: "Home", href: "/" },
+            {
+                label: "Annual reports",
+                href: "/who-we-are/publications/annual-reports",
+            },
+            { label: report.title },
+        ];
+    }, [report?.title]);
+
+    const relatedNavLinks = useMemo((): InternalNavLink[] => {
+        if (!slug) return [];
+        const fixed: InternalNavLink[] = [
+            {
+                title: "All annual reports",
+                to: "/who-we-are/publications/annual-reports",
+            },
+            { title: "Who we are", to: "/who-we-are/about" },
+        ];
+        for (const row of relatedFallback) {
+            const s = getSlugValue(row.slug);
+            if (!s || s === slug) continue;
+            fixed.push({
+                title: row.title,
+                to: `/who-we-are/publications/annual-reports/${s}`,
+            });
+        }
+        return mergeDedupeInternalLinks(fixed, 8);
+    }, [slug, relatedFallback]);
 
     useEffect(() => {
         if (loading) {
@@ -139,6 +200,13 @@ const ReportDetail = () => {
                         __html: serializeJsonLd(reportSchema),
                     }}
                 />
+                {breadcrumbItems.length > 0 && (
+                    <div className="border-b bg-muted/40">
+                        <div className="container mx-auto px-4 py-3">
+                            <PageBreadcrumbs items={breadcrumbItems} />
+                        </div>
+                    </div>
+                )}
                 <section 
                     className={`relative bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center ${
                         report.image ? 'bg-cover bg-center' : ''
@@ -269,6 +337,11 @@ const ReportDetail = () => {
                                     </p>
                                 </div>
                             )}
+
+                            <div className="mt-12 space-y-10 pt-8 border-t border-border">
+                                <RelatedContentLinks links={relatedNavLinks} />
+                                <SupportCtaLinks />
+                            </div>
                         </div>
                     </div>
                 </section>

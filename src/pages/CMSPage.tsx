@@ -3,7 +3,7 @@ import { Footer } from "@/components/Footer";
 import { PageContent } from "@/components/PageContent";
 import { DynamicForm } from "@/components/DynamicForm";
 import { VoicesFromCommunitySection } from "@/components/VoicesFromCommunitySection";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getPageContent, getFormByPage } from "@/lib/sanity.queries";
 import type { SanityPageContent, SanityFormBuilder } from "@/lib/sanity.types";
 import {
@@ -11,6 +11,16 @@ import {
     getCanonicalUrl,
     getPublicPathForPageSlug,
 } from "@/lib/seo";
+import { PageBreadcrumbs } from "@/components/seo/PageBreadcrumbs";
+import {
+    RelatedContentLinks,
+    SupportCtaLinks,
+} from "@/components/seo/RelatedContentLinks";
+import {
+    buildCmsPageBreadcrumbs,
+    mergeDedupeInternalLinks,
+    type InternalNavLink,
+} from "@/lib/internalNav";
 
 interface CMSPageProps {
     slug: string;
@@ -88,6 +98,32 @@ const CMSPage = ({ slug, publicPath }: CMSPageProps) => {
         return () => applySeo();
     }, [pageContent, publicPath, slug]);
 
+    const breadcrumbItems = useMemo(() => {
+        if (!pageContent?.heading) return [];
+        return buildCmsPageBreadcrumbs(slug, pageContent.heading);
+    }, [pageContent?.heading, slug]);
+
+    const relatedNavLinks = useMemo((): InternalNavLink[] => {
+        const raw: InternalNavLink[] = [
+            { title: "Latest news", to: "/news" },
+            { title: "Home", to: "/" },
+        ];
+        if (slug.startsWith("who-we-are")) {
+            raw.push({
+                title: "Annual reports",
+                to: "/who-we-are/publications/annual-reports",
+            });
+        }
+        if (slug.startsWith("care-community")) {
+            raw.push({
+                title: "Activities & events",
+                to: "/care-community/activities-and-events",
+            });
+        }
+        raw.push({ title: "Contact us", to: "/contact" });
+        return mergeDedupeInternalLinks(raw, 8);
+    }, [slug]);
+
     if (loading) {
         return (
             <div className="min-h-screen flex flex-col">
@@ -105,16 +141,31 @@ const CMSPage = ({ slug, publicPath }: CMSPageProps) => {
             <Navigation />
 
             <main id="main-content" className="flex-1">
+                {pageContent && breadcrumbItems.length > 0 && (
+                    <div className="border-b bg-muted/40">
+                        <div className="container mx-auto px-4 py-3">
+                            <PageBreadcrumbs items={breadcrumbItems} />
+                        </div>
+                    </div>
+                )}
                 {pageContent ? (
-                    <PageContent
-                        heading={pageContent.heading}
-                        subheading={pageContent.subheading}
-                        content={pageContent.content}
-                        badgeText={pageContent.badgeText}
-                        heroImage={pageContent.heroImage}
-                        bottomImages={pageContent.bottomImages}
-                        pageSlug={slug}
-                    />
+                    <>
+                        <PageContent
+                            heading={pageContent.heading}
+                            subheading={pageContent.subheading}
+                            content={pageContent.content}
+                            badgeText={pageContent.badgeText}
+                            heroImage={pageContent.heroImage}
+                            bottomImages={pageContent.bottomImages}
+                            pageSlug={slug}
+                        />
+                        <div className="container mx-auto px-4 pb-16">
+                            <div className="max-w-4xl mx-auto space-y-10 pt-8 border-t border-border">
+                                <RelatedContentLinks links={relatedNavLinks} />
+                                <SupportCtaLinks />
+                            </div>
+                        </div>
+                    </>
                 ) : (
                     <section className="bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center">
                         <div className="container mx-auto px-4 w-full">

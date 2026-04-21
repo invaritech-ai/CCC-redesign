@@ -1,14 +1,28 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getPressReleaseBySlug } from "@/lib/sanity.queries";
+import { useEffect, useMemo, useState } from "react";
+import {
+    getPressReleaseBySlug,
+    getPressReleasesExcludingSlug,
+    type RelatedListRow,
+} from "@/lib/sanity.queries";
 import { Calendar, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { PortableText } from "@/components/PortableText";
 import type { SanityPressRelease } from "@/lib/sanity.types";
 import { applySeo, getCanonicalUrl } from "@/lib/seo";
+import { PageBreadcrumbs } from "@/components/seo/PageBreadcrumbs";
+import {
+    RelatedContentLinks,
+    SupportCtaLinks,
+} from "@/components/seo/RelatedContentLinks";
+import {
+    getSlugValue,
+    mergeDedupeInternalLinks,
+    type InternalNavLink,
+} from "@/lib/internalNav";
 
 const PressReleaseDetail = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -16,6 +30,9 @@ const PressReleaseDetail = () => {
         null
     );
     const [loading, setLoading] = useState(true);
+    const [relatedFallback, setRelatedFallback] = useState<RelatedListRow[]>(
+        []
+    );
 
     useEffect(() => {
         const fetchPressRelease = async () => {
@@ -27,6 +44,44 @@ const PressReleaseDetail = () => {
         };
         fetchPressRelease();
     }, [slug]);
+
+    useEffect(() => {
+        if (!slug || loading || !pressRelease) return;
+        let cancelled = false;
+        (async () => {
+            const rows = await getPressReleasesExcludingSlug(slug, 10);
+            if (!cancelled) setRelatedFallback(rows);
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [slug, loading, pressRelease]);
+
+    const breadcrumbItems = useMemo(() => {
+        if (!pressRelease?.title) return [];
+        return [
+            { label: "Home", href: "/" },
+            { label: "Media and press", href: "/news/media-and-press" },
+            { label: pressRelease.title },
+        ];
+    }, [pressRelease?.title]);
+
+    const relatedNavLinks = useMemo((): InternalNavLink[] => {
+        if (!slug) return [];
+        const raw: InternalNavLink[] = [
+            { title: "Media and press", to: "/news/media-and-press" },
+            { title: "Latest news", to: "/news" },
+        ];
+        for (const row of relatedFallback) {
+            const s = getSlugValue(row.slug);
+            if (!s || s === slug) continue;
+            raw.push({
+                title: row.title,
+                to: `/news/media-and-press/press-releases/${s}`,
+            });
+        }
+        return mergeDedupeInternalLinks(raw, 8);
+    }, [slug, relatedFallback]);
 
     useEffect(() => {
         const canonicalPath = slug
@@ -56,7 +111,7 @@ const PressReleaseDetail = () => {
         const contentText =
             pressRelease.content
                 ?.find((block) => block._type === "block" && block.children)
-                ?.children?.map((child: any) => child.text || "")
+                ?.children?.map((child: { text?: string }) => child.text || "")
                 .join("")
                 .trim() || "";
 
@@ -120,6 +175,13 @@ const PressReleaseDetail = () => {
             <Navigation />
 
             <main id="main-content" className="flex-1">
+                {breadcrumbItems.length > 0 && (
+                    <div className="border-b bg-muted/40">
+                        <div className="container mx-auto px-4 py-3">
+                            <PageBreadcrumbs items={breadcrumbItems} />
+                        </div>
+                    </div>
+                )}
                 <section className="bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center">
                     <div className="container mx-auto px-4 w-full">
                         <div className="max-w-4xl md:mx-auto md:text-center">
@@ -177,6 +239,11 @@ const PressReleaseDetail = () => {
                                         </div>
                                     </div>
                                 )}
+
+                            <div className="mt-12 space-y-10 pt-8 border-t border-border">
+                                <RelatedContentLinks links={relatedNavLinks} />
+                                <SupportCtaLinks />
+                            </div>
                         </div>
                     </div>
                 </section>

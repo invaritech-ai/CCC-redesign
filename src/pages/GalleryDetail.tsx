@@ -1,17 +1,34 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getGalleryBySlug } from "@/lib/sanity.queries";
+import { useEffect, useMemo, useState } from "react";
+import {
+    getGalleryBySlug,
+    getGalleriesExcludingSlug,
+    type RelatedListRow,
+} from "@/lib/sanity.queries";
 import { ImageGallery } from "@/components/ImageGallery";
 import { getImageUrl } from "@/lib/sanityImage";
 import type { SanityGallery } from "@/lib/sanity.types";
 import { applySeo, getCanonicalUrl } from "@/lib/seo";
+import { PageBreadcrumbs } from "@/components/seo/PageBreadcrumbs";
+import {
+    RelatedContentLinks,
+    SupportCtaLinks,
+} from "@/components/seo/RelatedContentLinks";
+import {
+    getSlugValue,
+    mergeDedupeInternalLinks,
+    type InternalNavLink,
+} from "@/lib/internalNav";
 
 const GalleryDetail = () => {
     const { slug } = useParams<{ slug: string }>();
     const [gallery, setGallery] = useState<SanityGallery | null>(null);
     const [loading, setLoading] = useState(true);
+    const [relatedFallback, setRelatedFallback] = useState<RelatedListRow[]>(
+        []
+    );
 
     useEffect(() => {
         const fetchGallery = async () => {
@@ -23,6 +40,44 @@ const GalleryDetail = () => {
         };
         fetchGallery();
     }, [slug]);
+
+    useEffect(() => {
+        if (!slug || loading || !gallery) return;
+        let cancelled = false;
+        (async () => {
+            const rows = await getGalleriesExcludingSlug(slug, 10);
+            if (!cancelled) setRelatedFallback(rows);
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [slug, loading, gallery]);
+
+    const breadcrumbItems = useMemo(() => {
+        if (!gallery?.title) return [];
+        return [
+            { label: "Home", href: "/" },
+            { label: "Media and press", href: "/news/media-and-press" },
+            { label: gallery.title },
+        ];
+    }, [gallery?.title]);
+
+    const relatedNavLinks = useMemo((): InternalNavLink[] => {
+        if (!slug) return [];
+        const raw: InternalNavLink[] = [
+            { title: "Media and press", to: "/news/media-and-press" },
+            { title: "Latest news", to: "/news" },
+        ];
+        for (const row of relatedFallback) {
+            const s = getSlugValue(row.slug);
+            if (!s || s === slug) continue;
+            raw.push({
+                title: row.title,
+                to: `/news/media-and-press/galleries/${s}`,
+            });
+        }
+        return mergeDedupeInternalLinks(raw, 8);
+    }, [slug, relatedFallback]);
 
     useEffect(() => {
         const canonicalPath = slug
@@ -111,6 +166,13 @@ const GalleryDetail = () => {
             <Navigation />
 
             <main id="main-content" className="flex-1">
+                {breadcrumbItems.length > 0 && (
+                    <div className="border-b bg-muted/40">
+                        <div className="container mx-auto px-4 py-3">
+                            <PageBreadcrumbs items={breadcrumbItems} />
+                        </div>
+                    </div>
+                )}
                 <section className="bg-primary text-primary-foreground py-12 md:py-0 md:min-h-screen md:flex md:items-center">
                     <div className="container mx-auto px-4 w-full">
                         <div className="max-w-4xl md:mx-auto md:text-center">
@@ -142,6 +204,15 @@ const GalleryDetail = () => {
                         </div>
                     </section>
                 )}
+
+                <section className="py-12 border-t border-border bg-muted/20">
+                    <div className="container mx-auto px-4">
+                        <div className="max-w-4xl mx-auto space-y-10">
+                            <RelatedContentLinks links={relatedNavLinks} />
+                            <SupportCtaLinks />
+                        </div>
+                    </div>
+                </section>
             </main>
 
             <Footer />

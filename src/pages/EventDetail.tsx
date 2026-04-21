@@ -1,8 +1,13 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getEventBySlug, getFormByPage } from "@/lib/sanity.queries";
+import { useEffect, useMemo, useState } from "react";
+import {
+    getEventBySlug,
+    getFormByPage,
+    getEventsExcludingSlug,
+    type RelatedListRow,
+} from "@/lib/sanity.queries";
 import { Calendar, MapPin, ExternalLink, UserRound, Mail, Phone } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +16,17 @@ import { getImageUrl } from "@/lib/sanityImage";
 import { DynamicForm } from "@/components/DynamicForm";
 import type { SanityEvent, SanityFormBuilder } from "@/lib/sanity.types";
 import { applySeo, getCanonicalUrl, serializeJsonLd } from "@/lib/seo";
+import { PageBreadcrumbs } from "@/components/seo/PageBreadcrumbs";
+import {
+    RelatedContentLinks,
+    SupportCtaLinks,
+} from "@/components/seo/RelatedContentLinks";
+import {
+    disambiguateTitleWithSlugYear,
+    getSlugValue,
+    mergeDedupeInternalLinks,
+    type InternalNavLink,
+} from "@/lib/internalNav";
 
 const EventDetail = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -19,6 +35,9 @@ const EventDetail = () => {
         null
     );
     const [loading, setLoading] = useState(true);
+    const [relatedFallback, setRelatedFallback] = useState<RelatedListRow[]>(
+        []
+    );
 
     useEffect(() => {
         const fetchEvent = async () => {
@@ -35,6 +54,53 @@ const EventDetail = () => {
         };
         fetchEvent();
     }, [slug]);
+
+    useEffect(() => {
+        if (!slug || loading || !event) return;
+        let cancelled = false;
+        (async () => {
+            const rows = await getEventsExcludingSlug(slug, 10);
+            if (!cancelled) setRelatedFallback(rows);
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [slug, loading, event]);
+
+    const breadcrumbItems = useMemo(() => {
+        if (!event?.title) return [];
+        return [
+            { label: "Home", href: "/" },
+            {
+                label: "Activities & events",
+                href: "/care-community/activities-and-events",
+            },
+            { label: event.title },
+        ];
+    }, [event?.title]);
+
+    const relatedNavLinks = useMemo((): InternalNavLink[] => {
+        if (!slug) return [];
+        const raw: InternalNavLink[] = [
+            {
+                title: "All activities & events",
+                to: "/care-community/activities-and-events",
+            },
+            {
+                title: "Community members programme",
+                to: "/care-community/community-members-programme",
+            },
+        ];
+        for (const row of relatedFallback) {
+            const s = getSlugValue(row.slug);
+            if (!s || s === slug) continue;
+            raw.push({
+                title: row.title,
+                to: `/care-community/activities-and-events/${s}`,
+            });
+        }
+        return mergeDedupeInternalLinks(raw, 8);
+    }, [slug, relatedFallback]);
 
     useEffect(() => {
         if (loading) {
@@ -59,7 +125,7 @@ const EventDetail = () => {
         }
 
         applySeo({
-            title: `${event.title} | China Coast Community`,
+            title: `${disambiguateTitleWithSlugYear(event.title, slug)} | China Coast Community`,
             description:
                 event.description?.trim().slice(0, 160) ||
                 `Event details for ${event.title} at China Coast Community.`,
@@ -152,6 +218,13 @@ const EventDetail = () => {
                         __html: serializeJsonLd(eventSchema),
                     }}
                 />
+                {breadcrumbItems.length > 0 && (
+                    <div className="border-b bg-muted/40">
+                        <div className="container mx-auto px-4 py-3">
+                            <PageBreadcrumbs items={breadcrumbItems} />
+                        </div>
+                    </div>
+                )}
                 <section className="bg-primary text-primary-foreground py-12 md:py-16">
                     <div className="container mx-auto px-4 w-full">
                         <div className="max-w-4xl md:mx-auto md:text-center">
@@ -269,6 +342,11 @@ const EventDetail = () => {
                                     </Badge>
                                 </div>
                             )}
+
+                            <div className="mt-12 space-y-10 pt-8 border-t">
+                                <RelatedContentLinks links={relatedNavLinks} />
+                                <SupportCtaLinks />
+                            </div>
                         </div>
                     </div>
                 </section>

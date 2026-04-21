@@ -881,6 +881,125 @@ export const getFormByPage = async (pageSlug: string) => {
     }
 };
 
+/** Minimal row for internal “related” links on detail pages */
+export type RelatedListRow = {
+    _id: string;
+    title: string;
+    slug: { current?: string };
+    type?: string;
+};
+
+/**
+ * Updates excluding one slug, newest first (for internal link fallbacks).
+ */
+export const getUpdatesExcludingSlug = async (
+    excludeSlug: string,
+    limit: number = 6
+): Promise<RelatedListRow[]> => {
+    if (!isSanityConfigured()) return [];
+
+    const query = `*[_type == "update" && slug.current != $excludeSlug] | order(publishedAt desc) [0...$limit] {
+    _id,
+    title,
+    slug,
+    type
+  }`;
+
+    try {
+        return (await sanityClient.fetch(query, { excludeSlug, limit })) ?? [];
+    } catch {
+        return [];
+    }
+};
+
+/**
+ * Events excluding one slug, newest first.
+ */
+export const getEventsExcludingSlug = async (
+    excludeSlug: string,
+    limit: number = 6
+): Promise<RelatedListRow[]> => {
+    if (!isSanityConfigured()) return [];
+
+    const query = `*[_type == "event" && slug.current != $excludeSlug] | order(date desc) [0...$limit] {
+    _id,
+    title,
+    slug
+  }`;
+
+    try {
+        return (await sanityClient.fetch(query, { excludeSlug, limit })) ?? [];
+    } catch {
+        return [];
+    }
+};
+
+/**
+ * Reports excluding one slug, newest first by year.
+ */
+export const getReportsExcludingSlug = async (
+    excludeSlug: string,
+    limit: number = 6
+): Promise<RelatedListRow[]> => {
+    if (!isSanityConfigured()) return [];
+
+    const query = `*[_type == "report" && slug.current != $excludeSlug] | order(year desc) [0...$limit] {
+    _id,
+    title,
+    slug
+  }`;
+
+    try {
+        return (await sanityClient.fetch(query, { excludeSlug, limit })) ?? [];
+    } catch {
+        return [];
+    }
+};
+
+/**
+ * Press releases excluding one slug.
+ */
+export const getPressReleasesExcludingSlug = async (
+    excludeSlug: string,
+    limit: number = 6
+): Promise<RelatedListRow[]> => {
+    if (!isSanityConfigured()) return [];
+
+    const query = `*[_type == "pressRelease" && slug.current != $excludeSlug] | order(date desc) [0...$limit] {
+    _id,
+    title,
+    slug
+  }`;
+
+    try {
+        return (await sanityClient.fetch(query, { excludeSlug, limit })) ?? [];
+    } catch {
+        return [];
+    }
+};
+
+/**
+ * Galleries excluding one slug.
+ */
+export const getGalleriesExcludingSlug = async (
+    excludeSlug: string,
+    limit: number = 6
+): Promise<RelatedListRow[]> => {
+    if (!isSanityConfigured()) return [];
+
+    const query = `*[_type == "gallery" && slug.current != $excludeSlug] | order(_createdAt desc) [0...$limit] {
+    _id,
+    title,
+    slug
+  }`;
+
+    try {
+        return (await sanityClient.fetch(query, { excludeSlug, limit })) ?? [];
+    } catch {
+        return [];
+    }
+};
+
 /**
  * Fetch all content for sitemap generation
  * Returns all content types with slugs and update dates
