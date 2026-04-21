@@ -221,6 +221,58 @@ All colors MUST be HSL.
     }
 }
 
+/* Hero image: subtle 3D tilt + glare (desktop pointer devices only; JS gates reduced motion) */
+.hero-tilt-perspective {
+    transform: none;
+}
+
+.hero-tilt-card {
+    transform: none;
+    transform-style: flat;
+}
+
+.hero-tilt-glare {
+    display: none;
+}
+
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+    @media (prefers-reduced-motion: no-preference) {
+        .hero-tilt-perspective {
+            perspective: 1200px;
+        }
+
+        .hero-tilt-card {
+            --hero-tilt-rx: 0deg;
+            --hero-tilt-ry: 0deg;
+            --hero-tilt-s: 1;
+            --hero-glare-x: 50%;
+            --hero-glare-y: 50%;
+
+            transform: rotateX(var(--hero-tilt-rx)) rotateY(var(--hero-tilt-ry))
+                scale3d(var(--hero-tilt-s), var(--hero-tilt-s), 1);
+            transform-style: preserve-3d;
+            will-change: transform;
+            /* Slightly eased duration: responsive while moving, soft reset on leave */
+            transition: transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+
+        .hero-tilt-glare {
+            display: block;
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border-radius: inherit;
+            background: radial-gradient(
+                ellipse 85% 65% at var(--hero-glare-x) var(--hero-glare-y),
+                hsl(0 0% 100% / 0.13) 0%,
+                hsl(0 0% 100% / 0.04) 35%,
+                transparent 58%
+            );
+            mix-blend-mode: soft-light;
+        }
+    }
+}
+
 /* Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
     *,
@@ -230,5 +282,18 @@ All colors MUST be HSL.
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+
+    .hero-tilt-perspective {
+        perspective: none !important;
+    }
+
+    .hero-tilt-card {
+        transform: none !important;
+        will-change: auto !important;
+    }
+
+    .hero-tilt-glare {
+        display: none !important;
     }
 }
