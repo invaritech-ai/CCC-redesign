@@ -43,7 +43,7 @@ src/
 
 ### Prerequisites
 
--   Node.js 18+ and npm (or use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
+-   Node.js 18+ and pnpm 11.1.1 via Corepack (or use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
 
 ### Installation
 
@@ -57,7 +57,7 @@ cd CCC-redesign
 2. Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 3. Set up environment variables:
@@ -72,18 +72,18 @@ VITE_SANITY_API_VERSION=2024-01-01
 4. Start the development server:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 The application will be available at `http://localhost:5173`
 
 ## Available Scripts
 
--   `npm run dev` - Start development server
--   `npm run build` - Build for production
--   `npm run build:dev` - Build in development mode
--   `npm run preview` - Preview production build
--   `npm run lint` - Run ESLint
+-   `pnpm run dev` - Start development server
+-   `pnpm run build` - Build for production
+-   `pnpm run build:dev` - Build in development mode
+-   `pnpm run preview` - Preview production build
+-   `pnpm run lint` - Run ESLint
 
 ## Sanity CMS
 
@@ -129,7 +129,7 @@ The project uses:
 ## Building for Production
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 The production build will be output to the `dist/` directory.

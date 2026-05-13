@@ -98,7 +98,7 @@ The `resend` package has been added to `package.json`. You need to install it:
 Run the following command from the project root:
 
 ```bash
-npm install
+pnpm install
 ```
 
 This will install the `resend` package locally. For Vercel deployments, dependencies are automatically installed during build.
