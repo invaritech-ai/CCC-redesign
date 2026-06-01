@@ -8,7 +8,7 @@ interface Quote {
 interface WhatIsBeingBuiltSectionProps {
   title: string;
   introParagraph?: string;
-  intentions?: string[];
+  intentions?: React.ReactNode[];
   paragraphs?: React.ReactNode[];
   quotes?: Quote[];
 }
@@ -84,4 +84,3 @@ export const WhatIsBeingBuiltSection = ({
     </section>
   );
 };
-
