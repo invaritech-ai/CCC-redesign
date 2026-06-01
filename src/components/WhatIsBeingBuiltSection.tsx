@@ -49,9 +49,9 @@ export const WhatIsBeingBuiltSection = ({
                       <div className="p-2 bg-primary/10 rounded-lg shrink-0">
                         <Icon className="h-6 w-6 text-primary" />
                       </div>
-                      <p className="text-base md:text-lg text-foreground leading-relaxed pt-1">
+                      <div className="text-base md:text-lg text-foreground leading-relaxed pt-1">
                         {intention}
-                      </p>
+                      </div>
                     </div>
                   );
                 })}

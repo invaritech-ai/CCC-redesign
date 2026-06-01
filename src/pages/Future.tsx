@@ -115,14 +115,18 @@ const Future = () => {
                     title="What the new home will offer"
                     intentions={[
                         <>
-                            <span className="block font-semibold">
+                            <span className="block">
+                                Provide comfortable bedrooms with dignity by
+                                improving privacy and accessibility.
+                            </span>
+                            <span className="mt-4 block text-sm font-semibold uppercase text-muted-foreground">
                                 Approx. Room Size
                             </span>
-                            <span className="mt-2 block">
+                            <span className="mt-2 block text-sm md:text-base">
                                 Single/single room en-suite = 11 Sqm (excl.
                                 bathroom)
                             </span>
-                            <span className="mt-2 block">
+                            <span className="mt-1 block text-sm md:text-base">
                                 Double room en-suite = 18 Sqm (excl. bathroom)
                             </span>
                         </>,
