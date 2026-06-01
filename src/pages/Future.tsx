@@ -114,7 +114,18 @@ const Future = () => {
                 <WhatIsBeingBuiltSection
                     title="What the new home will offer"
                     intentions={[
-                        "Provide comfortable bedrooms with dignity by improving privacy and accessibility.",
+                        <>
+                            <span className="block font-semibold">
+                                Approx. Room Size
+                            </span>
+                            <span className="mt-2 block">
+                                Single/single room en-suite = 11 Sqm (excl.
+                                bathroom)
+                            </span>
+                            <span className="mt-2 block">
+                                Double room en-suite = 18 Sqm (excl. bathroom)
+                            </span>
+                        </>,
                         "Include dedicated spaces, wide, open corridors and thoughtful accessibility features with lifts, dining, gardens, rehabilitation and quiet rest.",
                         "Meet latest fire, health and safety, RCHE standards under regulations in Hong Kong.",
                         "Enable CCC to provide care to residents with various degrees of care requirements.",
