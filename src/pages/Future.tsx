@@ -123,11 +123,12 @@ const Future = () => {
                                 Approx. Room Size
                             </span>
                             <span className="mt-2 block text-sm md:text-base">
-                                Single/single room en-suite = 11 Sqm (excl.
-                                bathroom)
+                                Single/single room en-suite = 11 Square meters
+                                (excl. bathroom)
                             </span>
                             <span className="mt-1 block text-sm md:text-base">
-                                Double room en-suite = 18 Sqm (excl. bathroom)
+                                Double room en-suite = 18 Square meters (excl.
+                                bathroom)
                             </span>
                         </>,
                         "Include dedicated spaces, wide, open corridors and thoughtful accessibility features with lifts, dining, gardens, rehabilitation and quiet rest.",
