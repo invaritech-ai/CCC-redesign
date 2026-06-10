@@ -5,7 +5,7 @@ const checks = [
         file: "src/components/RedevelopmentBanner.tsx",
         values: [
             "Join us for the CCC Charity Golf Day",
-            "Friday 27 November",
+            "Friday 27 November 2026",
             "Shek O Country Club",
             "https://cccgolfday.sparkraise.com/",
         ],

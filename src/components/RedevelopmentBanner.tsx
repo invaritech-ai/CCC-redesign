@@ -76,8 +76,7 @@ export const RedevelopmentBanner = () => {
                                     Join us for the CCC Charity Golf Day
                                 </span>{" "}
                                 <span>
-                                    — Friday 27 November, Shek O Country Club.
-                                    Register your team or become a sponsor.
+                                    — Friday 27 November 2026, Shek O Country Club. Register your team or become a sponsor.
                                 </span>
                             </p>
                         </div>
