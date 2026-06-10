@@ -1,4 +1,4 @@
-import { Menu, ChevronDown, ChevronRight } from "lucide-react";
+import { Menu, ChevronDown, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -19,8 +19,11 @@ import { cn } from "@/lib/utils";
 type NavItem = {
     label: string;
     href?: string;
+    external?: boolean;
     children?: NavItem[];
 };
+
+const GOLF_DAY_URL = "https://cccgolfday.sparkraise.com/";
 
 const NAV_ITEMS: NavItem[] = [
     {
@@ -76,6 +79,7 @@ const NAV_ITEMS: NavItem[] = [
         label: "Get Involved",
         children: [
             { label: "Donate", href: "/donate" },
+            { label: "Golf Day 2026", href: GOLF_DAY_URL, external: true },
             { label: "Our Major Donors", href: "/donate/major-donors" },
             { label: "Volunteer", href: "/get-involved/volunteer" },
         ],
@@ -166,6 +170,29 @@ const DesktopNavItem = ({ item }: { item: NavItem }) => {
     const hasChildren = item.children && item.children.length > 0;
 
     if (!hasChildren) {
+        if (item.external) {
+            return (
+                <NavigationMenuItem>
+                    <NavigationMenuLink asChild>
+                        <a
+                            href={item.href || "#"}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={navigationMenuTriggerStyle()}
+                        >
+                            <span className="inline-flex items-center gap-1.5">
+                                {item.label}
+                                <ExternalLink
+                                    className="h-3.5 w-3.5"
+                                    aria-hidden="true"
+                                />
+                            </span>
+                        </a>
+                    </NavigationMenuLink>
+                </NavigationMenuItem>
+            );
+        }
+
         return (
             <NavigationMenuItem>
                 <NavigationMenuLink asChild>
@@ -198,6 +225,27 @@ const DesktopDropdownItem = ({ item }: { item: NavItem }) => {
     const hasChildren = item.children && item.children.length > 0;
 
     if (!hasChildren) {
+        if (item.external) {
+            return (
+                <li>
+                    <a
+                        href={item.href || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                    >
+                        <div className="inline-flex items-center gap-2 text-sm font-medium leading-none">
+                            {item.label}
+                            <ExternalLink
+                                className="h-3.5 w-3.5"
+                                aria-hidden="true"
+                            />
+                        </div>
+                    </a>
+                </li>
+            );
+        }
+
         return (
             <li>
                 <Link
@@ -231,6 +279,20 @@ const MobileNavItem = ({ item }: { item: NavItem }) => {
     const hasChildren = item.children && item.children.length > 0;
 
     if (!hasChildren) {
+        if (item.external) {
+            return (
+                <a
+                    href={item.href || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-base font-medium text-card-foreground hover:text-primary transition-colors py-2"
+                >
+                    {item.label}
+                    <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                </a>
+            );
+        }
+
         return (
             <Link
                 to={item.href || "#"}
