@@ -257,6 +257,77 @@ const applyRouteSeoToHtml = (indexHtml, routeSeo) => {
     return html;
 };
 
+// Mirrors src/components/Navigation.tsx NAV_ITEMS (internal links only).
+const NAV_LINKS = [
+    { label: "About China Coast Community", href: "/who-we-are/about" },
+    { label: "Our History", href: "/who-we-are/history" },
+    { label: "Our Mission & Values", href: "/who-we-are/mission-values" },
+    { label: "Board & Governance", href: "/who-we-are/board-governance" },
+    { label: "Annual Reports", href: "/who-we-are/publications/annual-reports" },
+    { label: "Community Members", href: "/care-community/community-members-programme" },
+    { label: "Activities & Events", href: "/care-community/activities-and-events" },
+    { label: "Care & Attention Home", href: "/care-community/care-and-attention-home" },
+    { label: "Redevelopment", href: "/redevelopment" },
+    { label: "News", href: "/news" },
+    { label: "Donate", href: "/donate" },
+    { label: "Our Major Donors", href: "/donate/major-donors" },
+    { label: "Volunteer", href: "/get-involved/volunteer" },
+    { label: "Contact", href: "/contact" },
+];
+
+// Mirrors src/components/Footer.tsx Quick Links column.
+const FOOTER_LINKS = [
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Annual Reports", href: "/who-we-are/publications/annual-reports" },
+    { label: "About Us", href: "/who-we-are/about" },
+    { label: "Latest News", href: "/news" },
+    { label: "Past Events Archive", href: "/care-community/activities-and-events/archive" },
+    { label: "Galleries Archive", href: "/news/media-and-press/galleries/archive" },
+    { label: "Press Releases Archive", href: "/news/media-and-press/press-releases/archive" },
+    { label: "Contact Us", href: "/contact" },
+];
+
+const renderLinkList = (links) =>
+    `<ul>${links
+        .map(
+            (link) =>
+                `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`
+        )
+        .join("")}</ul>`;
+
+// Real, always-present crawlable content + links for the otherwise-empty #root
+// shell. The app uses createRoot (not hydrateRoot), so client JS simply
+// replaces this on mount — it exists purely so crawlers that don't execute
+// JS (or don't wait for Sanity data to load) still see real content and a
+// real internal link graph instead of an empty div.
+const renderCrawlableShell = (routeEntry, listingLinks) => {
+    const heading = routeEntry.title ?? DEFAULT_SITE_TITLE;
+    const description = routeEntry.description ?? DEFAULT_SITE_DESCRIPTION;
+
+    const listingSection =
+        listingLinks && listingLinks.length > 0
+            ? `<section><h2>On this page</h2>${renderLinkList(listingLinks)}</section>`
+            : "";
+
+    return `<div id="root">
+    <nav aria-label="Primary">${renderLinkList(NAV_LINKS)}</nav>
+    <main>
+      <h1>${escapeHtml(heading)}</h1>
+      <p>${escapeHtml(description)}</p>
+      ${listingSection}
+    </main>
+    <footer>${renderLinkList(FOOTER_LINKS)}</footer>
+  </div>`;
+};
+
+const injectCrawlableShell = (html, routeEntry, listingLinks) => {
+    const shell = renderCrawlableShell(routeEntry, listingLinks);
+    return html.replace(
+        /<div id="root"><\/div>|<div id="root"\s*\/>/i,
+        shell
+    );
+};
+
 const getSanityClient = () => {
     const projectId =
         process.env.VITE_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID;
@@ -284,7 +355,7 @@ const getSanityClient = () => {
 const buildDynamicRouteSeo = async () => {
     const client = getSanityClient();
     if (!client) {
-        return [];
+        return { routeEntries: [], listingLinksByPath: {} };
     }
 
     let updates = [];
@@ -346,7 +417,7 @@ const buildDynamicRouteSeo = async () => {
         console.warn(
             "[seo-prerender] Unable to fetch dynamic Sanity routes. Continuing with static routes only."
         );
-        return [];
+        return { routeEntries: [], listingLinksByPath: {} };
     }
 
     const routeEntries = [];
@@ -431,7 +502,46 @@ const buildDynamicRouteSeo = async () => {
         });
     });
 
-    return routeEntries;
+    const eventLinks = events.map((event) => ({
+        label: event.title,
+        href: `/care-community/activities-and-events/${event.slug}`,
+    }));
+    const reportLinks = reports.map((report) => ({
+        label: report.title,
+        href: `/who-we-are/publications/annual-reports/${report.slug}`,
+    }));
+    const galleryLinks = galleries.map((gallery) => ({
+        label: gallery.title,
+        href: `/news/media-and-press/galleries/${gallery.slug}`,
+    }));
+    const pressReleaseLinks = pressReleases.map((pressRelease) => ({
+        label: pressRelease.title,
+        href: `/news/media-and-press/press-releases/${pressRelease.slug}`,
+    }));
+    const updateLinksByType = (types) =>
+        updates
+            .filter((update) => types.includes(update.type))
+            .map((update) => ({
+                label: update.title,
+                href:
+                    update.type === "story"
+                        ? `/news/stories/${update.slug}`
+                        : `/news/${update.slug}`,
+            }));
+
+    const listingLinksByPath = {
+        "/care-community/activities-and-events": eventLinks,
+        "/care-community/activities-and-events/archive": eventLinks,
+        "/who-we-are/publications/annual-reports": reportLinks,
+        "/news/media-and-press/galleries/archive": galleryLinks,
+        "/news/media-and-press/press-releases/archive": pressReleaseLinks,
+        "/news": updateLinksByType(["news", "story", "article", "announcement", "initiative"]),
+        "/news/stories": updateLinksByType(["story"]),
+        "/news/blog": updateLinksByType(["article"]),
+        "/news/noticeboard": updateLinksByType(["announcement", "initiative"]),
+    };
+
+    return { routeEntries, listingLinksByPath };
 };
 
 const writeRouteHtml = async (routePath, html) => {
@@ -466,7 +576,8 @@ const generate404Html = async (indexHtml) => {
 const run = async () => {
     const indexPath = path.join(distDir, "index.html");
     const indexHtml = await fs.readFile(indexPath, "utf-8");
-    const dynamicRoutes = await buildDynamicRouteSeo();
+    const { routeEntries: dynamicRoutes, listingLinksByPath } =
+        await buildDynamicRouteSeo();
 
     const mergedRouteMap = new Map();
     [...STATIC_ROUTE_SEO, ...dynamicRoutes].forEach((routeEntry) => {
@@ -484,7 +595,12 @@ const run = async () => {
     });
 
     for (const routeEntry of mergedRouteMap.values()) {
-        const html = applyRouteSeoToHtml(indexHtml, routeEntry);
+        let html = applyRouteSeoToHtml(indexHtml, routeEntry);
+        html = injectCrawlableShell(
+            html,
+            routeEntry,
+            listingLinksByPath[routeEntry.path]
+        );
         await writeRouteHtml(routeEntry.path, html);
     }
 
