@@ -73,3 +73,6 @@ received on 27 July, the resulting action list was therefore:
 
 This dated section is historical context only. Re-run the checkpoint before
 using it in a later session.
+
+The copy-ready field values and asset paths for this request are recorded in
+`docs/content-updates/2026-07-website-upload.md`.
