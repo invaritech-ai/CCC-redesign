@@ -10,6 +10,7 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
+    "sanity:checkpoint": "node scripts/sanity-content-checkpoint.mjs",
     "seo:check-bot-access": "node scripts/check-crawler-access.mjs",
     "seo:verify-html": "node scripts/verify-seo-html.mjs"
   },

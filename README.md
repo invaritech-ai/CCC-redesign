@@ -84,6 +84,7 @@ The application will be available at `http://localhost:5173`
 -   `pnpm run build:dev` - Build in development mode
 -   `pnpm run preview` - Preview production build
 -   `pnpm run lint` - Run ESLint
+-   `pnpm sanity:checkpoint` - Read-only summary of live Sanity content for handoffs
 
 ## Sanity CMS
 
