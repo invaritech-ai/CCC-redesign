@@ -39,14 +39,20 @@ values in chat or logs.
 2. If it exists, recommend editing that document; do not create a duplicate.
 3. If it does not exist, recommend creating a new event from the supplied
    flyer/details.
-4. A post-event collage normally replaces the event's flyer as its single main
+4. Derive a new event title from both the flyer and recent comparable live
+   titles. The established pattern is `Event name (Free/price)`. Append
+   `Refreshments provided` when the flyer says refreshments are included. For
+   example: `Chair Yoga (Free) Refreshments provided`. Retain `(Free)` even when
+   the flyer phrases it as “free entry” or “free of charge”. Do not add the
+   refreshments suffix when the flyer does not offer refreshments.
+5. A post-event collage normally replaces the event's flyer as its single main
    image. Put captions, thanks, feedback, and extra credits in the description
    because the current event model has no dedicated fields for them.
-5. For a “registration is full” request, edit the existing event. Put the
+6. For a “registration is full” request, edit the existing event. Put the
    notice prominently at the start of the description and remove a registration
    link if one exists. Preserve other useful details unless the sender clearly
    requests replacement.
-6. Do not guess malformed contact details, unclear symbols, missing dates, or
+7. Do not guess malformed contact details, unclear symbols, missing dates, or
    where unattached photos belong. List those as explicit clarifications.
 
 ## Verified checkpoint: 27 July 2026

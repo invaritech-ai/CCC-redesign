@@ -13,6 +13,11 @@ whether content should be edited or created:
 4. Compare the request with both the live records and the local schemas in
    `sanity/schemas/` before recommending an edit, a new document, or a schema
    change.
+5. Inspect recent comparable live event titles before proposing a title. Follow
+   the established qualifier pattern exactly: `Event name (Free/price)` and,
+   when the flyer states that refreshments are provided,
+   `Event name (Free/price) Refreshments provided`. Do not silently omit or
+   normalize these operational qualifiers.
 
 The checkpoint command is deliberately read-only and must remain so. Never
 print environment-variable values or credentials. Do not attempt a Sanity

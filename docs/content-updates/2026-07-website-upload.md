@@ -18,6 +18,17 @@ Event assets are in `/Users/avi/Downloads/juleventsupload/`:
 Redevelopment progress photos are in
 `/Users/avi/Downloads/cccwebsiteupdateredevelopmentprogressphotos/`.
 
+## Live status after manual entry
+
+A later live check on 27 July found that all three September/October events had
+been created. Do not create them again. Their live titles were:
+
+- `Hong Kong Football Club Buffet Lunch (Free)` — follows the pattern.
+- `Intergenerational Community Event (Free)` — follows the pattern.
+- `Health Talk by Caritas Outreach Team — “Three Highs” (Free)` — edit this to
+  add `Refreshments provided`, because the flyer explicitly says the event is
+  followed by refreshments.
+
 ## Edit: Chat & Chill Party — 8 July 2026
 
 Existing slug: `chat-and-chill-party`
@@ -119,9 +130,9 @@ RSVP by 5 August 2026.
 Please wear comfortable clothing and footwear.
 ```
 
-## Create: Hong Kong Football Club Buffet Lunch
+## Create: Hong Kong Football Club Buffet Lunch (Free)
 
-- Title: `Hong Kong Football Club Buffet Lunch`
+- Title: `Hong Kong Football Club Buffet Lunch (Free)`
 - Slug: `hong-kong-football-club-buffet-lunch`
 - Date: `9 September 2026`
 - Display time: `12:00 PM – 2:30 PM`
@@ -145,9 +156,9 @@ RSVP by 20 August 2026.
 Book early to avoid disappointment!
 ```
 
-## Create: Intergenerational Community Event
+## Create: Intergenerational Community Event (Free)
 
-- Title: `Intergenerational Community Event`
+- Title: `Intergenerational Community Event (Free)`
 - Slug: `intergenerational-community-event`
 - Date: `23 September 2026`
 - Display time: `10:30 AM`
@@ -176,10 +187,10 @@ Minimum 15 participants.
 RSVP by 9 September 2026.
 ```
 
-## Create: Health Talk by Caritas Outreach Team — “Three Highs”
+## Create: Health Talk by Caritas Outreach Team — “Three Highs” (Free) Refreshments provided
 
-- Title: `Health Talk by Caritas Outreach Team — “Three Highs”`
-- Slug: `health-talk-three-highs`
+- Title: `Health Talk by Caritas Outreach Team — “Three Highs” (Free) Refreshments provided`
+- Slug: `health-talk-by-caritas-outreach-team-three-highs`
 - Date: `7 October 2026`
 - Display time: `10:30 AM – 12:00 PM`
 - Location: `Room 1209, 12/F, Star House, 3 Salisbury Road, Tsim Sha Tsui, Hong Kong`
