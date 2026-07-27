@@ -45,8 +45,24 @@ const Future = () => {
         },
     ];
 
-    // Gallery images - using real project images
+    // Current construction progress followed by architectural visualizations
     const galleryImages = [
+        {
+            src: "/redevelopment-progress-street-view.webp",
+            alt: "Street view of the 63 Cumberland Road redevelopment site",
+        },
+        {
+            src: "/redevelopment-progress-site-entrance.webp",
+            alt: "Construction entrance at the 63 Cumberland Road redevelopment site",
+        },
+        {
+            src: "/redevelopment-progress-demolition.webp",
+            alt: "Excavation work during redevelopment at 63 Cumberland Road",
+        },
+        {
+            src: "/redevelopment-progress-site-cleared.webp",
+            alt: "Cleared construction site during redevelopment at 63 Cumberland Road",
+        },
         {
             src: "/central-lawn.webp",
             alt: "Central Lawn area",
@@ -194,7 +210,7 @@ const Future = () => {
                 {/* Section 8: Image Gallery */}
                 <ImageGallery
                     images={galleryImages}
-                    title="Project Visualizations"
+                    title="Redevelopment Progress & Visualizations"
                 />
             </main>
 
