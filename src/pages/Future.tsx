@@ -60,8 +60,8 @@ const Future = () => {
             alt: "Flower Arbor",
         },
         {
-            src: "/project-site.webp",
-            alt: "Project image",
+            src: "/private-terrace.webp",
+            alt: "Private Terrace",
         },
         {
             src: "/isometric-view.webp",
@@ -76,8 +76,8 @@ const Future = () => {
             alt: "Preparation work",
         },
         {
-            src: "/private-terrace.webp",
-            alt: "Private Terrace",
+            src: "/project-site.webp",
+            alt: "Project image",
         },
         {
             src: "/redevelopment-progress-street-view.webp",
