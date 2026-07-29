@@ -18,6 +18,9 @@ whether content should be edited or created:
    when the flyer states that refreshments are provided,
    `Event name (Free/price) Refreshments provided`. Do not silently omit or
    normalize these operational qualifiers.
+6. Write event date/time values in `YYYY-MM-DD HH:mm` format (for example,
+   `2026-07-29 10:15`). Treat these as Hong Kong local time unless the user
+   explicitly specifies another timezone.
 
 The checkpoint command is deliberately read-only and must remain so. Never
 print environment-variable values or credentials. Do not attempt a Sanity

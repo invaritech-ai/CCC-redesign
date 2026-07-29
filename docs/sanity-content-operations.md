@@ -45,14 +45,17 @@ values in chat or logs.
    example: `Chair Yoga (Free) Refreshments provided`. Retain `(Free)` even when
    the flyer phrases it as “free entry” or “free of charge”. Do not add the
    refreshments suffix when the flyer does not offer refreshments.
-5. A post-event collage normally replaces the event's flyer as its single main
+5. Present event date/time values as `YYYY-MM-DD HH:mm`, interpreted in Hong
+   Kong local time unless another timezone is explicitly provided. Example:
+   `2026-07-29 10:15`.
+6. A post-event collage normally replaces the event's flyer as its single main
    image. Put captions, thanks, feedback, and extra credits in the description
    because the current event model has no dedicated fields for them.
-6. For a “registration is full” request, edit the existing event. Put the
+7. For a “registration is full” request, edit the existing event. Put the
    notice prominently at the start of the description and remove a registration
    link if one exists. Preserve other useful details unless the sender clearly
    requests replacement.
-7. Do not guess malformed contact details, unclear symbols, missing dates, or
+8. Do not guess malformed contact details, unclear symbols, missing dates, or
    where unattached photos belong. List those as explicit clarifications.
 
 ## Verified checkpoint: 27 July 2026
